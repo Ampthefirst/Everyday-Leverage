@@ -17,3 +17,7 @@ One line each: decision — reason.
 - C2 "plunger" = straight pusher with a self-centring cup; "lever" = bent pusher. No moving parts or springs in v1.
 - Geometry results drop disconnected specks under 1 mm³ (boolean slivers); larger extra pieces still fail the tests.
 - Cross-section view: manifold `slice()` at the cut, inner offset by the shell thickness → solid shell ring + hatched infill; the kept half is the one facing the default camera.
+- `/api` functions are self-contained (no imports from `/src`) and use the Web `POST(request)` signature, so Vercel bundles them without ESM path/JSON-import surprises; a unit test keeps their allowed answer values identical to `src/finder/tree.json`.
+- Gemini reply verification extracts number+unit pairs, normalises N·m↔N·mm, cm↔mm, %↔fraction, and allows 1% rounding; any unmatched number → template wording.
+- If `/api/*` answers 503/404 (no key, or running on a static host) the Gemini features hide for the rest of the session.
+- Task-finder ties within 1 point are shown side by side (bottle caps: B1 vs B3).

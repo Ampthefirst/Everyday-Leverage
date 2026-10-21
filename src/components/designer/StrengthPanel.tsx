@@ -11,6 +11,8 @@ import { heatWarnings } from '../../print/settings';
 import { LEVEL_LABEL } from '../../strength/evaluate';
 import type { UseLocation } from '../../families/types';
 import type { MaterialId } from '../../strength/materials';
+import { ExplainBox } from '../../llm/ExplainBox';
+import { factsFrom } from '../../llm/facts';
 import { MATERIALS } from '../../strength/materials';
 
 export const LOCATIONS: { value: UseLocation; label: string }[] = [
@@ -46,9 +48,8 @@ export function StrengthPanel() {
           <StrengthBadge calibration={calibration} />
         </div>
         <Meter u={verdict.utilization} level={verdict.level} />
-        <p className="text-lg" aria-live="polite">
-          {verdict.reason}
-        </p>
+        <ExplainBox facts={factsFrom(analysis.family.name, verdict, print.material)} />
+        <p className="text-sm text-muted">{verdict.reason}</p>
         {verdicts.length > 1 && (
           <ul className="text-sm text-muted">
             {verdicts.map((v) => (
