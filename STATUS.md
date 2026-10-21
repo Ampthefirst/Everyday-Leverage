@@ -7,8 +7,13 @@ Last updated by the overnight build. `PLAN.md` is the spec; choices made along t
 All nine sub-families (A1–C3) are buildable from presets and fine-tune, with a live 3D view, ghost
 objects, cross-section, computed stress map, "how to use" animation, strength verdict + show-the-math
 + badge, print-readiness checks, and every output in PLAN §8. The task finder, calibration, Learn
-pages, profiles/share links and the optional Gemini features are in. `npm run check` is green
-(typecheck, lint, 139 unit tests, build) and the Playwright suite (flows + axe accessibility) passes.
+pages, profiles/share links, offline support and the optional Gemini features are in.
+
+- **Live:** https://everyday-leverage.vercel.app (Vercel production, deployed from `main`).
+- `npm run check` is green: typecheck, lint, 150 unit tests, build.
+- Playwright: 24 end-to-end tests (flows for A/B/C, out-of-scope, calibration, auto-split, offline,
+  Gemini, axe WCAG 2.2 AA on every page) — all pass locally **and against the live site**.
+- Gemini `/api/describe` and `/api/explain` verified on production (~3–4 s per request).
 
 ## Done
 
@@ -23,6 +28,7 @@ pages, profiles/share links and the optional Gemini features are in. `npm run ch
 | Guidance | Task finder (7 questions, routing table, ambiguous side-by-side, out-of-scope OT note, no-match picker, second-person copy, answers never stored), Learn (lever explainer, why-did-it-fail, PLA vs PETG), Calibrate (bars, sheet, entry, fit, profiles, JSON import/export, example data), Limits page, Get-it-printed page, Display settings, local profiles, share links (`#p=` hash) |
 | Gemini | `/api/describe`, `/api/explain` (Web `POST` handlers), opt-in toggle with notice, number verification, graceful hiding without key/network |
 | Accessibility | WCAG 2.2 AA axe checks pass on every page (incl. dark + high contrast), 48 px targets, keyboard camera controls, visible focus, reduced motion (animations become steps), labelled meter |
+| Offline | Service worker: pages network-first with cached shell, hashed assets + WASM precached via `precache.json` |
 
 ## Partial / known gaps
 
@@ -30,9 +36,9 @@ pages, profiles/share links and the optional Gemini features are in. `npm run ch
 - Ghost objects are simple stylised shapes (the hand is capsules + a rounded palm).
 - Fillets are approximated with hull blends and rounded profiles (no true 3D fillets).
 - The 3MF stores settings as metadata; slicers will not read them as slicer settings.
-- Gemini features are untested against the live API from this build environment (no key here); the
-  request/response handling, guards and fallbacks are unit-tested.
-- Not yet verified on a real Vercel deploy from this environment (see below).
+- `GEMINI_MODEL` in Vercel was not in the API's name format; the server now normalises friendly
+  forms ("Gemini 3.8 Flash" → `gemini-3.8-flash`). Setting it to the exact id is still cleaner.
+- Offline works after the first visit (service worker + precache); the very first load needs a network.
 
 ## How to test locally
 
@@ -41,6 +47,7 @@ npm install
 npm run dev          # http://localhost:5173
 npm run check        # typecheck + lint + unit tests + build
 npm run e2e          # Playwright: flows + axe accessibility (builds and serves on :4173)
+E2E_BASE_URL=https://everyday-leverage.vercel.app npm run e2e   # same suite against the live site
 ```
 
 Manual checks:
