@@ -16,11 +16,11 @@ Build plan for Claude Code. The product spec is `docs/everyday-leverage-guide.md
 
 | Concern | Choice |
 | --- | --- |
-| App | React 18 + Vite + TypeScript (strict) |
+| App | React 19 + Vite + TypeScript (strict) |
 | Styling | Tailwind CSS, design tokens in `src/styles/tokens.css`, light/dark |
 | State | Zustand (one store per domain: design, settings, profile, calibration) |
 | Routing | React Router |
-| 3D view | three.js via @react-three/fiber + @react-three/drei |
+| 3D view | three.js via @react-three/fiber (v9+, React 19) + @react-three/drei |
 | Geometry kernel | `manifold-3d` (WASM), run in a Web Worker |
 | Validation | zod schemas per family (params, ranges, defaults) |
 | 2D output | SVG generated from parameters; PDF via `jspdf` + `svg2pdf.js`; DXF via a small in-house writer |
@@ -105,6 +105,8 @@ interface Family<P> {
 
 **Validation lives on parameters**, not on mesh analysis. Example: wall at groove = gripOD/2 − shaft/2 − grooveDepth ≥ minWall.
 
+**Cross-parameter constraints.** The per-parameter ranges in §4.2 are independent bounds; not every combination of them is buildable (e.g. A1 allows a 25 mm shaft and a 20 mm grip OD, but the grip must enclose the shaft). Each family schema enforces its dependencies with zod `.superRefine` (e.g. A1 gripOD ≥ shaftMax + 2·(clearance + minWall + grooveDepth)) and returns a plain-language fix. Where a dependent range can be derived, the UI clamps the slider to it instead of letting the user reach an invalid value.
+
 ## 4. Geometry
 
 ### 4.1 Primitives (`geometry/primitives`)
@@ -120,7 +122,7 @@ Build these five once, then compose them:
 
 ### 4.2 Families: parameters, variants, critical point
 
-All ranges are zod-enforced. Defaults are sensible for an average adult and documented in each schema.
+All ranges are zod-enforced, plus the cross-parameter constraints from §3. Defaults are sensible for an average adult and documented in each schema.
 
 | ID | Key parameters (mm unless noted) | Variants | Critical check(s) |
 | --- | --- | --- | --- |
@@ -197,7 +199,8 @@ Each family returns `stressField(point) → utilization`, built from its load ca
 
 ## 6. Task finder (`finder/`)
 - `tree.json` holds the 7 questions from the guide, one per screen, with big targets, back, and a visible skip.
-- The router returns the best match + 2 alternates and a preset. Ambiguous answers route to the top 2 with a side-by-side preview. Out-of-scope answers (pain, injury, body load-bearing, medical device) show the plain OT/doctor note and produce no design. No match → manual family picker.
+- The router returns the best match + 2 alternates and a preset.
+- **Known overlap:** bottle caps fit both B1 (open, lid or bottle) and B3 (turn, cap). Route "open + bottle" and "turn + cap" as ambiguous between B1 and B3 (side-by-side preview), ordered by the motion answer; small caps (< 40 mm, if a size is given) favor B3, jar lids favor B1. Cover this in the routing tests. Ambiguous answers route to the top 2 with a side-by-side preview. Out-of-scope answers (pain, injury, body load-bearing, medical device) show the plain OT/doctor note and produce no design. No match → manual family picker.
 - Answers are never persisted. The "for someone else" answer switches copy to the second person.
 - Unit tests cover every path in the routing table from the guide.
 
@@ -243,7 +246,7 @@ All outputs are generated from params, so they never drift from the 3D part.
 ## 10. Gemini features (`/api`, `src/llm`)
 - **Opt-in toggle** with a notice: "Your text is sent to Google's Gemini to interpret it. Nothing else leaves your browser." Off by default.
 - `POST /api/describe` — `{ text ≤ 500 chars }` → structured task-finder answers (Gemini JSON schema → zod validated). **The decision tree still makes the routing decision.** Out-of-scope language → the same OT note.
-- `POST /api/explain` — `{ facts: ComputedFacts }` → friendlier wording. The client verifies every number in the reply matches `facts`; on any mismatch or error, show the template text instead.
+- `POST /api/explain` — `{ facts: ComputedFacts }` → friendlier wording. The client verifies every number in the reply matches `facts`; on any mismatch or error, show the template text instead. Verification is unit-aware: extract number + unit pairs, normalize to internal units (mm, N, N·mm, MPa; N·m ↔ N·mm, cm ↔ mm, %↔ fraction), and compare with a relative tolerance of 1% to allow rounding. Unitless numbers must match a fact value directly. The prompt also asks Gemini to keep the units given in `facts`.
 - **Server hygiene:** key only in `GEMINI_API_KEY` (Vercel env, never `VITE_`-prefixed), same-origin check, body size cap, max 1 request in flight per client (client-side), short timeout, no logging of user text.
 - With no network or no key, the features hide gracefully and everything else works.
 
@@ -252,6 +255,7 @@ All outputs are generated from params, so they never drift from the 3D part.
 Each stage lists tracks that can run in parallel (separate worktrees/sessions), then merge. Every stage ends with green tests and a Vercel preview.
 
 **Stage 0 — Scaffold (single track)**
+Prerequisite (done by the owner, not by Claude Code): import the GitHub repo into Vercel and set `GEMINI_API_KEY` and `GEMINI_MODEL` as Vercel environment variables. Vercel then builds a preview for every pushed branch and production from the default branch. If this is not done yet, build and commit everything anyway and log the deploy step in STATUS.md.
 Vite + React + TS + Tailwind, router, Zustand, Vitest, Playwright, ESLint/Prettier, `CLAUDE.md` with conventions (units, family contract, badge rule), `vercel.json` (SPA rewrite excluding `/api`), CI script `npm run check` = typecheck + lint + test + build. Deploy an empty shell to Vercel.
 
 **Stage 1 — Cores (3 tracks)**
@@ -260,7 +264,7 @@ Vite + React + TS + Tailwind, router, Zustand, Vitest, Playwright, ESLint/Pretti
 - 1c UI shell: design system components, Designer layout, viewer scene with orbit/ghost/cross-section/heat-map plumbing (heat-map fed by a dummy field), large-text and contrast modes.
 
 **Stage 2 — Families (3 tracks: A, B, C)**
-Implement all three families per track against the contract: schema, presets, variants, build, loads, critical sections, stress field, drawing/template/net specs, ghost, animation, orientation, measure guide, rules. Test: every preset and the min/max of every param builds a valid manifold that fits the bed (or splits, for C3).
+Implement all three families per track against the contract: schema, presets, variants, build, loads, critical sections, stress field, drawing/template/net specs, ghost, animation, orientation, measure guide, rules. Test: every preset builds a valid manifold that fits the bed (or splits, for C3). For each param, its min and max — with the other params at defaults, adjusted only as needed to satisfy the cross-parameter constraints (§3) — also build. Separately, test that invalid combinations are rejected by the schema with a fix message.
 
 **Stage 3 — Outputs & print-readiness (2 tracks)**
 - 3a: STL, 3MF, fit-test, split, bed fit, validator, orientation, settings and estimates.
