@@ -23,3 +23,4 @@ One line each: decision — reason.
 - Task-finder ties within 1 point are shown side by side (bottle caps: B1 vs B3).
 - Offline after first visit via a hand-written service worker (`public/sw.js`) plus a build-time `precache.json` of every asset — no extra plugin dependency; navigations are network-first so new deploys show up, hashed assets are cache-first.
 - Calibrate shows predicted (published data) vs measured break loads side by side — the guide's "one measured result beside the prediction".
+- No `maxOutputTokens` on Gemini calls: on thinking models the thinking tokens count against it and cut replies off; the prompts keep replies short and the server truncates text to 1200 characters.

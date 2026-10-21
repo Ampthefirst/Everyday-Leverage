@@ -77,7 +77,7 @@ export async function POST(req: Request): Promise<Response> {
     const r = await ai.models.generateContent({
       model,
       contents: [{ role: 'user', parts: [{ text: `Facts (JSON):\n${JSON.stringify(facts)}` }] }],
-      config: { systemInstruction: SYSTEM, temperature: 0.3, abortSignal: ctrl.signal, maxOutputTokens: 220 },
+      config: { systemInstruction: SYSTEM, temperature: 0.3, abortSignal: ctrl.signal },
     });
     const text = (r.text ?? '').trim();
     if (!text) return json(502, { error: 'empty' });
