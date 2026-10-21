@@ -38,6 +38,56 @@ const SAMPLE: { orientation: BarOrientation; kg: number }[] = [
 
 let nextId = 1;
 
+/** Prediction (published data) beside the measurement — the evidence the strength numbers need. */
+function PredictionTable({
+  base,
+  xy,
+  z,
+  unit,
+}: {
+  base: (typeof MATERIALS)[MaterialId];
+  xy: number[];
+  z: number[];
+  unit: 'kg' | 'N';
+}) {
+  // Invert σ = 6·F·a / (b·h²) for the predicted break load.
+  const loadFor = (sigma: number) => (sigma * TEST_BAR.width * TEST_BAR.thickness ** 2) / (6 * TEST_BAR.arm);
+  const show = (n: number) => (unit === 'kg' ? `${fmt(n / G, 2)} kg` : `${fmt(n, 1)} N`);
+  const mean = (a: number[]) => a.reduce((s, x) => s + x, 0) / a.length;
+  const rows: [string, number, number][] = [
+    ['Flat (XY)', loadFor(base.sigmaXY.value), loadFor(mean(xy))],
+    ['Upright (Z)', loadFor(base.sigmaXY.value * base.zFraction.value), loadFor(mean(z))],
+  ];
+  return (
+    <table className="mt-2 w-full text-left text-sm">
+      <caption className="sr-only">Predicted and measured break loads</caption>
+      <thead>
+        <tr>
+          <th scope="col">Bar</th>
+          <th scope="col">Predicted (published data)</th>
+          <th scope="col">Measured (your average)</th>
+          <th scope="col">Difference</th>
+        </tr>
+      </thead>
+      <tbody>
+        {rows.map(([name, pred, meas]) => (
+          <tr key={name}>
+            <th scope="row" className="font-normal">
+              {name}
+            </th>
+            <td>{show(pred)}</td>
+            <td>{show(meas)}</td>
+            <td>
+              {meas >= pred ? '+' : '−'}
+              {Math.abs(Math.round(((meas - pred) / pred) * 100))}%
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  );
+}
+
 export default function CalibratePage() {
   const { profiles, active, add, remove, activate } = useCalibration();
   const [printer, setPrinter] = useState('');
@@ -303,6 +353,7 @@ export default function CalibratePage() {
                   assumed {base.sigmaXY.value} MPa). Layer strength = {Math.round(fit.zFraction! * 100)}% of
                   that (assumed {Math.round(base.zFraction.value * 100)}%).
                 </p>
+                <PredictionTable base={base} xy={fit.xyStresses} z={fit.zStresses} unit={unit} />
                 {fit.problems.map((p) => (
                   <p key={p} className="mt-1 text-warn">
                     {p}
