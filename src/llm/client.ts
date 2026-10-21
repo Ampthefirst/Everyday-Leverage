@@ -5,7 +5,7 @@ import type { ComputedFacts } from './facts';
 
 export const LLM_NOTICE =
   "Your text is sent to Google's Gemini to interpret it. Nothing else leaves your browser.";
-const TIMEOUT_MS = 10000;
+const TIMEOUT_MS = 30000;
 
 /** Session-level availability: once the server says "unavailable" (no key) or the network fails, hide the features. */
 let available: boolean | null = null;

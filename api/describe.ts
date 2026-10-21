@@ -4,7 +4,7 @@
  * Server hygiene: key only in GEMINI_API_KEY, same-origin check, body cap, short timeout, no logging of text.
  * Self-contained on purpose (no imports from /src) so the Vercel function bundles cleanly.
  */
-import { GoogleGenAI } from '@google/genai';
+import { GoogleGenAI, ThinkingLevel } from '@google/genai';
 
 export const ALLOWED = {
   task: ['open', 'hold', 'turn', 'pull', 'press', 'reach', 'body'],
@@ -36,7 +36,7 @@ export const ALLOWED = {
 
 const MAX_TEXT = 500;
 const MAX_BODY = 2048;
-const TIMEOUT_MS = 9000;
+const TIMEOUT_MS = 25000;
 
 const SYSTEM = `You map a short description of an everyday task that someone finds hard into structured answers for a task finder.
 Rules:
@@ -53,6 +53,21 @@ const SCHEMA = {
   },
   required: ['outOfScope'],
 };
+
+type GenParams = Parameters<GoogleGenAI['models']['generateContent']>[0];
+
+/** Ask for low thinking (much faster on thinking models); retry without it if the model rejects the option. */
+async function generateFast(ai: GoogleGenAI, req: GenParams) {
+  try {
+    return await ai.models.generateContent({
+      ...req,
+      config: { ...req.config, thinkingConfig: { thinkingLevel: ThinkingLevel.LOW } },
+    });
+  } catch (e) {
+    if ((e as { status?: number }).status === 400) return ai.models.generateContent(req);
+    throw e;
+  }
+}
 
 function json(status: number, body: unknown): Response {
   return new Response(JSON.stringify(body), {
@@ -114,7 +129,7 @@ export async function POST(req: Request): Promise<Response> {
   const timer = setTimeout(() => ctrl.abort(), TIMEOUT_MS);
   try {
     const ai = new GoogleGenAI({ apiKey: key });
-    const r = await ai.models.generateContent({
+    const r = await generateFast(ai, {
       model,
       contents: [{ role: 'user', parts: [{ text }] }],
       config: {
@@ -123,7 +138,6 @@ export async function POST(req: Request): Promise<Response> {
         responseJsonSchema: SCHEMA,
         temperature: 0,
         abortSignal: ctrl.signal,
-        maxOutputTokens: 300,
       },
     });
     const parsed = JSON.parse(r.text ?? '{}') as Record<string, unknown>;

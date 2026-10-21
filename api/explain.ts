@@ -3,10 +3,10 @@
  * The client verifies every number in the reply against the facts and falls back to template text.
  * Self-contained on purpose (no imports from /src) so the Vercel function bundles cleanly.
  */
-import { GoogleGenAI } from '@google/genai';
+import { GoogleGenAI, ThinkingLevel } from '@google/genai';
 
 const MAX_BODY = 4096;
-const TIMEOUT_MS = 9000;
+const TIMEOUT_MS = 25000;
 
 const SYSTEM = `You rewrite a strength check for a 3D-printed everyday aid into 2–3 short, friendly sentences for a non-technical reader.
 Rules:
@@ -14,6 +14,21 @@ Rules:
 - When you mention a number, copy it exactly with the same unit as in the facts.
 - Do not mention medical conditions. Do not promise it will not break.
 - If calibrated is false, say briefly that it is an estimate.`;
+
+type GenParams = Parameters<GoogleGenAI['models']['generateContent']>[0];
+
+/** Ask for low thinking (much faster on thinking models); retry without it if the model rejects the option. */
+async function generateFast(ai: GoogleGenAI, req: GenParams) {
+  try {
+    return await ai.models.generateContent({
+      ...req,
+      config: { ...req.config, thinkingConfig: { thinkingLevel: ThinkingLevel.LOW } },
+    });
+  } catch (e) {
+    if ((e as { status?: number }).status === 400) return ai.models.generateContent(req);
+    throw e;
+  }
+}
 
 function json(status: number, body: unknown): Response {
   return new Response(JSON.stringify(body), {
@@ -74,7 +89,7 @@ export async function POST(req: Request): Promise<Response> {
   const timer = setTimeout(() => ctrl.abort(), TIMEOUT_MS);
   try {
     const ai = new GoogleGenAI({ apiKey: key });
-    const r = await ai.models.generateContent({
+    const r = await generateFast(ai, {
       model,
       contents: [{ role: 'user', parts: [{ text: `Facts (JSON):\n${JSON.stringify(facts)}` }] }],
       config: { systemInstruction: SYSTEM, temperature: 0.3, abortSignal: ctrl.signal },
