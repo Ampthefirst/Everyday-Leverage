@@ -1,0 +1,93 @@
+/* Design tokens. Light is the default; dark and high-contrast override. */
+:root {
+  --color-bg: #f8fafc;
+  --color-surface: #ffffff;
+  --color-surface-2: #f1f5f9;
+  --color-border: #cbd5e1;
+  --color-text: #0f172a;
+  --color-muted: #475569;
+  --color-primary: #1d4ed8;
+  --color-primary-strong: #1e3a8a;
+  --color-on-primary: #ffffff;
+  --color-accent: #b45309;
+  --color-focus: #f59e0b;
+  --color-ok: #15803d;
+  --color-warn: #b45309;
+  --color-bad: #b91c1c;
+  --color-info: #0369a1;
+  --color-ok-bg: #dcfce7;
+  --color-warn-bg: #fef3c7;
+  --color-bad-bg: #fee2e2;
+  --color-info-bg: #e0f2fe;
+  --color-viewer-bg: #e2e8f0;
+  --color-part: #2563eb;
+  --radius: 12px;
+  --tap: 48px;
+  color-scheme: light;
+}
+
+:root.dark {
+  --color-bg: #0b1220;
+  --color-surface: #111a2e;
+  --color-surface-2: #18233b;
+  --color-border: #334155;
+  --color-text: #e2e8f0;
+  --color-muted: #a3b1c6;
+  --color-primary: #60a5fa;
+  --color-primary-strong: #93c5fd;
+  --color-on-primary: #0b1220;
+  --color-accent: #fbbf24;
+  --color-focus: #fbbf24;
+  --color-ok: #4ade80;
+  --color-warn: #fbbf24;
+  --color-bad: #f87171;
+  --color-info: #38bdf8;
+  --color-ok-bg: #052e16;
+  --color-warn-bg: #3b2a05;
+  --color-bad-bg: #3f0d0d;
+  --color-info-bg: #082f49;
+  --color-viewer-bg: #1e293b;
+  --color-part: #60a5fa;
+  color-scheme: dark;
+}
+
+:root[data-contrast='high'] {
+  --color-bg: #ffffff;
+  --color-surface: #ffffff;
+  --color-surface-2: #ffffff;
+  --color-border: #000000;
+  --color-text: #000000;
+  --color-muted: #000000;
+  --color-primary: #0000c8;
+  --color-primary-strong: #00007a;
+  --color-on-primary: #ffffff;
+  --color-focus: #c80000;
+  --color-ok: #005a00;
+  --color-warn: #6b3a00;
+  --color-bad: #9a0000;
+  --color-info: #00007a;
+}
+
+:root.dark[data-contrast='high'] {
+  --color-bg: #000000;
+  --color-surface: #000000;
+  --color-surface-2: #000000;
+  --color-border: #ffffff;
+  --color-text: #ffffff;
+  --color-muted: #ffffff;
+  --color-primary: #ffff00;
+  --color-primary-strong: #ffff66;
+  --color-on-primary: #000000;
+  --color-focus: #00ffff;
+  --color-ok: #00ff66;
+  --color-warn: #ffcc00;
+  --color-bad: #ff6666;
+  --color-info: #66ccff;
+}
+
+:root[data-text='125'] {
+  font-size: 125%;
+}
+:root[data-text='150'] {
+  font-size: 150%;
+}
