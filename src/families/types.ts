@@ -86,8 +86,8 @@ export type UseLocation = 'kitchen' | 'bathroom' | 'desk' | 'outdoors' | 'car' |
 export interface UseContext {
   level: LoadLevel;
   location: UseLocation;
-  /** Override of the primary load in display units (N·m or N). */
-  loadOverride?: number;
+  /** User overrides of task loads in display units (N·m or N), keyed by task — so a torque never leaks into a force. */
+  loadOverrides?: Partial<Record<string, number>>;
 }
 
 // ---------- 2D outputs ----------

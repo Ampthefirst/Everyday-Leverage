@@ -9,7 +9,7 @@ import { shellThickness } from '../types';
 
 export function b1LoadCases(p: B1P, use: UseContext): LoadCase[] {
   const task = p.hands === 'two' && p.mount === 'handheld' ? 'jarLidHeavy' : 'jarLid';
-  return [makeLoadCase({ task, level: use.level, override: use.loadOverride })];
+  return [makeLoadCase({ task, level: use.level, overrides: use.loadOverrides })];
 }
 
 export function b1Sections(p: B1P, lc: LoadCase, print: PrintSettings): CriticalSection[] {

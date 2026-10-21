@@ -18,7 +18,7 @@ const CONTACT_W = 20;
 
 export function a1LoadCases(_p: A1P, use: UseContext): LoadCase[] {
   return [
-    makeLoadCase({ task: 'utensilTwist', level: use.level, override: use.loadOverride }),
+    makeLoadCase({ task: 'utensilTwist', level: use.level, overrides: use.loadOverrides }),
     makeLoadCase({ task: 'utensilGrip', level: use.level }),
   ];
 }

@@ -9,7 +9,7 @@ import type { CriticalSection, LoadCase, PrintSettings } from '../types';
 import { shellThickness } from '../types';
 
 export function b3LoadCases(_p: B3P, use: UseContext): LoadCase[] {
-  return [makeLoadCase({ task: 'knob', level: use.level, override: use.loadOverride, repeated: true })];
+  return [makeLoadCase({ task: 'knob', level: use.level, overrides: use.loadOverrides, repeated: true })];
 }
 
 export function b3Sections(p: B3P, lc: LoadCase, print: PrintSettings): CriticalSection[] {

@@ -75,18 +75,27 @@ export function StrengthPanel() {
         />
         <NumberSlider
           label={`${primary.label} (before scaling)`}
-          value={use.loadOverride ?? disp.value}
+          value={use.loadOverrides?.[primary.id] ?? disp.value}
           min={disp.unit === 'N·m' ? 0.1 : 2}
           max={disp.unit === 'N·m' ? Math.max(15, task?.value ?? 0) : 200}
           step={disp.unit === 'N·m' ? 0.1 : 1}
           unit={disp.unit}
           help={
-            use.loadOverride === undefined
+            use.loadOverrides?.[primary.id] === undefined
               ? 'Assumed typical value — change it if you know better.'
               : 'Your value.'
           }
-          onChange={(v) => setUse({ loadOverride: v })}
+          onChange={(v) => setUse({ loadOverrides: { ...use.loadOverrides, [primary.id]: v } })}
         />
+        {use.loadOverrides?.[primary.id] !== undefined && (
+          <button
+            type="button"
+            className="tap text-sm font-semibold text-primary underline"
+            onClick={() => setUse({ loadOverrides: { ...use.loadOverrides, [primary.id]: undefined } })}
+          >
+            Use the typical value again
+          </button>
+        )}
         <NumberSlider
           label="Safety factor"
           value={sf}

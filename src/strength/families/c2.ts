@@ -9,7 +9,7 @@ import { shellThickness } from '../types';
 
 export function c2LoadCases(_p: C2P, use: UseContext): LoadCase[] {
   return [
-    makeLoadCase({ task: 'buttonPress', level: use.level, override: use.loadOverride, repeated: true }),
+    makeLoadCase({ task: 'buttonPress', level: use.level, overrides: use.loadOverrides, repeated: true }),
   ];
 }
 

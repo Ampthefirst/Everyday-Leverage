@@ -155,6 +155,11 @@ describe('verdict', () => {
     expect(v.governing.id).toBe('b');
     expect(v.reason).toContain('where the lever meets the cup');
   });
+  it('an override for one task never changes another task (no N·m leaking into N)', () => {
+    const overrides = { jarLid: 8 };
+    expect(makeLoadCase({ task: 'jarLid', level: 'moderate', overrides }).value).toBe(8000);
+    expect(makeLoadCase({ task: 'drawerPull', level: 'moderate', overrides }).value).toBe(40);
+  });
   it('load levels scale ×0.6/×1/×1.6 and torque converts to N·mm', () => {
     expect(makeLoadCase({ task: 'jarLid', level: 'light' }).value).toBeCloseTo(2400, 6);
     expect(makeLoadCase({ task: 'jarLid', level: 'heavy' }).value).toBeCloseTo(6400, 6);

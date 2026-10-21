@@ -40,11 +40,14 @@ export interface LoadInput {
   level: LoadLevel;
   /** User override in display units (N·m or N); replaces the default before scaling. */
   override?: number;
+  /** Overrides keyed by task; the one for this task is used. */
+  overrides?: Partial<Record<string, number>>;
   repeated?: boolean;
 }
 
-export function makeLoadCase({ task, level, override, repeated }: LoadInput): LoadCase {
+export function makeLoadCase({ task, level, override: single, overrides, repeated }: LoadInput): LoadCase {
   const t = TASK_LOADS[task];
+  const override = single ?? overrides?.[task];
   const display = override ?? t.value;
   const base = t.kind === 'torque' ? nmToNmm(display) : display;
   return {

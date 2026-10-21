@@ -205,7 +205,7 @@ function ResultCard({ s, answers, primary = false }: { s: Suggestion; answers: A
     const p: Params = { ...fam.defaults, ...(preset?.params ?? {}) } as Params;
     if (use.hand && fam.fields.some((f) => f.key === 'hand')) p.hand = use.hand;
     setParams(fam.id, p, preset ? { preset: preset.id } : undefined);
-    setUse({ level: use.level, location: use.location, loadOverride: undefined });
+    setUse({ level: use.level, location: use.location });
     navigate(`/design/${fam.id}`);
   };
   return (

@@ -8,7 +8,7 @@ import type { CriticalSection, LoadCase, PrintSettings } from '../types';
 import { shellThickness } from '../types';
 
 export function c3LoadCases(_p: C3P, use: UseContext): LoadCase[] {
-  return [makeLoadCase({ task: 'reachTip', level: use.level, override: use.loadOverride })];
+  return [makeLoadCase({ task: 'reachTip', level: use.level, overrides: use.loadOverrides })];
 }
 
 /** Part frame: lever axis on X; clip from x = 0 to clipW; bar continues to the tip; push is along −Z. */

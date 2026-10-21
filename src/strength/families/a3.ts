@@ -9,7 +9,7 @@ import type { CriticalSection, LoadCase, PrintSettings } from '../types';
 import { shellThickness } from '../types';
 
 export function a3LoadCases(_p: A3P, use: UseContext): LoadCase[] {
-  return [makeLoadCase({ task: 'toolSocket', level: use.level, override: use.loadOverride })];
+  return [makeLoadCase({ task: 'toolSocket', level: use.level, overrides: use.loadOverrides })];
 }
 
 export function a3Sections(p: A3P, lc: LoadCase, print: PrintSettings): CriticalSection[] {

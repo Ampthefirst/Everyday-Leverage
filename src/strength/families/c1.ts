@@ -9,7 +9,7 @@ import { shellThickness } from '../types';
 
 export function c1LoadCases(p: C1P, use: UseContext): LoadCase[] {
   const task = p.attach === 'screw' ? 'drawerPull' : 'zipperTab';
-  return [makeLoadCase({ task, level: use.level, override: use.loadOverride })];
+  return [makeLoadCase({ task, level: use.level, overrides: use.loadOverrides })];
 }
 
 /** Part frame: loop in XY (pull along +Y), thickness on Z; attachment on −Y. */

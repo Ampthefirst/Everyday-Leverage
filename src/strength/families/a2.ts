@@ -11,7 +11,7 @@ import { shellThickness } from '../types';
 export const A2_SLOT_EDGE = 6;
 
 export function a2LoadCases(_p: A2P, use: UseContext): LoadCase[] {
-  return [makeLoadCase({ task: 'utensilGrip', level: use.level, override: use.loadOverride })];
+  return [makeLoadCase({ task: 'utensilGrip', level: use.level, overrides: use.loadOverrides })];
 }
 
 export function a2Sections(p: A2P, lc: LoadCase, print: PrintSettings): CriticalSection[] {

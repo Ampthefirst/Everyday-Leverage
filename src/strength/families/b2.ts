@@ -9,7 +9,7 @@ import { shellThickness } from '../types';
 
 export function b2LoadCases(p: B2P, use: UseContext): LoadCase[] {
   return [
-    makeLoadCase({ task: p.mode === 'key' ? 'key' : 'knob', level: use.level, override: use.loadOverride }),
+    makeLoadCase({ task: p.mode === 'key' ? 'key' : 'knob', level: use.level, overrides: use.loadOverrides }),
   ];
 }
 
