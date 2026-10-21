@@ -401,10 +401,12 @@ export const B3: Family<B3P> = {
         : kind === 'faucetCross'
           ? { span: p.targetD, h: p.depth }
           : { d: p.targetD, h: p.depth + 4 };
-    const z = kind === 'bottle' ? H + 120 + 14 - p.depth + 1 : H - p.depth + p.depth + 4 + 1;
+    // The object is flipped (top down) so its top sits 1 mm inside the bottom of the socket.
+    const objH = kind === 'bottle' ? 120 + 14 : kind === 'faucetCross' ? p.depth : p.depth + 4;
+    const z = H - p.depth + 1 + objH;
     return {
       objects: [
-        { kind, size, position: [0, 0, kind === 'bottle' ? z : H + 1 + 4], rotation: [180, 0, 0] },
+        { kind, size, position: [0, 0, z], rotation: [180, 0, 0] },
         {
           kind: 'hand',
           size: { breadth: 0, grip: p.leverW },

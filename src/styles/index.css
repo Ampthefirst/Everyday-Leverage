@@ -45,6 +45,11 @@ body {
   border-radius: 6px;
 }
 
+/* At extra-large text the viewer is small; the strength tab carries the meter instead. */
+:root[data-text='150'] .meter-overlay {
+  display: none;
+}
+
 #main:focus,
 #main:focus-visible {
   outline: none;

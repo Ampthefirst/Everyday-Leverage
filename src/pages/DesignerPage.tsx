@@ -271,7 +271,7 @@ function Designer({ familyId }: { familyId: FamilyId }) {
               </div>
             )}
             <HeatLegend />
-            <div className="absolute right-3 top-3 hidden w-64 rounded-xl border border-border bg-surface/95 p-3 shadow sm:block">
+            <div className="meter-overlay absolute right-3 top-3 hidden w-64 rounded-xl border border-border bg-surface/95 p-3 shadow sm:block">
               <Meter u={v.utilization} level={v.level} />
               <div className="mt-2 flex items-center justify-between gap-2">
                 <StrengthBadge calibration={analysis.calibration} />

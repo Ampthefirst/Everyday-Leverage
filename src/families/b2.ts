@@ -368,13 +368,12 @@ export const B2: Family<B2P> = {
               kind: 'key',
               size: { w: p.bladeW, t: p.bladeT },
               position: [0, 0, p.leverW - h.h + p.insert - p.bladeW * 0.45],
-              rotation: [180, 0, 0],
             }
           : {
               kind: 'knob',
               size: { d: p.knobD, h: p.knobH },
-              position: [0, 0, p.leverW - h.h - 1],
-              rotation: [180, 0, 0],
+              // The knob sits in the socket: its top touches the socket roof.
+              position: [0, 0, p.leverW - h.h + p.knobH * 0.8 - p.knobH],
             },
         {
           kind: 'hand',

@@ -29,8 +29,8 @@ export function a2Sections(p: A2P, lc: LoadCase, print: PrintSettings): Critical
   s.math.unshift(
     { label: 'Utensil force F', expr: 'F', value: F, unit: 'N' },
     {
-      label: 'Lever arm',
-      expr: p.style === 'open' ? '0.9·a' : '0.45·a (closed ring)',
+      label: 'Peel arm',
+      expr: p.style === 'open' ? 'pocket depth + band' : '(pocket depth + band) / 2, closed ring',
       value: arm,
       unit: 'mm',
     },
