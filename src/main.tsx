@@ -5,6 +5,13 @@ import '@fontsource/atkinson-hyperlegible/700.css';
 import './styles/index.css';
 import { App } from './app/App';
 
+// Offline support (production only; dev uses Vite's live server).
+if (import.meta.env.PROD && 'serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js').catch(() => undefined);
+  });
+}
+
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <App />

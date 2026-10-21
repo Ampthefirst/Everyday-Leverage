@@ -21,3 +21,5 @@ One line each: decision — reason.
 - Gemini reply verification extracts number+unit pairs, normalises N·m↔N·mm, cm↔mm, %↔fraction, and allows 1% rounding; any unmatched number → template wording.
 - If `/api/*` answers 503/404 (no key, or running on a static host) the Gemini features hide for the rest of the session.
 - Task-finder ties within 1 point are shown side by side (bottle caps: B1 vs B3).
+- Offline after first visit via a hand-written service worker (`public/sw.js`) plus a build-time `precache.json` of every asset — no extra plugin dependency; navigations are network-first so new deploys show up, hashed assets are cache-first.
+- Calibrate shows predicted (published data) vs measured break loads side by side — the guide's "one measured result beside the prediction".
