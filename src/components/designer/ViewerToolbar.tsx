@@ -2,20 +2,24 @@ import { useDesign } from '../../state/design';
 import { Button } from '../Button';
 import { StrengthBadge } from '../StrengthBadge';
 import { useDesigner } from './context';
+import type { CameraCommand } from '../../viewer/Viewer';
 
 function ToggleButton({
   pressed,
   onClick,
   children,
+  label,
 }: {
   pressed: boolean;
   onClick: () => void;
   children: React.ReactNode;
+  label?: string;
 }) {
   return (
     <button
       type="button"
       aria-pressed={pressed}
+      title={label}
       onClick={onClick}
       className={`tap rounded-xl border-2 px-3 text-sm font-semibold ${pressed ? 'border-primary bg-primary text-on-primary' : 'border-border bg-surface text-text hover:border-primary'}`}
     >
@@ -24,43 +28,88 @@ function ToggleButton({
   );
 }
 
+const CAM: { c: CameraCommand; label: string; icon: string }[] = [
+  { c: 'left', label: 'Turn view left', icon: '⟲' },
+  { c: 'right', label: 'Turn view right', icon: '⟳' },
+  { c: 'up', label: 'Tilt view up', icon: '▲' },
+  { c: 'down', label: 'Tilt view down', icon: '▼' },
+  { c: 'in', label: 'Zoom in', icon: '+' },
+  { c: 'out', label: 'Zoom out', icon: '−' },
+];
+
 export function ViewerToolbar({
   onReset,
   onPlay,
   playing,
   reduced,
+  onCamera,
 }: {
   onReset: () => void;
   onPlay: () => void;
   playing: boolean;
   reduced: boolean;
+  onCamera: (c: CameraCommand) => void;
 }) {
   const view = useDesign((s) => s.view);
   const setView = useDesign((s) => s.setView);
   return (
     <div
-      className="flex flex-wrap items-center gap-2 border-b border-border bg-surface p-2"
+      className="flex flex-wrap items-center gap-1.5 border-b border-border bg-surface p-2"
       role="toolbar"
       aria-label="3D view controls"
     >
-      <Button variant="ghost" onClick={onReset}>
-        Reset view
-      </Button>
-      <ToggleButton pressed={view.ghost} onClick={() => setView({ ghost: !view.ghost })}>
-        Show object
+      <ToggleButton
+        pressed={view.ghost}
+        onClick={() => setView({ ghost: !view.ghost })}
+        label="Show the object around the part"
+      >
+        Object
       </ToggleButton>
-      <ToggleButton pressed={view.section} onClick={() => setView({ section: !view.section })}>
+      <ToggleButton
+        pressed={view.section}
+        onClick={() => setView({ section: !view.section })}
+        label="Cut the part open"
+      >
         Cut open
       </ToggleButton>
-      <ToggleButton pressed={view.heat} onClick={() => setView({ heat: !view.heat })}>
+      <ToggleButton
+        pressed={view.heat}
+        onClick={() => setView({ heat: !view.heat })}
+        label="Show the stress map"
+      >
         Stress map
       </ToggleButton>
-      <ToggleButton pressed={view.mirror} onClick={() => setView({ mirror: !view.mirror })}>
-        Mirror L/R
+      <ToggleButton
+        pressed={view.mirror}
+        onClick={() => setView({ mirror: !view.mirror })}
+        label="Mirror left and right"
+      >
+        Mirror
       </ToggleButton>
-      <ToggleButton pressed={playing} onClick={onPlay}>
-        {reduced ? 'How to use (steps)' : playing ? 'Stop' : 'How to use'}
+      <ToggleButton
+        pressed={playing}
+        onClick={onPlay}
+        label={reduced ? 'Show the next how-to-use step' : 'Play the how-to-use animation'}
+      >
+        {reduced ? 'How to use ›' : playing ? 'Stop' : 'How to use'}
       </ToggleButton>
+      <span className="ml-auto flex flex-wrap items-center gap-1" role="group" aria-label="Move the view">
+        {CAM.map((b) => (
+          <button
+            key={b.c}
+            type="button"
+            aria-label={b.label}
+            title={b.label}
+            onClick={() => onCamera(b.c)}
+            className="tap rounded-lg border border-border bg-surface px-2 text-lg font-bold hover:border-primary"
+          >
+            <span aria-hidden="true">{b.icon}</span>
+          </button>
+        ))}
+        <Button variant="ghost" onClick={onReset}>
+          Reset
+        </Button>
+      </span>
     </div>
   );
 }

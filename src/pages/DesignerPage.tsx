@@ -1,4 +1,7 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { lazy, Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+
+// PDF/zip generation (jsPDF, fflate) loads only when the Get files tab opens.
+const FilesPanel = lazy(() => import('../components/designer/FilesPanel'));
 import { Link, useParams } from 'react-router-dom';
 import { getFamily } from '../families';
 import type { FamilyId } from '../families/types';
@@ -9,13 +12,12 @@ import { useProfiles } from '../state/profiles';
 import { analyse } from '../app/analysis';
 import { geometry, StaleError } from '../geometry/client';
 import type { BuildResult, SectionResult } from '../geometry/protocol';
-import { Viewer } from '../viewer/Viewer';
+import { Viewer, type CameraCommand } from '../viewer/Viewer';
 import { Tabs } from '../components/Tabs';
 import { DesignerCtx } from '../components/designer/context';
 import { FitPanel, StylePanel } from '../components/designer/FitPanel';
 import { StrengthPanel } from '../components/designer/StrengthPanel';
 import { PrintPanel } from '../components/designer/PrintPanel';
-import { FilesPanel } from '../components/designer/FilesPanel';
 import { HeatLegend, SectionSlider, ViewerToolbar } from '../components/designer/ViewerToolbar';
 import { Dialog } from '../components/Dialog';
 import { Illustration } from '../components/Illustration';
@@ -75,6 +77,7 @@ function Designer({ familyId }: { familyId: FamilyId }) {
   const [measure, setMeasure] = useState<string | null>(null);
   const [resetKey, setResetKey] = useState(0);
   const [animStep, setAnimStep] = useState(-1);
+  const [camCmd, setCamCmd] = useState<{ c: CameraCommand; n: number } | null>(null);
   const reduced = prefersReducedMotion();
 
   const paramsKey = JSON.stringify(params);
@@ -199,7 +202,10 @@ function Designer({ familyId }: { familyId: FamilyId }) {
   return (
     <DesignerCtx.Provider value={ctx}>
       <div className="flex flex-col lg:h-[calc(100vh-4.1rem)] lg:flex-row">
-        <section aria-label="3D preview" className="flex min-h-0 flex-col lg:flex-1">
+        <section
+          aria-label="3D preview"
+          className="sticky top-0 z-20 flex min-h-0 flex-col bg-surface shadow-sm lg:static lg:flex-1 lg:shadow-none [@media(max-height:699px)]:static"
+        >
           <div className="flex flex-wrap items-center gap-x-4 gap-y-1 border-b border-border bg-surface px-3 py-2">
             <h1 className="text-xl font-bold">
               <span className="text-muted">{family.id}</span> {family.name}
@@ -219,12 +225,13 @@ function Designer({ familyId }: { familyId: FamilyId }) {
           </div>
           <ViewerToolbar
             onReset={() => setResetKey((k) => k + 1)}
+            onCamera={(c) => setCamCmd({ c, n: Date.now() })}
             onPlay={onPlay}
             playing={animStep >= 0}
             reduced={reduced}
           />
           <SectionSlider />
-          <div className="relative h-[48vh] min-h-72 lg:h-auto lg:flex-1">
+          <div className="relative h-[38vh] min-h-56 lg:h-auto lg:flex-1">
             <Viewer
               mesh={build?.mesh ?? null}
               pieces={build?.pieces ?? []}
@@ -238,6 +245,7 @@ function Designer({ familyId }: { familyId: FamilyId }) {
               animation={animStep >= 0 ? { spec: animation, step: animStep, reduced } : null}
               handBreadth={handBreadth}
               resetKey={resetKey}
+              camera={camCmd}
               label={`3D view of the ${family.name}. ${v.reason}`}
             />
             <div
@@ -263,17 +271,19 @@ function Designer({ familyId }: { familyId: FamilyId }) {
               </div>
             )}
             <HeatLegend />
-            <button
-              type="button"
-              onClick={() => setTab('strength')}
-              className="absolute right-3 top-3 hidden w-64 rounded-xl border border-border bg-surface/95 p-3 text-left shadow sm:block"
-              aria-label={`Strength: ${v.reason}. Open the strength tab.`}
-            >
+            <div className="absolute right-3 top-3 hidden w-64 rounded-xl border border-border bg-surface/95 p-3 shadow sm:block">
               <Meter u={v.utilization} level={v.level} />
-              <div className="mt-2">
+              <div className="mt-2 flex items-center justify-between gap-2">
                 <StrengthBadge calibration={analysis.calibration} />
+                <button
+                  type="button"
+                  onClick={() => setTab('strength')}
+                  className="tap text-sm font-semibold text-primary underline"
+                >
+                  Details
+                </button>
               </div>
-            </button>
+            </div>
           </div>
         </section>
         <aside
@@ -285,7 +295,11 @@ function Designer({ familyId }: { familyId: FamilyId }) {
             {tab === 'style' && <StylePanel />}
             {tab === 'strength' && <StrengthPanel />}
             {tab === 'print' && <PrintPanel />}
-            {tab === 'files' && <FilesPanel />}
+            {tab === 'files' && (
+              <Suspense fallback={<p role="status">Loading file tools…</p>}>
+                <FilesPanel />
+              </Suspense>
+            )}
           </Tabs>
         </aside>
       </div>

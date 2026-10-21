@@ -18,7 +18,6 @@ import { MATERIALS, type MaterialId } from '../strength/materials';
 import { profileKey, useCalibration } from '../state/calibration';
 import { geometry } from '../geometry/client';
 import { downloadBlob, orientMesh, toBinarySTL } from '../outputs/stl';
-import { calibrationSheetPdf } from '../outputs/pdf/calibration';
 import { fmt } from '../types/units';
 
 interface Row {
@@ -149,13 +148,15 @@ export default function CalibratePage() {
             </Button>
             <Button
               variant="secondary"
-              onClick={() =>
+              onClick={async () => {
+                // jsPDF loads only when needed.
+                const { calibrationSheetPdf } = await import('../outputs/pdf/calibration');
                 downloadBlob(
                   calibrationSheetPdf(/^en-(US|CA)/.test(navigator.language) ? 'letter' : 'a4'),
                   'calibration-instructions.pdf',
                   'application/pdf',
-                )
-              }
+                );
+              }}
             >
               Instruction sheet (PDF)
             </Button>

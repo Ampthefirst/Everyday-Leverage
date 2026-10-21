@@ -28,6 +28,38 @@ export interface ViewerProps {
   handBreadth: number;
   resetKey: number;
   label: string;
+  /** Keyboard / button camera commands (orbit and zoom without a mouse). */
+  camera?: { c: CameraCommand; n: number } | null;
+}
+
+export type CameraCommand = 'left' | 'right' | 'up' | 'down' | 'in' | 'out';
+
+/** Applies button-driven orbit/zoom steps to the camera around the controls' target. */
+function CameraCommands({
+  cmd,
+  controls,
+}: {
+  cmd: ViewerProps['camera'];
+  controls: React.RefObject<OrbitControlsImpl | null>;
+}) {
+  const { camera } = useThree();
+  useEffect(() => {
+    if (!cmd || !controls.current) return;
+    const target = controls.current.target;
+    const offset = camera.position.clone().sub(target);
+    const sph = new THREE.Spherical().setFromVector3(offset);
+    const step = Math.PI / 12;
+    if (cmd.c === 'left') sph.theta -= step;
+    if (cmd.c === 'right') sph.theta += step;
+    if (cmd.c === 'up') sph.phi = Math.max(0.15, sph.phi - step);
+    if (cmd.c === 'down') sph.phi = Math.min(Math.PI - 0.15, sph.phi + step);
+    if (cmd.c === 'in') sph.radius *= 0.8;
+    if (cmd.c === 'out') sph.radius *= 1.25;
+    camera.position.copy(target).add(new THREE.Vector3().setFromSpherical(sph));
+    camera.lookAt(target);
+    controls.current.update();
+  }, [cmd, camera, controls]);
+  return null;
 }
 
 function readCssVar(name: string, fallback: string) {
@@ -361,6 +393,7 @@ function Scene(props: ViewerProps & { color: string }) {
       </group>
       <OrbitControls ref={controls} makeDefault enableDamping dampingFactor={0.12} />
       <CameraFit mesh={mesh} resetKey={props.resetKey} controls={controls} />
+      <CameraCommands cmd={props.camera} controls={controls} />
     </>
   );
 }

@@ -38,7 +38,7 @@ const GROUPS: { kind: OutputFile['kind']; title: string; lead: string }[] = [
   { kind: 'extra', title: 'Extras', lead: 'Mock-ups, gauges and outlines for CAD or a laser cutter.' },
 ];
 
-export function FilesPanel() {
+export default function FilesPanel() {
   const { family, params, analysis, build } = useDesigner();
   const location = useDesign((s) => s.use.location);
   const wherePrint = useSettings((s) => s.wherePrint);

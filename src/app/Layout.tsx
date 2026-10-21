@@ -16,10 +16,16 @@ export function Layout() {
   const mainRef = useRef<HTMLElement>(null);
   const [menuOpen, setMenuOpen] = useState(false);
 
-  // Move focus to the main region on navigation so screen readers announce the new page.
+  // Move focus to the main region on navigation (not on first load) so screen readers announce the new page.
+  const first = useRef(true);
   useEffect(() => {
     setMenuOpen(false);
-    mainRef.current?.focus();
+    if (first.current) {
+      first.current = false;
+      return;
+    }
+    mainRef.current?.focus({ preventScroll: true });
+    window.scrollTo(0, 0);
   }, [location.pathname]);
 
   const isDesigner = location.pathname.startsWith('/design/');
