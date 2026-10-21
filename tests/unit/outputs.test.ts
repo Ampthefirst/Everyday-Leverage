@@ -106,7 +106,12 @@ describe.each(familyList().map((f) => [f.id, f] as const))('outputs for %s', (_i
     expect(Object.keys(zip).length).toBe(files.length + 1);
     const tmf = files.find((f) => f.name.endsWith('.3mf'))!;
     const inner = unzipSync(tmf.make() as Uint8Array);
-    expect(strFromU8(inner['3D/3dmodel.model'])).toContain('unit="millimeter"');
+    const model = strFromU8(inner['3D/3dmodel.model']);
+    expect(model).toContain('unit="millimeter"');
+    // Custom metadata names must use a declared namespace prefix (3MF core spec).
+    expect(model).toContain('xmlns:everyday-leverage=');
+    expect(inner['[Content_Types].xml']).toBeTruthy();
+    expect(inner['_rels/.rels']).toBeTruthy();
     expect(strFromU8(inner['3D/3dmodel.model'])).toContain(`everyday-leverage:family">${fam.id}`);
   });
 });

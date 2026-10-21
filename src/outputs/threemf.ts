@@ -31,7 +31,7 @@ export function toThreeMF(meshes: MeshData[], metadata: Record<string, string>):
     .map(([k, val]) => `<metadata name="${esc(k)}">${esc(val)}</metadata>`)
     .join('');
   const model = `<?xml version="1.0" encoding="UTF-8"?>
-<model unit="millimeter" xml:lang="en-US" xmlns="http://schemas.microsoft.com/3dmanufacturing/core/2015/02">${meta}<resources>${objects.join('')}</resources><build>${items.join('')}</build></model>`;
+<model unit="millimeter" xml:lang="en-US" xmlns="http://schemas.microsoft.com/3dmanufacturing/core/2015/02" xmlns:everyday-leverage="https://github.com/Ampthefirst/Everyday-Leverage/3mf">${meta}<resources>${objects.join('')}</resources><build>${items.join('')}</build></model>`;
   const contentTypes = `<?xml version="1.0" encoding="UTF-8"?>
 <Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="model" ContentType="application/vnd.ms-package.3dmanufacturing-3dmodel+xml"/></Types>`;
   const rels = `<?xml version="1.0" encoding="UTF-8"?>
