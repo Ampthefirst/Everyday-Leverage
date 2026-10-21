@@ -22,6 +22,13 @@ function json(status: number, body: unknown): Response {
   });
 }
 
+/** Status and a short SDK message for diagnosis — never the user's text or the key. */
+function errorDetail(e: unknown, key: string): string {
+  const err = e as { status?: number; name?: string; message?: string };
+  const msg = (err.message ?? String(e)).split(key).join('***').replace(/\s+/g, ' ').slice(0, 200);
+  return `${err.status ?? err.name ?? 'error'}: ${msg}`;
+}
+
 function sameOrigin(req: Request): boolean {
   const origin = req.headers.get('origin');
   const host = req.headers.get('x-forwarded-host') ?? req.headers.get('host');
@@ -62,8 +69,8 @@ export async function POST(req: Request): Promise<Response> {
     const text = (r.text ?? '').trim();
     if (!text) return json(502, { error: 'empty' });
     return json(200, { text: text.slice(0, 1200) });
-  } catch {
-    return json(502, { error: 'model error' });
+  } catch (e) {
+    return json(502, { error: 'model error', detail: errorDetail(e, key) });
   } finally {
     clearTimeout(timer);
   }
