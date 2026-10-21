@@ -1,0 +1,100 @@
+{
+  "version": 1,
+  "questions": [
+    {
+      "id": "task",
+      "text": "What are you trying to do?",
+      "textOther": "What are they trying to do?",
+      "options": [
+        { "value": "open", "label": "Open something", "hint": "a jar, a bottle" },
+        { "value": "hold", "label": "Hold something", "hint": "a spoon, a pen, a tool" },
+        { "value": "turn", "label": "Turn something", "hint": "a key, a knob, a tap" },
+        { "value": "pull", "label": "Pull something", "hint": "a drawer, a zipper" },
+        { "value": "press", "label": "Press something", "hint": "a button, a switch, a screen" },
+        { "value": "reach", "label": "Reach or push a lever", "hint": "a door handle" },
+        { "value": "body", "label": "Support my body", "hint": "standing up, walking, lifting myself" }
+      ]
+    },
+    {
+      "id": "object",
+      "text": "What is the object?",
+      "textOther": "What is the object?",
+      "options": [
+        { "value": "jar", "label": "Jar or lid", "tasks": ["open", "turn"] },
+        { "value": "bottle", "label": "Bottle cap", "tasks": ["open", "turn"] },
+        { "value": "utensil", "label": "Spoon, fork or knife", "tasks": ["hold"] },
+        { "value": "pen", "label": "Pen, pencil or brush", "tasks": ["hold"] },
+        { "value": "toothbrush", "label": "Toothbrush or razor", "tasks": ["hold"] },
+        { "value": "tool", "label": "Small tool (screwdriver, hex key)", "tasks": ["hold", "turn"] },
+        { "value": "key", "label": "Key", "tasks": ["turn", "open"] },
+        { "value": "knob", "label": "Round knob", "tasks": ["turn", "open", "pull"] },
+        { "value": "tap", "label": "Tap or faucet", "tasks": ["turn", "open"] },
+        { "value": "stove", "label": "Stove or oven knob", "tasks": ["turn"] },
+        { "value": "drawer", "label": "Drawer or cupboard", "tasks": ["pull", "open"] },
+        { "value": "door", "label": "Door lever", "tasks": ["reach", "open", "turn", "pull", "press"] },
+        { "value": "zipper", "label": "Zipper or bag tab", "tasks": ["pull", "open"] },
+        { "value": "can", "label": "Can ring-pull", "tasks": ["pull", "open"] },
+        { "value": "button", "label": "Button or switch", "tasks": ["press", "reach"] },
+        { "value": "screen", "label": "Phone or tablet screen", "tasks": ["press"] },
+        { "value": "other", "label": "Something else", "tasks": ["open", "hold", "turn", "pull", "press", "reach"] }
+      ]
+    },
+    {
+      "id": "problem",
+      "text": "What goes wrong?",
+      "textOther": "What goes wrong for them?",
+      "options": [
+        { "value": "grip", "label": "Can't grip it well", "hint": "it's too thin or small" },
+        { "value": "noHold", "label": "Can't keep hold at all", "hint": "the hand can't close around it" },
+        { "value": "turn", "label": "Can't turn it", "hint": "not enough twist" },
+        { "value": "pull", "label": "Can't pull it", "hint": "too small to pinch" },
+        { "value": "reach", "label": "Can't reach it", "hint": "too far or too low" },
+        { "value": "slip", "label": "Hand slips off" },
+        { "value": "press", "label": "Can't press hard enough or accurately" },
+        { "value": "pain", "label": "It hurts or I'm injured" }
+      ]
+    },
+    {
+      "id": "hand",
+      "text": "Which hand will you use?",
+      "textOther": "Which hand will they use?",
+      "options": [
+        { "value": "right", "label": "Right" },
+        { "value": "left", "label": "Left" },
+        { "value": "either", "label": "Either / both" }
+      ]
+    },
+    {
+      "id": "force",
+      "text": "How much force does the task seem to need?",
+      "textOther": "How much force does the task seem to need?",
+      "options": [
+        { "value": "light", "label": "Light", "hint": "it just needs a little help" },
+        { "value": "moderate", "label": "Moderate" },
+        { "value": "heavy", "label": "Heavy", "hint": "it's really stiff or stuck" }
+      ]
+    },
+    {
+      "id": "location",
+      "text": "Where will it be used?",
+      "textOther": "Where will it be used?",
+      "options": [
+        { "value": "kitchen", "label": "Kitchen" },
+        { "value": "bathroom", "label": "Bathroom" },
+        { "value": "desk", "label": "Desk or living room" },
+        { "value": "outdoors", "label": "Outdoors" },
+        { "value": "car", "label": "Car" },
+        { "value": "other", "label": "Somewhere else" }
+      ]
+    },
+    {
+      "id": "who",
+      "text": "Is this for you or someone else?",
+      "textOther": "Is this for you or someone else?",
+      "options": [
+        { "value": "me", "label": "For me" },
+        { "value": "other", "label": "For someone else" }
+      ]
+    }
+  ]
+}

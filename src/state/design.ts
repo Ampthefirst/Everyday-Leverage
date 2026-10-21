@@ -3,6 +3,7 @@ import { persist } from 'zustand/middleware';
 import type { FamilyId, Params, UseContext } from '../families/types';
 import { getFamily } from '../families';
 import { coerceParams } from '../families/schema';
+import { useProfiles } from './profiles';
 import type { PrintSettings } from '../strength/types';
 
 export interface ViewState {
@@ -52,7 +53,13 @@ export const useDesign = create<DesignState>()(
       getParams(id) {
         const fam = getFamily(id)!;
         const stored = get().params[id];
-        return stored ? coerceParams(fam.fields, stored) : fam.defaults;
+        if (stored) return coerceParams(fam.fields, stored);
+        // First visit: start from the profile's saved sizes or preferred hand, if any.
+        const prof = useProfiles.getState().current();
+        const saved = prof.designs[id];
+        if (saved) return coerceParams(fam.fields, saved);
+        if (fam.fields.some((f) => f.key === 'hand')) return { ...fam.defaults, hand: prof.hand };
+        return fam.defaults;
       },
       setParam(id, key, value) {
         const fam = getFamily(id)!;

@@ -4,6 +4,7 @@ import { useDesign } from '../../state/design';
 import { ParamControl } from './ParamControl';
 import { useDesigner } from './context';
 import { Button } from '../Button';
+import { useProfiles } from '../../state/profiles';
 
 export function PresetCards() {
   const { family } = useDesigner();
@@ -81,6 +82,7 @@ export function FitPanel() {
             <Button variant="secondary" onClick={() => reset(family.id)}>
               Reset all to defaults
             </Button>
+            <ProfileSave />
           </div>
         )}
       </section>
@@ -118,6 +120,41 @@ export function StylePanel() {
           <ParamControl key={f.key} field={f} params={params} onChange={setParam} />
         ))}
       </section>
+    </div>
+  );
+}
+
+function ProfileSave() {
+  const { family, params } = useDesigner();
+  const currentId = useProfiles((s) => s.currentId);
+  const current = useProfiles((s) => s.current());
+  const update = useProfiles((s) => s.update);
+  const setParams = useDesign((s) => s.setParams);
+  const [done, setDone] = useState(false);
+  if (!currentId)
+    return (
+      <p className="text-sm text-muted">
+        Tip: create a profile in Display settings to keep these sizes for next time.
+      </p>
+    );
+  const saved = current.designs[family.id];
+  return (
+    <div className="flex flex-wrap gap-2">
+      <Button
+        variant="ghost"
+        onClick={() => {
+          update(current.id, { designs: { ...current.designs, [family.id]: params } });
+          setDone(true);
+          setTimeout(() => setDone(false), 2000);
+        }}
+      >
+        {done ? 'Saved' : `Save sizes to “${current.name}”`}
+      </Button>
+      {saved && (
+        <Button variant="ghost" onClick={() => setParams(family.id, saved)}>
+          Load sizes from “{current.name}”
+        </Button>
+      )}
     </div>
   );
 }
