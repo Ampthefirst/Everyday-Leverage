@@ -63,7 +63,7 @@ function Designer({ familyId }: { familyId: FamilyId }) {
   const use = useDesign((s) => s.use);
   const print = useDesign((s) => s.print);
   const safetyFactor = useDesign((s) => s.safetyFactor);
-  const orientationId = useDesign((s) => s.orientation);
+  const orientationId = useDesign((s) => s.orientation[familyId] ?? 'auto');
   const view = useDesign((s) => s.view);
   useCalibration((s) => s.active);
   const calibrationFor = useCalibration((s) => s.activeFor);

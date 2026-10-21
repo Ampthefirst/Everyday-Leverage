@@ -47,7 +47,7 @@ export function PrintPanel() {
   const { analysis, build } = useDesigner();
   const { orientations, orientation, advice, print, bed, estimate } = analysis;
   const setOrientation = useDesign((s) => s.setOrientation);
-  const chosen = useDesign((s) => s.orientation);
+  const chosen = useDesign((s) => s.orientation[analysis.family.id] ?? 'auto');
   const setPrint = useDesign((s) => s.setPrint);
   const custom = useDesign((s) => s.print);
   const upd = (patch: Partial<typeof print>) => setPrint({ ...print, ...patch });
@@ -82,7 +82,7 @@ export function PrintPanel() {
                   name="orientation"
                   className="mt-1 h-5 w-5"
                   checked={active}
-                  onChange={() => setOrientation(o.candidate.id)}
+                  onChange={() => setOrientation(analysis.family.id, o.candidate.id)}
                 />
                 <span>
                   <span className="font-semibold">
@@ -99,7 +99,7 @@ export function PrintPanel() {
           })}
         </fieldset>
         {chosen !== 'auto' && (
-          <Button variant="ghost" onClick={() => setOrientation('auto')}>
+          <Button variant="ghost" onClick={() => setOrientation(analysis.family.id, 'auto')}>
             Use the recommended placement
           </Button>
         )}

@@ -21,7 +21,8 @@ interface DesignState {
   /** null = follow the recommended settings for the family and location. */
   print: PrintSettings | null;
   safetyFactor: number;
-  orientation: string; // 'auto' or a candidate id
+  /** Chosen placement per design: a candidate id; missing = the recommended one. */
+  orientation: Partial<Record<FamilyId, string>>;
   view: ViewState;
   /** Which preset/variant was last applied, per family (for highlighting). */
   presetId: Partial<Record<FamilyId, string>>;
@@ -34,7 +35,7 @@ interface DesignState {
   setUse(patch: Partial<UseContext>): void;
   setPrint(p: PrintSettings | null): void;
   setSafetyFactor(sf: number): void;
-  setOrientation(o: string): void;
+  setOrientation(id: FamilyId, o: string): void;
   setView(patch: Partial<ViewState>): void;
 }
 
@@ -45,7 +46,7 @@ export const useDesign = create<DesignState>()(
       use: { level: 'moderate', location: 'kitchen' },
       print: null,
       safetyFactor: 2,
-      orientation: 'auto',
+      orientation: {},
       view: { ghost: true, heat: false, section: false, sectionPos: 0.5, mirror: false },
       presetId: {},
       variantId: {},
@@ -85,7 +86,8 @@ export const useDesign = create<DesignState>()(
       setUse: (patch) => set((s) => ({ use: { ...s.use, ...patch } })),
       setPrint: (print) => set({ print }),
       setSafetyFactor: (safetyFactor) => set({ safetyFactor: Math.min(4, Math.max(1.2, safetyFactor)) }),
-      setOrientation: (orientation) => set({ orientation }),
+      setOrientation: (id, o) =>
+        set((s) => ({ orientation: { ...s.orientation, [id]: o === 'auto' ? undefined : o } })),
       setView: (patch) => set((s) => ({ view: { ...s.view, ...patch } })),
     }),
     {
