@@ -45,6 +45,11 @@ body {
   border-radius: 6px;
 }
 
+#main:focus,
+#main:focus-visible {
+  outline: none;
+}
+
 .tap {
   min-height: var(--tap);
   min-width: var(--tap);

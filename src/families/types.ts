@@ -254,6 +254,8 @@ export interface Family<P extends Params = Params> {
   displayRotation?: Vec3;
   /** Can be split when it does not fit the bed. */
   splittable?: boolean;
+  /** Where to cut when the part is too long for the bed; null when it fits in one piece. */
+  splitPlan?(p: P): { axis: 'x' | 'y' | 'z'; at: number } | null;
 }
 
 export type AnyFamily = Family<Params>;
