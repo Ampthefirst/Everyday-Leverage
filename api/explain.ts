@@ -29,6 +29,19 @@ function errorDetail(e: unknown, key: string): string {
   return `${err.status ?? err.name ?? 'error'}: ${msg}`;
 }
 
+/** Accept friendly forms of the model name: "Gemini 2.5 Flash", "models/gemini-2.5-flash", quoted values. */
+export function normalizeModel(raw: string | undefined): string | undefined {
+  if (!raw) return undefined;
+  const m = raw
+    .trim()
+    .replace(/^['"]|['"]$/g, '')
+    .replace(/^models\//, '')
+    .trim()
+    .toLowerCase()
+    .replace(/\s+/g, '-');
+  return m || undefined;
+}
+
 function sameOrigin(req: Request): boolean {
   const origin = req.headers.get('origin');
   const host = req.headers.get('x-forwarded-host') ?? req.headers.get('host');
@@ -42,7 +55,7 @@ function sameOrigin(req: Request): boolean {
 
 export async function POST(req: Request): Promise<Response> {
   const key = process.env.GEMINI_API_KEY;
-  const model = process.env.GEMINI_MODEL;
+  const model = normalizeModel(process.env.GEMINI_MODEL);
   if (!key || !model) return json(503, { error: 'unavailable' });
   if (!sameOrigin(req)) return json(403, { error: 'forbidden' });
   const len = Number(req.headers.get('content-length') ?? '0');
@@ -70,7 +83,7 @@ export async function POST(req: Request): Promise<Response> {
     if (!text) return json(502, { error: 'empty' });
     return json(200, { text: text.slice(0, 1200) });
   } catch (e) {
-    return json(502, { error: 'model error', detail: errorDetail(e, key) });
+    return json(502, { error: 'model error', model, detail: errorDetail(e, key) });
   } finally {
     clearTimeout(timer);
   }

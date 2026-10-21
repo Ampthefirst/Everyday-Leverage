@@ -88,3 +88,13 @@ describe('/api functions (no network paths)', () => {
     delete process.env.GEMINI_MODEL;
   });
 });
+
+import { normalizeModel } from '../../api/describe';
+describe('model name normalisation', () => {
+  it('accepts friendly forms', () => {
+    expect(normalizeModel('Gemini 2.5 Flash')).toBe('gemini-2.5-flash');
+    expect(normalizeModel(' "models/gemini-2.5-flash" ')).toBe('gemini-2.5-flash');
+    expect(normalizeModel('gemini-2.5-flash')).toBe('gemini-2.5-flash');
+    expect(normalizeModel('')).toBeUndefined();
+  });
+});
