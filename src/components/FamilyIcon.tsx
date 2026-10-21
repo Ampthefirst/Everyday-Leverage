@@ -2,7 +2,13 @@ import type { FamilyId } from '../families/types';
 
 /** Small line pictograms for each sub-family. Decorative. */
 export function FamilyIcon({ id, className = 'h-14 w-14' }: { id: FamilyId; className?: string }) {
-  const s = { fill: 'none', stroke: 'currentColor', strokeWidth: 4, strokeLinecap: 'round' as const, strokeLinejoin: 'round' as const };
+  const s = {
+    fill: 'none',
+    stroke: 'currentColor',
+    strokeWidth: 4,
+    strokeLinecap: 'round' as const,
+    strokeLinejoin: 'round' as const,
+  };
   const shapes: Record<FamilyId, React.ReactNode> = {
     A1: (
       <>

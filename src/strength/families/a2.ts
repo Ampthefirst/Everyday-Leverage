@@ -19,8 +19,10 @@ export function a2Sections(p: A2P, lc: LoadCase, print: PrintSettings): Critical
   const { a, b } = a2Inner(p);
   const F = lc.value;
   const out: CriticalSection[] = [];
-  // Pushing on the utensil bends the band; the open C has its peak moment opposite the pocket.
-  const arm = p.style === 'open' ? a * 0.9 : a * 0.45;
+  // The hand supports the band all round, so the utensil force mainly tries to peel the pocket off the
+  // palm: the band ends carry a moment of about F × pocket depth (more for an open C, which is not tied).
+  const hd0 = a2HolderDepth(p);
+  const arm = p.style === 'open' ? hd0 + p.bandT : (hd0 + p.bandT) / 2;
   const M = F * arm;
   const sec = rectSection(p.bandWidth, p.bandT, { t: Math.min(t, p.bandT / 2), infill: print.infill });
   const s = bending(M, sec);

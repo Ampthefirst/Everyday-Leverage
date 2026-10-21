@@ -7,3 +7,13 @@ One line each: decision — reason.
 - Playwright pinned to 1.56.1 — matches the preinstalled Chromium build (1194) in the build container.
 - Dropped `@vercel/node` dev dependency; `/api` functions use the Web `Request`/`Response` signature — fewer deps, no audit warnings, easy to unit-test.
 - Atkinson Hyperlegible self-hosted via @fontsource — legible for low-vision users and works offline.
+- Added `src/families/` for the family contract objects (schema, presets, specs) next to PLAN's layout — the UI can import a family without the geometry kernel.
+- 2D outputs use one small in-house drawing model (`src/outputs/svg/ir.ts`) rendered to SVG, jsPDF and DXF, instead of SVG → svg2pdf.js — one source for all three formats, testable in Node, exact mm→pt control for the 25 mm square.
+- Family `repair(p, keep)` added to the contract: fixes dependent params after a change and powers both the "Fix it for me" button and the Stage 2 min/max tests.
+- A1 slip model (assumed, labelled): crush ribs 1.2 N per mm of engagement, μ = 0.3, M3 clamp preload 500 N. Slip check only for round handles (flat/oval handles cannot spin).
+- A2 band check uses a "peel" moment F × (pocket depth + band) because the hand supports the band; a free-cantilever model called every real cuff a failure.
+- B2 multi-key holds keys in parallel slots (pick one) rather than a pivoting fan — simpler, stronger, no moving parts.
+- C1 screw-on version is a D-handle with blind 3.4 mm pilot holes; screws go in from inside the drawer.
+- C2 "plunger" = straight pusher with a self-centring cup; "lever" = bent pusher. No moving parts or springs in v1.
+- Geometry results drop disconnected specks under 1 mm³ (boolean slivers); larger extra pieces still fail the tests.
+- Cross-section view: manifold `slice()` at the cut, inner offset by the shell thickness → solid shell ring + hatched infill; the kept half is the one facing the default camera.

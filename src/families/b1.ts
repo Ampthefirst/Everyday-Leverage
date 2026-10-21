@@ -462,12 +462,21 @@ export const B1: Family<B1P> = {
   template(p) {
     const items = [];
     const ds = p.mount === 'wall' ? [p.lidMax, p.lidMin] : b1Diameters(p);
+    // Flow the circles into rows that fit a portrait page (about 180 mm wide).
     let x = 0;
+    let y = 0;
+    let rowH = 0;
     const circles: Shape[] = [];
     for (const d of ds) {
       const r = d / 2 + (p.mount === 'wall' ? 0 : p.clearance);
-      circles.push(circle(x + r, r, r), text(x + r, r, `${mm(d, 0)}`, 4));
+      if (x > 0 && x + 2 * r > 180) {
+        x = 0;
+        y -= rowH + 8;
+        rowH = 0;
+      }
+      circles.push(circle(x + r, y - r, r), text(x + r, y - r, `${mm(d, 0)}`, 4));
       x += 2 * r + 6;
+      rowH = Math.max(rowH, 2 * r);
     }
     items.push({
       title: 'Lid circles (1:1)',

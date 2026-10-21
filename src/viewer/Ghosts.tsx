@@ -1,4 +1,5 @@
 import { useMemo } from 'react';
+import { RoundedBox } from '@react-three/drei';
 import * as THREE from 'three';
 import type { GhostObject } from '../families/types';
 
@@ -81,7 +82,7 @@ function Capsule({ a, b, r, mat }: { a: THREE.Vector3; b: THREE.Vector3; r: numb
 
 /** Stylised hand built from capsules, scaled by hand breadth, mirrored for the left hand. */
 function Hand({ o, breadth }: { o: GhostObject; breadth: number }) {
-  const mat = useGhostMaterial('#e0a17a', 0.38);
+  const mat = useGhostMaterial('#e0a17a', 0.3);
   const s = breadth / 85;
   const grip = o.size.grip ?? 32;
   const pose = o.pose ?? 'grip';
@@ -149,9 +150,10 @@ function Hand({ o, breadth }: { o: GhostObject; breadth: number }) {
             size: [80 * s, 26 * s, 90 * s] as [number, number, number],
             pos: [-20 * s, -30 * s, -100 * s] as [number, number, number],
           };
+  const rr = Math.min(...palm.size) * 0.45;
   return (
     <group scale={[o.hand === 'left' ? -1 : 1, 1, 1]}>
-      <Box size={palm.size} pos={palm.pos} mat={mat} />
+      <RoundedBox args={palm.size} radius={rr} smoothness={4} position={palm.pos} material={mat} />
       {fingers.map((f, i) => (
         <Capsule key={i} a={f.a} b={f.b} r={f.r} mat={mat} />
       ))}
@@ -181,7 +183,7 @@ function GhostShape({ o, breadth }: { o: GhostObject; breadth: number }) {
       const d = sz.cap ?? 30;
       return (
         <group>
-          <ZCyl r={d * 1.3} h={sz.height ?? 150} mat={glass} />
+          <ZCyl r={d * 0.75} h={sz.height ?? 150} mat={glass} />
           <ZCyl r={d / 2} h={14} z0={sz.height ?? 150} mat={plastic} />
         </group>
       );
@@ -278,7 +280,7 @@ function GhostShape({ o, breadth }: { o: GhostObject; breadth: number }) {
           <mesh position={[L / 2, 0, 0]} rotation={[0, 0, Math.PI / 2]} material={metal}>
             <cylinderGeometry args={[d / 2, d / 2, L, 28]} />
           </mesh>
-          <Box size={[700, 30, 900]} pos={[L / 2, -60, -150]} mat={wood} />
+          <Box size={[360, 20, 420]} pos={[L / 2, -60, -120]} mat={wood} />
         </group>
       );
     }

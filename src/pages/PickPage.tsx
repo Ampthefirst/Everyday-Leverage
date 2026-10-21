@@ -14,7 +14,10 @@ export default function PickPage() {
   const fams = familyList();
   return (
     <Page>
-      <PageHeader title="Pick a design" lead="Nine designs in three groups. Each one adds leverage — a longer lever, a thicker grip, or a better angle." />
+      <PageHeader
+        title="Pick a design"
+        lead="Nine designs in three groups. Each one adds leverage — a longer lever, a thicker grip, or a better angle."
+      />
       <div className="space-y-10">
         {GROUPS.map((g) => (
           <section key={g.id} aria-labelledby={`g-${g.id}`}>
