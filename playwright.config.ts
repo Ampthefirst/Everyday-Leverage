@@ -7,7 +7,8 @@ export default defineConfig({
   fullyParallel: false,
   workers: 1,
   use: {
-    baseURL: 'http://localhost:4173',
+    // E2E_BASE_URL=https://… runs the suite against a deployed site instead of a local build.
+    baseURL: process.env.E2E_BASE_URL ?? 'http://localhost:4173',
     acceptDownloads: true,
     launchOptions: {
       // Software WebGL so the 3D viewer renders in headless CI.
@@ -15,10 +16,12 @@ export default defineConfig({
       ...(process.env.PW_CHROMIUM_PATH ? { executablePath: process.env.PW_CHROMIUM_PATH } : {}),
     },
   },
-  webServer: {
-    command: 'npm run build && npm run preview -- --port 4173 --strictPort',
-    port: 4173,
-    reuseExistingServer: true,
-    timeout: 180_000,
-  },
+  webServer: process.env.E2E_BASE_URL
+    ? undefined
+    : {
+        command: 'npm run build && npm run preview -- --port 4173 --strictPort',
+        port: 4173,
+        reuseExistingServer: true,
+        timeout: 180_000,
+      },
 });
