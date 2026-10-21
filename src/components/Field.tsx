@@ -20,7 +20,18 @@ function decimals(step: number) {
 }
 
 /** Slider + number box pair. Both are labelled; the number box accepts typed values. */
-export function NumberSlider({ label, value, min, max, step = 1, unit, help, onChange, aside, disabled }: NumberSliderProps) {
+export function NumberSlider({
+  label,
+  value,
+  min,
+  max,
+  step = 1,
+  unit,
+  help,
+  onChange,
+  aside,
+  disabled,
+}: NumberSliderProps) {
   const id = useId();
   const [text, setText] = useState(String(value));
   useEffect(() => setText(value.toFixed(decimals(step)).replace(/\.0+$/, '')), [value, step]);

@@ -35,7 +35,11 @@ export function Tabs<T extends string>({
   };
   return (
     <div className="flex min-h-0 flex-1 flex-col">
-      <div role="tablist" aria-label={label} className="flex gap-1 overflow-x-auto border-b border-border px-2">
+      <div
+        role="tablist"
+        aria-label={label}
+        className="flex gap-1 overflow-x-auto border-b border-border px-2"
+      >
         {tabs.map((t, i) => (
           <button
             key={t.id}

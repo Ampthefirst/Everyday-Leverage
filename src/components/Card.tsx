@@ -1,7 +1,9 @@
 import type { ReactNode } from 'react';
 
 export function Card({ children, className = '' }: { children: ReactNode; className?: string }) {
-  return <section className={`rounded-2xl border border-border bg-surface p-5 ${className}`}>{children}</section>;
+  return (
+    <section className={`rounded-2xl border border-border bg-surface p-5 ${className}`}>{children}</section>
+  );
 }
 
 export function PageHeader({ title, lead }: { title: string; lead?: ReactNode }) {
@@ -17,7 +19,13 @@ export function Page({ children, narrow = false }: { children: ReactNode; narrow
   return <div className={`mx-auto px-4 py-8 ${narrow ? 'max-w-3xl' : 'max-w-7xl'}`}>{children}</div>;
 }
 
-export function Note({ tone = 'info', children }: { tone?: 'info' | 'warn' | 'bad' | 'ok'; children: ReactNode }) {
+export function Note({
+  tone = 'info',
+  children,
+}: {
+  tone?: 'info' | 'warn' | 'bad' | 'ok';
+  children: ReactNode;
+}) {
   const cls = {
     info: 'border-info bg-info-bg',
     warn: 'border-warn bg-warn-bg',

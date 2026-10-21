@@ -75,7 +75,11 @@ export function Layout() {
               occupational therapist or doctor. Printed plastic is not food-safe.
             </p>
             <p>
-              Strength numbers are estimates. <NavLink className="underline" to="/limits">Read the limits</NavLink>.
+              Strength numbers are estimates.{' '}
+              <NavLink className="underline" to="/limits">
+                Read the limits
+              </NavLink>
+              .
             </p>
           </div>
         </footer>

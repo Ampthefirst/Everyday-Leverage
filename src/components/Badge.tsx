@@ -10,7 +10,15 @@ const tones: Record<Tone, string> = {
   neutral: 'bg-surface-2 text-text border-border',
 };
 
-export function Badge({ tone = 'neutral', children, title }: { tone?: Tone; children: ReactNode; title?: string }) {
+export function Badge({
+  tone = 'neutral',
+  children,
+  title,
+}: {
+  tone?: Tone;
+  children: ReactNode;
+  title?: string;
+}) {
   return (
     <span
       title={title}
