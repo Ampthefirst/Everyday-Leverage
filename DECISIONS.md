@@ -25,3 +25,4 @@ One line each: decision — reason.
 - Calibrate shows predicted (published data) vs measured break loads side by side — the guide's "one measured result beside the prediction".
 - No `maxOutputTokens` on Gemini calls: on thinking models the thinking tokens count against it and cut replies off; the prompts keep replies short and the server truncates text to 1200 characters.
 - Impeccable design skill (v0.1.16, Apache-2.0) vendored into `.claude/skills/impeccable` from github.com/pbakaus/impeccable so every session has it; its engine binary downloads (checksum-verified) to ~/.impeccable on first use. Auto-check hooks not enabled yet.
+- PRODUCT.md (Impeccable init): v2 redesign is tuned first for judges/evaluators at a presentation or competition; only the product name is a fixed brand commitment; presentation mode recorded as a planned capability.
