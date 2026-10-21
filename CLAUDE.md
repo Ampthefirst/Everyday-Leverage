@@ -25,6 +25,9 @@ Each sub-family (A1…C3) is one object implementing `Family<P>` in `src/familie
 geometry builder in `src/geometry/families/` (runs in the manifold worker) and its strength model in
 `src/strength/families/`. The Designer, outputs, and print tools only talk to the contract.
 
+## Design
+The Impeccable skill lives in `.claude/skills/impeccable` (invoke as `/impeccable <command>`). Use it for UI work in v2.
+
 ## Layout
 See PLAN.md §2. `src/families/` holds the contract objects (schema, presets, variants, specs) — added
 alongside the plan's layout so the UI can import a family without pulling in geometry.

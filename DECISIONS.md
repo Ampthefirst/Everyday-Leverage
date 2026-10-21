@@ -24,3 +24,4 @@ One line each: decision — reason.
 - Offline after first visit via a hand-written service worker (`public/sw.js`) plus a build-time `precache.json` of every asset — no extra plugin dependency; navigations are network-first so new deploys show up, hashed assets are cache-first.
 - Calibrate shows predicted (published data) vs measured break loads side by side — the guide's "one measured result beside the prediction".
 - No `maxOutputTokens` on Gemini calls: on thinking models the thinking tokens count against it and cut replies off; the prompts keep replies short and the server truncates text to 1200 characters.
+- Impeccable design skill (v0.1.16, Apache-2.0) vendored into `.claude/skills/impeccable` from github.com/pbakaus/impeccable so every session has it; its engine binary downloads (checksum-verified) to ~/.impeccable on first use. Auto-check hooks not enabled yet.
