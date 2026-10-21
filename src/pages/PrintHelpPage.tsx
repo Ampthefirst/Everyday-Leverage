@@ -6,7 +6,7 @@ export default function PrintHelpPage() {
     <Page narrow>
       <PageHeader
         title="Get it printed"
-        lead="You don't need your own 3D printer. The hard part — a design that fits and won't break — is done here. Printing can happen somewhere else."
+        lead="You don't need your own 3D printer. The hard part — a design sized to fit you and checked for strength — is done here. Printing can happen somewhere else."
       />
       <div className="space-y-6">
         <Card>
