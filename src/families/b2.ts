@@ -259,6 +259,15 @@ function drawing(p: B2P) {
     views: [
       { name: 'Front', shapes: front },
       { name: 'Top', shapes: top },
+      {
+        name: 'Section A–A',
+        caption: 'Through a wing',
+        shapes: [
+          rect(0, 0, p.leverT, p.leverW, 'outline', 'hatch'),
+          dim([0, p.leverW], [p.leverT, p.leverW], -5, mm(p.leverT, 0)),
+          dim([p.leverT, 0], [p.leverT, p.leverW], -6, mm(p.leverW, 0)),
+        ],
+      },
     ],
     keyDims: [
       p.mode === 'key'

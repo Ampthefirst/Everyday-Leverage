@@ -251,6 +251,14 @@ function drawing(p: A3P) {
     views: [
       { name: 'Front', shapes: front },
       { name: 'Socket end', shapes: bottom },
+      {
+        name: 'Section A–A',
+        caption: 'Across the socket',
+        shapes: [
+          circle(0, 0, a3BossD(p) / 2, 'outline', 'hatch'),
+          ...socketShapes(p, 0, 0).map((s) => ({ ...s, fill: 'solid' as const })),
+        ],
+      },
     ],
     keyDims: [
       {

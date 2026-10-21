@@ -195,6 +195,15 @@ function drawing(p: C1P) {
     views: [
       { name: 'Top', shapes: top },
       { name: 'Side', shapes: side },
+      {
+        name: 'Section A–A',
+        caption: 'Through the band',
+        shapes: [
+          rect(0, 0, p.band, p.thick, 'outline', 'hatch'),
+          dim([0, p.thick], [p.band, p.thick], -5, mm(p.band, 1)),
+          dim([p.band, 0], [p.band, p.thick], -6, mm(p.thick, 1)),
+        ],
+      },
     ],
     keyDims: [
       {

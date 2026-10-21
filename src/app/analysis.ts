@@ -68,6 +68,18 @@ export function analyse(args: {
     ? checkBedFit(rotatedSize(args.geometry.size, orientation.candidate.rotation))
     : null;
   const issues = validateDesign(family, p, print, bed, split);
+  // Overhangs: the chosen placement says whether supports are needed.
+  const sup = orientation.candidate.supports;
+  if (sup !== 'none')
+    issues.push({
+      severity: sup === 'needed' ? 'warn' : 'info',
+      message:
+        sup === 'needed'
+          ? `Placed ${orientation.candidate.label.toLowerCase()}, this part has overhangs that need supports.`
+          : 'A few small supports may help with overhangs (supports touching the build plate only).',
+      fix:
+        sup === 'needed' ? 'Turn on supports in the slicer, or choose the recommended placement.' : undefined,
+    });
   const est = args.geometry ? estimate(args.geometry.volume, args.geometry.surfaceArea, print) : null;
   return {
     family,

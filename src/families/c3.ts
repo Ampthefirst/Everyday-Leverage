@@ -213,6 +213,15 @@ function drawing(p: C3P) {
     views: [
       { name: 'Side', shapes: side },
       { name: 'End (clip)', shapes: end },
+      {
+        name: 'Section A–A',
+        caption: 'Through the bar at the clip',
+        shapes: [
+          roundRect(0, 0, p.barW, p.barH, 3, 'outline', 'hatch'),
+          dim([-p.barW / 2, p.barH / 2], [p.barW / 2, p.barH / 2], -5, mm(p.barW, 0)),
+          dim([p.barW / 2, -p.barH / 2], [p.barW / 2, p.barH / 2], -6, mm(p.barH, 0)),
+        ],
+      },
     ],
     keyDims: [
       { label: 'Clip inside', value: `Ø${mm(p.leverD, 1)}`, tol: '±0.3' },

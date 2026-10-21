@@ -310,6 +310,15 @@ function drawing(p: B3P) {
     views: [
       { name: 'Top', shapes: top },
       { name: 'Front', shapes: front },
+      {
+        name: 'Section A–A',
+        caption: 'Through the lever',
+        shapes: [
+          rect(0, 0, p.leverW, p.leverH, 'outline', 'hatch'),
+          dim([0, p.leverH], [p.leverW, p.leverH], -5, mm(p.leverW, 0)),
+          dim([p.leverW, 0], [p.leverW, p.leverH], -6, mm(p.leverH, 0)),
+        ],
+      },
     ],
     keyDims: [
       { label: 'Socket size', value: `${mm(p.targetD + 2 * p.clearance, 1)} across`, tol: '±0.3' },

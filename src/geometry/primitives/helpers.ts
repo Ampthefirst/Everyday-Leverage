@@ -104,7 +104,8 @@ const SEG: Record<string, string> = {
 /** Text stamp of height h in the XY plane (centred), extruded `depth` along Z from z=0. */
 export function stampText(K: Kernel, text: string, h: number, depth: number): Manifold | null {
   const w = h * 0.55;
-  const s = Math.max(0.6, h * 0.16);
+  // Strokes at least 0.8 mm wide (minimum printable feature).
+  const s = Math.max(0.8, h * 0.18);
   const gap = h * 0.3;
   const boxes: CrossSection[] = [];
   const chars = text.toUpperCase().split('');

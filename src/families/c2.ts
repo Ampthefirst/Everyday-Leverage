@@ -1,7 +1,7 @@
 import type { Family, FieldDef, ValidationIssue } from './types';
 import { buildSchema, defaultsOf } from './schema';
 import { MEASURE, err, info, mm, warn, FLAT } from './common';
-import { circle, dim, line, rect, text, type Shape } from '../outputs/svg/ir';
+import { circle, dia, dim, line, rect, text, type Shape } from '../outputs/svg/ir';
 import { c2LoadCases, c2Sections } from '../strength/families/c2';
 import { maxPartLength } from '../print/bedfit';
 
@@ -182,6 +182,14 @@ function drawing(p: C2P) {
     views: [
       { name: 'Side', shapes: side },
       { name: 'Tip end', shapes: tip },
+      {
+        name: 'Section A–A',
+        caption: 'Through the shaft',
+        shapes: [
+          circle(0, 0, p.shaftD / 2, 'outline', 'hatch'),
+          dia(0, 0, p.shaftD / 2, `Ø${mm(p.shaftD, 1)}`),
+        ],
+      },
     ],
     keyDims: [
       { label: 'Overall length', value: mm(L, 0), tol: '±1' },

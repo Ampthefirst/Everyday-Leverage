@@ -242,6 +242,15 @@ function drawing(p: A2P) {
     views: [
       { name: 'Top (looking along the arm)', shapes: top },
       { name: 'Side', shapes: side },
+      {
+        name: 'Section B–B',
+        caption: 'Through the band',
+        shapes: [
+          rect(0, 0, p.bandWidth, p.bandT, 'outline', 'hatch'),
+          dim([0, p.bandT], [p.bandWidth, p.bandT], -5, mm(p.bandWidth, 0)),
+          dim([p.bandWidth, 0], [p.bandWidth, p.bandT], -6, mm(p.bandT, 1)),
+        ],
+      },
     ],
     keyDims: [
       { label: 'Inside width', value: mm(2 * a, 0), tol: '±1' },
