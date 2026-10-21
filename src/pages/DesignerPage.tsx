@@ -1,4 +1,4 @@
-import { lazy, Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { lazy, Suspense, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 
 // PDF/zip generation (jsPDF, fflate) loads only when the Get files tab opens.
 const FilesPanel = lazy(() => import('../components/designer/FilesPanel'));
@@ -22,7 +22,7 @@ import { HeatLegend, SectionSlider, ViewerToolbar } from '../components/designer
 import { Dialog } from '../components/Dialog';
 import { Illustration } from '../components/Illustration';
 import { Page, PageHeader } from '../components/Card';
-import { LinkButton } from '../components/Button';
+import { Button, LinkButton } from '../components/Button';
 import { Meter } from '../components/Meter';
 import { StrengthBadge } from '../components/StrengthBadge';
 import { shellThickness } from '../strength/types';
@@ -290,6 +290,7 @@ function Designer({ familyId }: { familyId: FamilyId }) {
           aria-label="Design settings"
           className="flex min-h-0 flex-col border-l border-border bg-surface lg:w-[30rem]"
         >
+          <ErrorBanner onShow={() => setTab('print')} />
           <Tabs tabs={TABS} active={tab} onChange={setTab} label="Design steps">
             {tab === 'fit' && <FitPanel />}
             {tab === 'style' && <StylePanel />}
@@ -321,5 +322,29 @@ function Designer({ familyId }: { familyId: FamilyId }) {
         </ol>
       </Dialog>
     </DesignerCtx.Provider>
+  );
+}
+
+/** Shown above the tabs whenever the design has a blocking problem. */
+function ErrorBanner({ onShow }: { onShow: () => void }) {
+  const { analysis, family, params } = useContext(DesignerCtx)!;
+  const setParams = useDesign((s) => s.setParams);
+  const errors = analysis.issues.filter((i) => i.severity === 'error');
+  if (!errors.length) return null;
+  return (
+    <div role="alert" className="m-3 rounded-xl border-l-4 border-bad bg-bad-bg p-3">
+      <p className="font-semibold">{errors[0].message}</p>
+      {errors[0].fix && <p>{errors[0].fix}</p>}
+      <div className="mt-2 flex flex-wrap gap-2">
+        <Button variant="secondary" onClick={() => setParams(family.id, family.repair(params))}>
+          Fix it for me
+        </Button>
+        {errors.length > 1 && (
+          <Button variant="ghost" onClick={onShow}>
+            See all {errors.length} problems
+          </Button>
+        )}
+      </div>
+    </div>
   );
 }

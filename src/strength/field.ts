@@ -50,7 +50,8 @@ export function buildField(sections: SectionResult[], shellT: number): StressFie
       const nominal = s.utilization / Math.max(1, s.Kt);
       let v: number;
       if (s.zone.type === 'point') {
-        v = s.utilization * zoneShape(s.zone, p);
+        // Point zones peak exactly at the section anchor, so the colour there equals the number.
+        v = s.utilization * zoneShape({ ...s.zone, at: s.at }, p);
       } else {
         const d = Math.hypot(p[0] - s.at[0], p[1] - s.at[1], p[2] - s.at[2]);
         v = nominal * zoneShape(s.zone, p) + (s.utilization - nominal) * Math.exp(-((d / bumpR) ** 2));
