@@ -1,8 +1,8 @@
 /* Everyday Leverage service worker: makes the app work offline after the first visit.
    - Pages: network first, falling back to the cached app shell.
-   - Hashed build assets (/assets/*), fonts and the WASM kernel: cache first (they never change).
+   - Hashed build assets (/assets/*), fonts, the WASM kernel and the design renders: cache first.
    - /api is never cached. */
-const CACHE = 'el-v2';
+const CACHE = 'el-v3';
 const SHELL = ['/', '/index.html', '/favicon.svg'];
 
 self.addEventListener('install', (e) => {
@@ -48,7 +48,7 @@ self.addEventListener('fetch', (e) => {
     );
     return;
   }
-  if (url.pathname.startsWith('/assets/') || url.pathname.endsWith('.svg')) {
+  if (url.pathname.startsWith('/assets/') || url.pathname.startsWith('/renders/') || url.pathname.endsWith('.svg')) {
     e.respondWith(
       caches.match(req).then(
         (hit) =>

@@ -1,5 +1,13 @@
 import { describe, expect, it } from 'vitest';
-import { gripCylinder, handSpec, indexTip, pinchSolution, poseAngles, thumbTip, wrapAngles } from '../../src/viewer/handModel';
+import {
+  gripCylinder,
+  handSpec,
+  indexTip,
+  pinchSolution,
+  poseAngles,
+  thumbTip,
+  wrapAngles,
+} from '../../src/viewer/handModel';
 
 describe('articulated hand', () => {
   it('scales with hand breadth', () => {

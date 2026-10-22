@@ -32,3 +32,12 @@ One line each: decision — reason.
 - Hand ghost to become a procedural articulated mannequin hand (palm + 3-segment fingers + opposable thumb, joint-angle poses fitted to the real grip size) rather than a downloaded rigged model — no licensing, light, exact grip fit.
 - Articulated hand built: grip wraps fingers by arc angle around the real grip diameter; pinch aims the thumb by a small grid search so its pad meets the index pad across an 8 mm object, which then sits at the ghost origin; see-through hands get a depth pre-pass so only the outer shell shows.
 - Hand placements re-tuned for renders and the viewer: B1/B3 overhand with the wrist behind the lever (fingers wrap toward the viewer), B2 pinches a wing from behind, C3 palm presses down on the bar end; the C1 tile hides the hand because the hook hand covers the small pull loop. B1/B3 tiles use a lower camera.
+- v2 tokens replace the light/dark sets with one dark ANSI palette (cyan/magenta chrome, white text, white-on-blue for LIVE); every rounded utility resolves to 2 px; the old theme setting is kept in storage but ignored. High contrast stays as black/white/yellow.
+- VT323 applies to h1/h2 and `.font-display` only, with `font-size-adjust: 0.5` so its small x-height matches the body face; body text is Atkinson Hyperlegible Mono with tabular numerals.
+- Top bar holds only Home / Find / Pick plus a Menu button; Learn, Calibrate, Get it printed, Limits & safety and Settings move into a numbered side menu (native <dialog>, Esc closes, 1–5 jump). "Display" is renamed Settings.
+- Single-key shortcuts (H, F, P, M, and 1–5 in the menu) are on by default and can be turned off in Settings (WCAG 2.1.4); they are ignored while typing or when a dialog is open.
+- Footer disclaimers come from src/content/disclaimers.ts, gated by VITE_PRESENTATION_MODE for the planned presentation build; other disclaimers move there as their pages are redesigned.
+- Home live part: A1 built by the real geometry worker, stepping 32 → 42 → 26 mm every 3.6 s while turning; the readout shows the real build time. It pauses off-screen and in background tabs, and is still under reduced motion. The tile render stays underneath until the first build lands.
+- LIVE badge blinks four times and then holds (WCAG 2.2.2). Board tiles turn toward a mouse cursor only (not touch), and show names on hover/focus, or always on touch screens.
+- Design renders (public/renders) are precached by the service worker for offline use.
+- Favicon/logo redrawn as a 16×16 pixel lever on a fulcrum in the world palette.

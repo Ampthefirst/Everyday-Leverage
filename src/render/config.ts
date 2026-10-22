@@ -15,11 +15,7 @@ export interface RenderShot {
   hideGhosts?: string[];
 }
 
-export const GROUP_FILAMENT: Record<'A' | 'B' | 'C', string> = {
-  A: '#0fa3b6', // cyan PETG
-  B: '#b8268f', // magenta PETG
-  C: '#e09a12', // amber PETG
-};
+export { GROUP_FILAMENT } from '../viewer/Studio';
 
 export const SHOTS: Record<FamilyId, RenderShot> = {
   A1: { preset: 'spoon' },

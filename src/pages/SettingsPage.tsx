@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Card, Note, Page, PageHeader } from '../components/Card';
 import { Choice, NumberSlider, Toggle } from '../components/Field';
 import { Button } from '../components/Button';
-import { useSettings, type TextScale, type ThemePref } from '../state/settings';
+import { useSettings, type TextScale } from '../state/settings';
 import { useProfiles } from '../state/profiles';
 import { LLM_NOTICE } from '../llm/client';
 
@@ -11,7 +11,7 @@ export default function SettingsPage() {
   return (
     <Page narrow>
       <PageHeader
-        title="Display and preferences"
+        title="Settings"
         lead="Make the app easier to see and use. These choices are saved on this device only."
       />
       <div className="space-y-6">
@@ -27,27 +27,23 @@ export default function SettingsPage() {
             ]}
             onChange={(v) => s.set({ textScale: v as TextScale })}
           />
-          <Choice
-            label="Colours"
-            value={s.theme}
-            options={[
-              { value: 'system', label: 'Match my device' },
-              { value: 'light', label: 'Light' },
-              { value: 'dark', label: 'Dark' },
-            ]}
-            onChange={(v) => s.set({ theme: v as ThemePref })}
-          />
           <Toggle
             label="High contrast"
             checked={s.highContrast}
             onChange={(v) => s.set({ highContrast: v })}
-            help="Black and white with strong outlines."
+            help="Pure black, white and yellow with strong outlines."
           />
           <Toggle
             label="Reduce motion"
             checked={s.reduceMotion}
             onChange={(v) => s.set({ reduceMotion: v })}
-            help="'How to use' animations become step-by-step pictures. Your device setting is always respected."
+            help="'How to use' animations become step-by-step pictures and the title screen appears at once. Your device setting is always respected."
+          />
+          <Toggle
+            label="Single-key shortcuts"
+            checked={s.hotkeys}
+            onChange={(v) => s.set({ hotkeys: v })}
+            help="H home, F find, P pick, M menu. Turn off if they get in the way of speech or switch software."
           />
         </Card>
         <Card className="space-y-3">

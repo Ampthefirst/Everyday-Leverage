@@ -12,9 +12,8 @@ import { loadKernel, type MeshData } from '../geometry/kernel';
 import { runBuild } from '../geometry/jobs';
 import { getFamily } from '../families';
 import type { FamilyId, Params } from '../families/types';
-import { toGeometry } from '../viewer/meshGeometry';
-import { Ghost, GhostStudio } from '../viewer/Ghosts';
 import { GROUP_FILAMENT, RENDER_SIZE, SHOTS } from './config';
+import { frameObject, StudioLights, StudioSubject } from '../viewer/Studio';
 import { ArticulatedHand } from '../viewer/Hand';
 import type { HandPose } from '../viewer/handModel';
 
@@ -26,37 +25,9 @@ declare global {
   }
 }
 
-const deg = (d: number) => (d * Math.PI) / 180;
-
 function Studio({ id, mesh, params }: { id: FamilyId; mesh: MeshData; params: Params }) {
-  const family = getFamily(id)!;
   const shot = SHOTS[id];
   const { gl, scene, camera } = useThree();
-  const geom = useMemo(() => toGeometry(mesh), [mesh]);
-  const material = useMemo(
-    () => new THREE.MeshPhysicalMaterial({ color: GROUP_FILAMENT[family.group], roughness: 0.55, envMapIntensity: 0.45 }),
-    [family.group],
-  );
-  const ghosts = family.ghost(params).objects.filter((o) => !shot.hideGhosts?.includes(o.kind));
-  const dr = family.displayRotation ?? [0, 0, 0];
-  const b = mesh.bbox;
-  const centre: [number, number, number] = [-(b.min[0] + b.max[0]) / 2, -(b.min[1] + b.max[1]) / 2, -(b.min[2] + b.max[2]) / 2];
-
-  // Image-based lighting from a procedural studio room (no network needed).
-  useEffect(() => {
-    const pmrem = new THREE.PMREMGenerator(gl);
-    const env = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
-    scene.environment = env;
-    // Neutral tone mapping keeps filament colours saturated (ACES washes them out).
-    gl.toneMapping = THREE.NeutralToneMapping;
-    gl.toneMappingExposure = 0.9;
-    gl.shadowMap.enabled = true;
-    gl.shadowMap.type = THREE.PCFSoftShadowMap;
-    return () => {
-      env.dispose();
-      pmrem.dispose();
-    };
-  }, [gl, scene]);
 
   // Frame the whole subject (part + context object) once everything is in the scene.
   useEffect(() => {
@@ -67,16 +38,11 @@ function Studio({ id, mesh, params }: { id: FamilyId; mesh: MeshData; params: Pa
         raf = requestAnimationFrame(fit);
         return;
       }
-      const box = new THREE.Box3().setFromObject(scene.getObjectByName('subject')!);
-      const sphere = box.getBoundingSphere(new THREE.Sphere());
-      const cam = camera as THREE.PerspectiveCamera;
-      const dir = new THREE.Vector3(...(shot.view ?? [0.85, 0.62, 1])).normalize();
-      const dist = (sphere.radius / Math.sin(deg(cam.fov / 2))) * 1.0;
-      cam.position.copy(sphere.center).addScaledVector(dir, dist);
-      cam.near = dist / 50;
-      cam.far = dist * 10;
-      cam.lookAt(sphere.center);
-      cam.updateProjectionMatrix();
+      frameObject(
+        camera as THREE.PerspectiveCamera,
+        scene.getObjectByName('subject')!,
+        shot.view ?? [0.85, 0.62, 1],
+      );
       requestAnimationFrame(() =>
         requestAnimationFrame(() => {
           window.__capture = (type = 'image/webp', quality = 0.9) => gl.domElement.toDataURL(type, quality);
@@ -90,32 +56,8 @@ function Studio({ id, mesh, params }: { id: FamilyId; mesh: MeshData; params: Pa
 
   return (
     <>
-      <directionalLight
-        position={[260, 520, 380]}
-        intensity={3.2}
-        castShadow
-        shadow-mapSize={[2048, 2048]}
-        shadow-bias={-0.0004}
-        shadow-camera-left={-300}
-        shadow-camera-right={300}
-        shadow-camera-top={300}
-        shadow-camera-bottom={-300}
-        shadow-camera-far={2000}
-      />
-      {/* Cool rim light so edges read against the black tiles. */}
-      <directionalLight position={[-420, 260, -360]} intensity={2} color="#bfe6ff" />
-      <group name="subject" rotation={[-Math.PI / 2, 0, 0]}>
-        <group rotation={[deg(dr[0]), deg(dr[1]), deg(dr[2])]}>
-          <group position={centre}>
-            <mesh geometry={geom} material={material} castShadow receiveShadow />
-            <GhostStudio.Provider value={true}>
-              {ghosts.map((o, i) => (
-                <Ghost key={i} o={o} breadth={85} />
-              ))}
-            </GhostStudio.Provider>
-          </group>
-        </group>
-      </group>
+      <StudioLights />
+      <StudioSubject id={id} mesh={mesh} params={params} hideGhosts={shot.hideGhosts} />
     </>
   );
 }
@@ -123,14 +65,22 @@ function Studio({ id, mesh, params }: { id: FamilyId; mesh: MeshData; params: Pa
 /** Hand check: render.html?hand=grip&d=32 shows the articulated hand alone (with the handle for grips). */
 function HandCheck({ pose, d }: { pose: HandPose; d: number }) {
   const { gl, scene, camera } = useThree();
-  const mat = useMemo(() => new THREE.MeshPhysicalMaterial({ color: '#e9e7e3', roughness: 0.5, clearcoat: 0.15 }), []);
-  const handle = useMemo(() => new THREE.MeshPhysicalMaterial({ color: GROUP_FILAMENT.A, roughness: 0.55 }), []);
+  const mat = useMemo(
+    () => new THREE.MeshPhysicalMaterial({ color: '#e9e7e3', roughness: 0.5, clearcoat: 0.15 }),
+    [],
+  );
+  const handle = useMemo(
+    () => new THREE.MeshPhysicalMaterial({ color: GROUP_FILAMENT.A, roughness: 0.55 }),
+    [],
+  );
   useEffect(() => {
     const pmrem = new THREE.PMREMGenerator(gl);
     scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
     gl.toneMapping = THREE.NeutralToneMapping;
     const cam = camera as THREE.PerspectiveCamera;
-    const v = (new URLSearchParams(window.location.search).get('view') ?? '260,180,320').split(',').map(Number);
+    const v = (new URLSearchParams(window.location.search).get('view') ?? '260,180,320')
+      .split(',')
+      .map(Number);
     cam.position.set(v[0], v[1], v[2]);
     cam.lookAt(0, 0, 0);
     requestAnimationFrame(() =>
@@ -171,7 +121,11 @@ export function RenderPage() {
     }
     const shot = SHOTS[id];
     const preset = family.presets.find((p) => p.id === shot.preset);
-    const params = family.repair({ ...family.defaults, ...(preset?.params ?? {}), ...(shot.params ?? {}) } as Params);
+    const params = family.repair({
+      ...family.defaults,
+      ...(preset?.params ?? {}),
+      ...(shot.params ?? {}),
+    } as Params);
     loadKernel(() => wasmUrl)
       .then((K) => setState({ mesh: runBuild(K, id, params).mesh, params }))
       .catch((e) => (window.__renderError = String(e)));
@@ -179,7 +133,12 @@ export function RenderPage() {
 
   if (handPose) {
     return (
-      <Canvas dpr={1} gl={{ alpha: true, antialias: true, preserveDrawingBuffer: true }} camera={{ fov: 35 }} style={{ width: size, height: size }}>
+      <Canvas
+        dpr={1}
+        gl={{ alpha: true, antialias: true, preserveDrawingBuffer: true }}
+        camera={{ fov: 35 }}
+        style={{ width: size, height: size }}
+      >
         <HandCheck pose={handPose} d={Number(q.get('d') ?? 32)} />
       </Canvas>
     );

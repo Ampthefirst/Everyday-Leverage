@@ -1,88 +1,63 @@
-/* Design tokens. Light is the default; dark and high-contrast override. */
+/*
+ * Design tokens: "Bulletin board at 2 a.m." — a dark-only ANSI world (docs/v2-ui-brief.md).
+ * Terminal black ground, cyan and magenta for structure and chrome, white for text,
+ * white-on-blue reserved for live or new things. High contrast is the accessibility alternative.
+ */
 :root {
-  --color-bg: #f8fafc;
-  --color-surface: #ffffff;
-  --color-surface-2: #f1f5f9;
-  --color-border: #cbd5e1;
-  --color-text: #0f172a;
-  --color-muted: #475569;
-  --color-primary: #1d4ed8;
-  --color-primary-strong: #1e3a8a;
-  --color-on-primary: #ffffff;
-  --color-accent: #b45309;
-  --color-focus: #f59e0b;
-  --color-ok: #15803d;
-  --color-warn: #b45309;
-  --color-bad: #b91c1c;
-  --color-info: #0369a1;
-  --color-ok-bg: #dcfce7;
-  --color-warn-bg: #fef3c7;
-  --color-bad-bg: #fee2e2;
-  --color-info-bg: #e0f2fe;
-  --color-viewer-bg: #e2e8f0;
-  --color-part: #2563eb;
-  --radius: 12px;
+  --color-bg: #07070c;
+  --color-surface: #0e0f18;
+  --color-surface-2: #171a29;
+  --color-border: #3f7f8c;
+  --color-rule: #24505a;
+  --color-text: #ececec;
+  --color-muted: #a9b0bf;
+  --color-primary: #33e0e0;
+  --color-primary-strong: #8ff5f5;
+  --color-on-primary: #041014;
+  --color-accent: #ff5fd2;
+  --color-shade: #6e1d5f;
+  --color-focus: #ffe14d;
+  --color-live: #1f3fd8;
+  --color-on-live: #ffffff;
+  --color-ok: #5fe07a;
+  --color-warn: #ffd75f;
+  --color-bad: #ff6b6b;
+  --color-info: #6cb6ff;
+  --color-ok-bg: #0b2414;
+  --color-warn-bg: #2a2208;
+  --color-bad-bg: #2d0e0e;
+  --color-info-bg: #0a1c33;
+  --color-viewer-bg: #0b0c14;
+  --color-part: #33e0e0;
+  --radius: 2px;
   --tap: 48px;
-  color-scheme: light;
-}
-
-:root.dark {
-  --color-bg: #0b1220;
-  --color-surface: #111a2e;
-  --color-surface-2: #18233b;
-  --color-border: #334155;
-  --color-text: #e2e8f0;
-  --color-muted: #a3b1c6;
-  --color-primary: #60a5fa;
-  --color-primary-strong: #93c5fd;
-  --color-on-primary: #0b1220;
-  --color-accent: #fbbf24;
-  --color-focus: #fbbf24;
-  --color-ok: #4ade80;
-  --color-warn: #fbbf24;
-  --color-bad: #f87171;
-  --color-info: #38bdf8;
-  --color-ok-bg: #052e16;
-  --color-warn-bg: #3b2a05;
-  --color-bad-bg: #3f0d0d;
-  --color-info-bg: #082f49;
-  --color-viewer-bg: #1e293b;
-  --color-part: #60a5fa;
   color-scheme: dark;
 }
 
 :root[data-contrast='high'] {
-  --color-bg: #ffffff;
-  --color-surface: #ffffff;
-  --color-surface-2: #ffffff;
-  --color-border: #000000;
-  --color-text: #000000;
-  --color-muted: #000000;
-  --color-primary: #0000c8;
-  --color-primary-strong: #00007a;
-  --color-on-primary: #ffffff;
-  --color-focus: #c80000;
-  --color-ok: #005a00;
-  --color-warn: #6b3a00;
-  --color-bad: #9a0000;
-  --color-info: #00007a;
-}
-
-:root.dark[data-contrast='high'] {
   --color-bg: #000000;
   --color-surface: #000000;
   --color-surface-2: #000000;
   --color-border: #ffffff;
+  --color-rule: #ffffff;
   --color-text: #ffffff;
   --color-muted: #ffffff;
   --color-primary: #ffff00;
   --color-primary-strong: #ffff66;
   --color-on-primary: #000000;
+  --color-accent: #ffff00;
+  --color-shade: #555555;
   --color-focus: #00ffff;
+  --color-live: #0000c8;
   --color-ok: #00ff66;
   --color-warn: #ffcc00;
   --color-bad: #ff6666;
   --color-info: #66ccff;
+  --color-ok-bg: #000000;
+  --color-warn-bg: #000000;
+  --color-bad-bg: #000000;
+  --color-info-bg: #000000;
+  --color-viewer-bg: #000000;
 }
 
 :root[data-text='125'] {

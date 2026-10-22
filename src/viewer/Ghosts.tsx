@@ -14,13 +14,33 @@ function studioMaterial(finish: Finish): THREE.Material {
   switch (finish) {
     case 'glass':
       // Clear glass on a transparent canvas: mostly reflection, a little body.
-      return new THREE.MeshPhysicalMaterial({ color: '#dff3f5', roughness: 0.03, metalness: 0, transparent: true, opacity: 0.28, envMapIntensity: 1.6, clearcoat: 1, side: THREE.DoubleSide, depthWrite: false });
+      return new THREE.MeshPhysicalMaterial({
+        color: '#dff3f5',
+        roughness: 0.03,
+        metalness: 0,
+        transparent: true,
+        opacity: 0.28,
+        envMapIntensity: 1.6,
+        clearcoat: 1,
+        side: THREE.DoubleSide,
+        depthWrite: false,
+      });
     case 'metal':
-      return new THREE.MeshPhysicalMaterial({ color: '#d7dce2', metalness: 1, roughness: 0.16, envMapIntensity: 1.3 });
+      return new THREE.MeshPhysicalMaterial({
+        color: '#d7dce2',
+        metalness: 1,
+        roughness: 0.16,
+        envMapIntensity: 1.3,
+      });
     case 'wood':
       return new THREE.MeshPhysicalMaterial({ color: '#8a6440', roughness: 0.7 });
     case 'mannequin':
-      return new THREE.MeshPhysicalMaterial({ color: '#e9e7e3', roughness: 0.5, clearcoat: 0.15, clearcoatRoughness: 0.6 });
+      return new THREE.MeshPhysicalMaterial({
+        color: '#e9e7e3',
+        roughness: 0.5,
+        clearcoat: 0.15,
+        clearcoatRoughness: 0.6,
+      });
     case 'skin':
       return new THREE.MeshPhysicalMaterial({ color: '#c99a7c', roughness: 0.6, sheen: 0.3 });
     default:
@@ -36,14 +56,14 @@ function useGhostMaterial(color: string, opacity = 0.32, finish: Finish = 'plast
       studio
         ? studioMaterial(finish)
         : new THREE.MeshStandardMaterial({
-        color,
-        transparent: true,
-        opacity,
-        depthWrite: false,
-        roughness: 0.6,
-        metalness: 0.05,
-        side: THREE.DoubleSide,
-      }),
+            color,
+            transparent: true,
+            opacity,
+            depthWrite: false,
+            roughness: 0.6,
+            metalness: 0.05,
+            side: THREE.DoubleSide,
+          }),
     [color, opacity, finish, studio],
   );
 }
@@ -96,7 +116,15 @@ function Box({
 /** Articulated mannequin hand, scaled by hand breadth, mirrored for the left hand. */
 function Hand({ o, breadth }: { o: GhostObject; breadth: number }) {
   const mat = useGhostMaterial('#ece9e4', 0.34, 'mannequin');
-  return <ArticulatedHand breadth={breadth} pose={o.pose ?? 'grip'} gripD={o.size.grip ?? 32} side={o.hand ?? 'right'} mat={mat} />;
+  return (
+    <ArticulatedHand
+      breadth={breadth}
+      pose={o.pose ?? 'grip'}
+      gripD={o.size.grip ?? 32}
+      side={o.hand ?? 'right'}
+      mat={mat}
+    />
+  );
 }
 
 function GhostShape({ o, breadth }: { o: GhostObject; breadth: number }) {
@@ -105,7 +133,10 @@ function GhostShape({ o, breadth }: { o: GhostObject; breadth: number }) {
   const metal = useGhostMaterial('#cbd5e1', 0.42, 'metal');
   const wood = useGhostMaterial('#d6b48a', 0.3, 'wood');
   const plastic = useGhostMaterial('#f9a8d4', 0.35, 'plastic');
-  const jam = useMemo(() => new THREE.MeshPhysicalMaterial({ color: '#7a0f1e', roughness: 0.25, clearcoat: 0.6 }), []);
+  const jam = useMemo(
+    () => new THREE.MeshPhysicalMaterial({ color: '#7a0f1e', roughness: 0.25, clearcoat: 0.6 }),
+    [],
+  );
   const sz = o.size;
   switch (o.kind) {
     case 'jar': {
@@ -190,7 +221,9 @@ function GhostShape({ o, breadth }: { o: GhostObject; breadth: number }) {
         <group>
           <Box size={[30, 80, 1.5]} pos={[0, -20, -2]} mat={plastic} />
           {studio &&
-            Array.from({ length: 14 }, (_, i) => <Box key={i} size={[7, 2.4, 2.4]} pos={[0, -28 - i * 4, -1.2]} mat={metal} />)}
+            Array.from({ length: 14 }, (_, i) => (
+              <Box key={i} size={[7, 2.4, 2.4]} pos={[0, -28 - i * 4, -1.2]} mat={metal} />
+            ))}
           <Box size={[sz.w ?? 8, sz.l ?? 20, sz.t ?? 2]} pos={[0, 0, 0]} mat={metal} />
         </group>
       );
@@ -204,7 +237,11 @@ function GhostShape({ o, breadth }: { o: GhostObject; breadth: number }) {
     case 'button':
       return (
         <group>
-          <Box size={studio ? [(sz.d ?? 12) * 2.6, (sz.d ?? 12) * 2.6, 6] : [80, 80, 6]} pos={[0, 0, -3]} mat={plastic} />
+          <Box
+            size={studio ? [(sz.d ?? 12) * 2.6, (sz.d ?? 12) * 2.6, 6] : [80, 80, 6]}
+            pos={[0, 0, -3]}
+            mat={plastic}
+          />
           <ZCyl r={(sz.d ?? 12) / 2} h={3} mat={metal} />
         </group>
       );

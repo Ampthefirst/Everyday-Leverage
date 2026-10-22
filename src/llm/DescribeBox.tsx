@@ -30,7 +30,7 @@ export function DescribeBox({ onAnswers }: { onAnswers: (a: Answers) => void }) 
       <p className="mt-8 text-sm text-muted">
         Prefer to describe it in your own words? Turn on the optional Gemini feature in{' '}
         <Link to="/settings" className="text-primary underline">
-          Display settings
+          Settings
         </Link>
         .
       </p>

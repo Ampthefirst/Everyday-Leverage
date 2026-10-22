@@ -134,7 +134,7 @@ function ProfileSave() {
   if (!currentId)
     return (
       <p className="text-sm text-muted">
-        Tip: create a profile in Display settings to keep these sizes for next time.
+        Tip: create a profile in Settings to keep these sizes for next time.
       </p>
     );
   const saved = current.designs[family.id];

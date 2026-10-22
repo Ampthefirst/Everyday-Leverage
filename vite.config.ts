@@ -3,6 +3,7 @@ import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import tailwindcss from '@tailwindcss/vite';
 import type { Plugin } from 'vite';
+import { readdirSync } from 'node:fs';
 
 /** Writes precache.json (every built asset) so the service worker can cache the whole app on install. */
 function precacheManifest(): Plugin {
@@ -13,6 +14,8 @@ function precacheManifest(): Plugin {
       const files = Object.keys(bundle)
         .filter((f) => !f.endsWith('.map') && f !== 'index.html')
         .map((f) => `/${f}`);
+      // Studio renders of the nine designs (public/renders) are part of the offline app too.
+      for (const f of readdirSync('public/renders')) if (f.endsWith('.webp')) files.push(`/renders/${f}`);
       this.emitFile({ type: 'asset', fileName: 'precache.json', source: JSON.stringify(files) });
     },
   };

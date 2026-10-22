@@ -33,7 +33,14 @@ export function handSpec(breadth = 85): HandSpec {
   const L = 96 * s; // wrist to middle knuckle
   const pitch = 19.5 * s;
   const T = 26 * s;
-  const mk = (name: FingerName, i: number, drop: number, lengths: [number, number, number], width: number, splay: number): FingerSpec => ({
+  const mk = (
+    name: FingerName,
+    i: number,
+    drop: number,
+    lengths: [number, number, number],
+    width: number,
+    splay: number,
+  ): FingerSpec => ({
     name,
     base: [(-1.5 + i) * pitch, L - drop * s, 0],
     lengths: lengths.map((l) => l * s) as [number, number, number],
@@ -84,7 +91,11 @@ const deg = (r: number) => (r * 180) / Math.PI;
  */
 export function wrapAngles(lengths: [number, number, number], R: number): [number, number, number] {
   const arc = (a: number, b: number) => deg(2 * Math.asin(clamp((a + b) / 4 / R, 0, 1)));
-  return [clamp(arc(0, lengths[0]) + 18, 10, 95), clamp(arc(lengths[0], lengths[1]), 0, 110), clamp(arc(lengths[1], lengths[2]), 0, 85)];
+  return [
+    clamp(arc(0, lengths[0]) + 18, 10, 95),
+    clamp(arc(lengths[0], lengths[1]), 0, 110),
+    clamp(arc(lengths[1], lengths[2]), 0, 85),
+  ];
 }
 
 /** Grip cylinder for a handle of diameter d: axis along canonical X, under the proximal phalanges. */
@@ -105,7 +116,10 @@ type V3 = [number, number, number];
 const rd = (d: number) => (d * Math.PI) / 180;
 
 /** Tip centre of a planar 3-segment chain from its base along +Y, curling toward −Z; plus the pad normal. */
-function chainTip(lengths: [number, number, number], flex: [number, number, number]): { tip: V3; normal: V3 } {
+function chainTip(
+  lengths: [number, number, number],
+  flex: [number, number, number],
+): { tip: V3; normal: V3 } {
   let th = 0;
   let y = 0;
   let z = 0;
@@ -144,7 +158,11 @@ function solvePinch(spec: HandSpec, index: FingerAngles, gap: number): { thumb: 
   const fi = chainTip(f.lengths, index.flex);
   const wi = f.width * 0.72 * 0.43;
   const wt = spec.thumb.width * 0.72 * 0.43;
-  const iPad: V3 = [f.base[0] + fi.tip[0], f.base[1] + fi.tip[1] + fi.normal[1] * wi, f.base[2] + fi.tip[2] + fi.normal[2] * wi];
+  const iPad: V3 = [
+    f.base[0] + fi.tip[0],
+    f.base[1] + fi.tip[1] + fi.normal[1] * wi,
+    f.base[2] + fi.tip[2] + fi.normal[2] * wi,
+  ];
   const target: V3 = [iPad[0], iPad[1] + fi.normal[1] * (gap + wt), iPad[2] + fi.normal[2] * (gap + wt)];
   let best = { cost: Infinity, thumb: undefined as unknown as ThumbAngles };
   for (let oppose = 0; oppose <= 90; oppose += 3)
@@ -194,7 +212,10 @@ export function poseAngles(pose: HandPose, spec: HandSpec, gripD = 32): PoseAngl
     const fingers = spec.fingers.map((f) => {
       const a = wrapAngles(f.lengths, wrapR);
       // A hook grip keeps the knuckles straighter and curls only the finger ends.
-      return { flex: (pose === 'hook' ? [a[0] * 0.25, a[1] * 1.1, a[2]] : a) as [number, number, number], splay: -f.splay * 0.8 };
+      return {
+        flex: (pose === 'hook' ? [a[0] * 0.25, a[1] * 1.1, a[2]] : a) as [number, number, number],
+        splay: -f.splay * 0.8,
+      };
     });
     // The thumb crosses in front of the handle toward the little-finger side and rests on the index finger.
     const t = clamp(48 - gripD * 0.4, 18, 40);
@@ -208,13 +229,17 @@ export function poseAngles(pose: HandPose, spec: HandSpec, gripD = 32): PoseAngl
   }
   if (pose === 'point') {
     return {
-      fingers: spec.fingers.map((f) => (f.name === 'index' ? { flex: [4, 4, 2], splay: 0 } : { flex: [85, 100, 70], splay: 0 })),
+      fingers: spec.fingers.map((f) =>
+        f.name === 'index' ? { flex: [4, 4, 2], splay: 0 } : { flex: [85, 100, 70], splay: 0 },
+      ),
       thumb: { oppose: 45, abduct: 20, roll: -40, flex: [20, 35, 30] },
     };
   }
   // pinch: the thumb pad meets the index pad across the held object; the other fingers curl loosely.
   return {
-    fingers: spec.fingers.map((f) => (f.name === 'index' ? PINCH_INDEX : { flex: [55 + (f.name === 'little' ? 15 : 0), 70, 45], splay: 0 })),
+    fingers: spec.fingers.map((f) =>
+      f.name === 'index' ? PINCH_INDEX : { flex: [55 + (f.name === 'little' ? 15 : 0), 70, 45], splay: 0 },
+    ),
     thumb: pinchSolution(spec).thumb,
   };
 }

@@ -1,8 +1,6 @@
 @import 'tailwindcss';
 @import './tokens.css';
 
-@custom-variant dark (&:where(.dark, .dark *));
-
 @theme {
   --color-bg: var(--color-bg);
   --color-surface: var(--color-surface);
@@ -22,7 +20,23 @@
   --color-warn-bg: var(--color-warn-bg);
   --color-bad-bg: var(--color-bad-bg);
   --color-info-bg: var(--color-info-bg);
-  --font-sans: 'Atkinson Hyperlegible', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --color-rule: var(--color-rule);
+  --color-live: var(--color-live);
+  --color-on-live: var(--color-on-live);
+  --color-focus: var(--color-focus);
+  --color-viewer-bg: var(--color-viewer-bg);
+  --color-shade: var(--color-shade);
+  /* Running text, numbers and fields: a monospaced face from a low-vision family. */
+  --font-sans: 'Atkinson Hyperlegible Mono', ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
+  /* Display, menus and labels: a DEC VT320 terminal face, used large only. */
+  --font-display: 'VT323', 'Atkinson Hyperlegible Mono', ui-monospace, monospace;
+  /* The world has square corners: every rounded utility resolves to a hairline radius. */
+  --radius-sm: 2px;
+  --radius-md: 2px;
+  --radius-lg: 2px;
+  --radius-xl: 2px;
+  --radius-2xl: 2px;
+  --radius-3xl: 2px;
 }
 
 html,
@@ -35,14 +49,42 @@ body {
   background: var(--color-bg);
   color: var(--color-text);
   font-family: var(--font-sans);
-  line-height: 1.5;
+  line-height: 1.55;
+  font-variant-numeric: tabular-nums;
   -webkit-font-smoothing: antialiased;
+}
+
+/* VT323 has a small x-height: font-size-adjust brings it up to the body face so sizes stay honest. */
+h1,
+h2,
+.font-display {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size-adjust: 0.5;
+  font-synthesis: none;
+  letter-spacing: 0.01em;
+  line-height: 1.1;
+}
+
+::selection {
+  background: var(--color-accent);
+  color: var(--color-bg);
+}
+
+html {
+  caret-color: var(--color-primary);
+  scrollbar-color: var(--color-border) var(--color-bg);
+  accent-color: var(--color-primary);
+}
+
+a {
+  text-underline-offset: 0.2em;
 }
 
 :focus-visible {
   outline: 3px solid var(--color-focus);
   outline-offset: 2px;
-  border-radius: 6px;
+  border-radius: 0;
 }
 
 /* At extra-large text the viewer is small; the strength tab carries the meter instead. */
@@ -74,9 +116,19 @@ body {
   *::before,
   *::after {
     animation-duration: 0.01ms !important;
+    animation-delay: 0ms !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
+}
+
+/* The in-app "Reduce motion" setting does the same as the device setting. */
+:root[data-motion='reduce'] *,
+:root[data-motion='reduce'] *::before,
+:root[data-motion='reduce'] *::after {
+  animation-duration: 0.01ms !important;
+  animation-delay: 0ms !important;
+  transition-duration: 0.01ms !important;
 }
 
 input[type='range'] {
@@ -86,4 +138,93 @@ input[type='range'] {
 
 .prose-plain p + p {
   margin-top: 0.75rem;
+}
+
+/* ── Bulletin-board motion and windows ─────────────────────────────── */
+
+/* Title screen: rows arrive one at a time, like a screen coming in over a modem. */
+.pour {
+  animation: pour 40ms steps(1, end) backwards;
+}
+@keyframes pour {
+  from {
+    opacity: 0;
+  }
+}
+
+/* Live / new marker: white on blue, blinks a few times then holds (WCAG 2.2.2: stops within 5 s). */
+.live-badge {
+  background: var(--color-live);
+  color: var(--color-on-live);
+}
+.live-badge.blink {
+  animation: blink 1s steps(1, end) 4;
+}
+@keyframes blink {
+  50% {
+    opacity: 0;
+  }
+}
+
+/* Side menu slides in from the right edge. */
+.side-menu[open] {
+  animation: menu-in 180ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+@keyframes menu-in {
+  from {
+    transform: translateX(100%);
+  }
+}
+
+/* Board tiles: each part faces the cursor; the hovered window comes forward. */
+.tile {
+  --rx: 0deg;
+  --ry: 0deg;
+  position: relative;
+  transition: transform 220ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+.tile-img {
+  transform: rotateX(var(--rx)) rotateY(var(--ry));
+  transition: transform 260ms cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform;
+}
+.tile-open {
+  visibility: hidden;
+}
+.tile-name {
+  opacity: 0;
+  transition: opacity 120ms steps(1, end);
+}
+.tile:hover,
+.tile:focus-visible {
+  z-index: 10;
+  transform: scale(1.1);
+}
+.tile:hover .tile-frame,
+.tile:focus-visible .tile-frame {
+  border-color: var(--color-primary);
+  box-shadow: 0 18px 40px -12px rgb(0 0 0 / 0.85);
+}
+.tile:hover .tile-bar,
+.tile:focus-visible .tile-bar {
+  background: var(--color-primary);
+  color: var(--color-on-primary);
+}
+.tile:hover .tile-img,
+.tile:focus-visible .tile-img {
+  transform: rotateX(calc(var(--rx) * 1.8)) rotateY(calc(var(--ry) * 1.8)) scale(1.04);
+}
+.tile:hover .tile-open,
+.tile:focus-visible .tile-open {
+  visibility: visible;
+}
+.tile:hover .tile-name,
+.tile:focus-visible .tile-name {
+  opacity: 1;
+}
+/* No hover on touch screens: names always show. */
+@media (hover: none) {
+  .tile-name {
+    opacity: 1;
+  }
 }
