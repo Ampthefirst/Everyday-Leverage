@@ -7,3 +7,6 @@ dist
 playwright-report
 test-results
 *.tsbuildinfo
+
+# Impeccable review captures (regenerated per review)
+.impeccable/review/
