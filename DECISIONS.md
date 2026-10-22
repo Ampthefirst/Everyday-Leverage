@@ -28,3 +28,4 @@ One line each: decision — reason.
 - PRODUCT.md (Impeccable init): v2 redesign is tuned first for judges/evaluators at a presentation or competition; only the product name is a fixed brand commitment; presentation mode recorded as a planned capability.
 - v2 visual direction: 'Bulletin board at 2 a.m.' (ANSI BBS world), chosen by the owner after two re-rolls steered to techy/bold dark; brief in docs/v2-ui-brief.md.
 - v2 is dark-only (owner); fonts VT323 (display/menus) + Atkinson Hyperlegible Mono (text) — terminal character with a low-vision-designed reading face, both OFL and self-hostable via @fontsource.
+- Part renders (public/renders/*.webp) come from a dev-only render page (render.html) driven by scripts/render-parts.mjs: the app's own geometry, three.js studio lighting, group filament colours (A cyan, B magenta, C amber), neutral tone mapping; provenance embedded in each file. Regenerate with npm run render:parts.
