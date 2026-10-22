@@ -3,7 +3,7 @@
  * Usage: npm run render:parts            (all nine)
  *        npm run render:parts -- B1 C3   (just these)
  *        npm run render:parts -- --turn  (also the turn strips: public/renders/turn/<ID>-<0..6>.webp,
- *                                         512 px, camera yaw −30°…+30°, for the board's cursor turning)
+ *                                         1024 px, camera yaw −30°…+30°, for the board's cursor turning)
  */
 import { createServer } from 'vite';
 import { chromium } from '@playwright/test';
@@ -53,7 +53,7 @@ try {
     await shoot(id, `${OUT}/${id}.webp`);
     if (TURN) {
       mkdirSync(`${OUT}/turn`, { recursive: true });
-      for (const [k, yaw] of TURN_YAWS.entries()) await shoot(id, `${OUT}/turn/${id}-${k}.webp`, { yaw, size: 512 });
+      for (const [k, yaw] of TURN_YAWS.entries()) await shoot(id, `${OUT}/turn/${id}-${k}.webp`, { yaw });
     }
   }
 } finally {

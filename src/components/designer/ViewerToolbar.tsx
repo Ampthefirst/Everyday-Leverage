@@ -124,7 +124,7 @@ export function ViewerToolbar({
       >
         {reduced ? 'How to use: next step' : playing ? 'Stop' : 'How to use'}
       </ToggleButton>
-      <span className="ml-auto flex shrink-0 items-center gap-1" role="group" aria-label="Move the view">
+      <span className="ml-auto flex flex-wrap items-center gap-1" role="group" aria-label="Move the view">
         {CAM.map((b) => (
           <button
             key={b.c}
