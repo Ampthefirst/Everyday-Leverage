@@ -1,4 +1,5 @@
 import { jsPDF } from 'jspdf';
+import { disclaimer } from '../../content/disclaimers';
 import type { Vec2 } from '../../types/geom';
 import { PT_PER_MM } from '../../types/units';
 import { flatten, STYLES } from '../svg/render';
@@ -188,7 +189,7 @@ export class Sheet {
     drawShapes(this.doc, flat, tx, ptPerMm);
   }
 
-  footer(note = 'Everyday Leverage — convenience aid, not a medical device. Not food-safe.') {
+  footer(note = disclaimer('pdfFooter') ?? 'Everyday Leverage') {
     const n = this.doc.getNumberOfPages();
     for (let i = 1; i <= n; i++) {
       this.doc.setPage(i);

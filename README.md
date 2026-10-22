@@ -38,6 +38,20 @@ Import the repo in Vercel (Vite preset is detected; `vercel.json` adds the SPA r
 `GEMINI_API_KEY` and `GEMINI_MODEL` as environment variables — server-side only, never `VITE_`.
 Everything except the two Gemini features works without them.
 
+## Presentation build (optional, temporary)
+
+A separate deployment can hide every disclaimer, including the "Uncalibrated estimate" strength badge,
+for a live presentation. The normal site is never affected.
+
+1. In Vercel, create a second project from this same repository (or use a protected preview), and
+   turn on password protection if it should stay private.
+2. Add the environment variable `VITE_PRESENTATION_MODE` = `1` to that project only.
+3. Redeploy it. The flag is read at build time, so changing it always needs a redeploy.
+4. When the presentation is over, delete that project.
+
+All disclaimers live in `src/content/disclaimers.ts`; `tests/unit/presentation.test.ts` checks the site
+chrome, the badge, the PDFs and the zip with the flag on and off.
+
 ## Tech
 
 React 19 · Vite · TypeScript · Tailwind CSS · Zustand · three.js (@react-three/fiber, drei) ·

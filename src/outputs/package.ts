@@ -1,4 +1,5 @@
 import { zipSync, strToU8 } from 'fflate';
+import { disclaimers } from '../content/disclaimers';
 import type { OutputContext } from './context';
 import { baseName } from './names';
 import { orientMesh, toBinarySTL } from './stl';
@@ -202,10 +203,10 @@ export function packageZip(ctx: OutputContext, files: OutputFile[]): Uint8Array<
     ...files.map((f) => `  ${f.name} — ${f.label}`),
     '',
     'Print the fit test first if you can. Print templates at 100% ("Actual size") and check the 25 mm square.',
-    ctx.analysis.calibration
-      ? `Strength: calibrated to ${ctx.analysis.calibration.printerName}.`
-      : 'Strength: uncalibrated estimate from published material data.',
-    'Convenience aid — not a medical device. Not food-safe.',
+    ...(ctx.analysis.calibration
+      ? [`Strength: calibrated to ${ctx.analysis.calibration.printerName}.`]
+      : disclaimers('readmeUncalibrated')),
+    ...disclaimers('readme'),
   ].join('\n');
   entries['README.txt'] = strToU8(readme);
   return zipSync(entries, { level: 6 }) as Uint8Array<ArrayBuffer>;

@@ -1,7 +1,7 @@
 import { Link, NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useEffect, useRef, useState } from 'react';
 import { useSettings } from '../state/settings';
-import { DISCLAIMERS, SHOW_DISCLAIMERS } from '../content/disclaimers';
+import { DISCLAIMERS, showDisclaimers } from '../content/disclaimers';
 import { isTyping } from './hotkeys';
 
 /** The top bar keeps only the three ways in; everything else lives in the side menu. */
@@ -50,6 +50,8 @@ function MenuGlyph() {
 
 function SideMenu({ open, onClose }: { open: boolean; onClose: () => void }) {
   const ref = useRef<HTMLDialogElement>(null);
+  // The presentation build keeps the Limits page reachable by link but does not promote it.
+  const menu = showDisclaimers() ? MENU : MENU.filter((m) => m.to !== '/limits');
   const navigate = useNavigate();
   useEffect(() => {
     const d = ref.current;
@@ -66,10 +68,10 @@ function SideMenu({ open, onClose }: { open: boolean; onClose: () => void }) {
       onKeyDown={(e) => {
         if (e.ctrlKey || e.metaKey || e.altKey) return;
         const n = Number(e.key);
-        if (n >= 1 && n <= MENU.length) {
+        if (n >= 1 && n <= menu.length) {
           e.preventDefault();
           onClose();
-          navigate(MENU[n - 1].to);
+          navigate(menu[n - 1].to);
         }
       }}
       onClick={(e) => {
@@ -95,7 +97,7 @@ function SideMenu({ open, onClose }: { open: boolean; onClose: () => void }) {
         <p className="px-5 pt-4 text-sm text-muted">Press a number, or choose:</p>
         <nav aria-label="More" className="flex-1 overflow-y-auto px-2 py-2">
           <ol>
-            {MENU.map((m, i) => (
+            {menu.map((m, i) => (
               <li key={m.to}>
                 <NavLink
                   to={m.to}
@@ -237,7 +239,7 @@ export function Layout() {
       <main id="main" ref={mainRef} tabIndex={-1} className="flex-1 outline-none">
         <Outlet />
       </main>
-      {!isDesigner && SHOW_DISCLAIMERS && (
+      {!isDesigner && showDisclaimers() && (
         <footer className="border-t-[3px] border-double border-rule bg-surface px-4 py-6 text-sm text-muted">
           <div className="mx-auto max-w-7xl space-y-1">
             <p>{DISCLAIMERS.footer.slice(0, 2).join(' ')}</p>

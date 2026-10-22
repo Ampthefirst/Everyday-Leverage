@@ -1,4 +1,5 @@
 import type { Verdict } from '../strength/types';
+import { disclaimer } from '../content/disclaimers';
 import { displayLoad } from '../strength/loads';
 import { LEVEL_LABEL } from '../strength/evaluate';
 
@@ -51,8 +52,7 @@ export function templateExplanation(f: ComputedFacts): string {
     : '';
   const sf = ` That already includes a safety factor of ${f.safetyFactor}.`;
   const fix = f.verdict === 'Comfortable' ? '' : ` ${f.fix}`;
-  const cal = f.calibrated
-    ? ''
-    : ' These are estimates from published material data, not tests on your printer.';
+  const caveat = disclaimer('estimateCaveat');
+  const cal = f.calibrated || !caveat ? '' : ` ${caveat}`;
   return head + where + layers + sf + fix + cal;
 }

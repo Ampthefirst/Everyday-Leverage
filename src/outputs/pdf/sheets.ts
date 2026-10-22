@@ -1,4 +1,5 @@
 import type { OutputContext } from '../context';
+import { disclaimer, disclaimers, showDisclaimers } from '../../content/disclaimers';
 import { PT_PER_MM, fmt } from '../../types/units';
 import { flatten } from '../svg/render';
 import { shapeBounds } from '../svg/ir';
@@ -235,18 +236,18 @@ export function printSheetPdf(ctx: OutputContext): Uint8Array<ArrayBuffer> {
     `${LEVEL_LABEL[v.level]} — ${Math.round(v.utilization * 100)}% of strength budget`,
     verdictTone(v.level),
   );
-  sheet.badge(badgeText(analysis.calibration, analysis.print.material), analysis.calibration ? 'ok' : 'warn');
+  if (showDisclaimers())
+    sheet.badge(
+      badgeText(analysis.calibration, analysis.print.material),
+      analysis.calibration ? 'ok' : 'warn',
+    );
   const lc = displayLoad(v.loadCase);
   sheet.para(
     `${v.reason} Load: ${v.loadCase.label.toLowerCase()} = ${fmt(lc.value, 2)} ${lc.unit}${v.loadCase.assumed ? ' (assumed typical value)' : ''}, safety factor ${fmt(v.safetyFactor)}.`,
     10,
   );
-  if (!analysis.calibration)
-    sheet.para(
-      'These numbers are analytic estimates from published material data — not tested on your printer and not finite-element analysis.',
-      9,
-      { color: [120, 60, 0] },
-    );
+  const est = disclaimer('sheetEstimate');
+  if (!analysis.calibration && est) sheet.para(est, 9, { color: [120, 60, 0] });
   sheet.para('Printer settings', 13, { bold: true });
   sheet.table(settingsRows(ctx));
   if (analysis.estimate) {
@@ -266,9 +267,9 @@ export function printSheetPdf(ctx: OutputContext): Uint8Array<ArrayBuffer> {
   sheet.para('Care and limits', 13, { bold: true });
   sheet.bullet([
     ...heatWarnings(analysis.print.material, ctx.location).map((w) => w.text),
-    'Not food-safe: printed plastic is porous. Keep it from touching food.',
+    ...disclaimers('foodSafe'),
     'Check it for cracks or whitening now and then. Reprint if it looks damaged.',
-    'This is a convenience aid, not a medical device.',
+    ...disclaimers('notMedical'),
   ]);
   sheet.footer();
   return sheet.bytes();
@@ -320,13 +321,13 @@ export function requestSheetPdf(ctx: OutputContext): Uint8Array<ArrayBuffer> {
             : 'Check',
       ],
     ]);
-  sheet.para('About the strength numbers', 13, { bold: true });
-  sheet.para(
-    analysis.calibration
-      ? `The strength estimate was calibrated with test bars printed on "${analysis.calibration.printerName}". The calibration applies only to that printer; on another printer the result is an estimate.`
-      : 'The strength estimate uses published material data, not tests on your printer. If you can, please use the material and number of walls listed above.',
-    10,
-  );
+  const about = analysis.calibration
+    ? `The strength estimate was calibrated with test bars printed on "${analysis.calibration.printerName}". The calibration applies only to that printer; on another printer the result is an estimate.`
+    : disclaimer('requestUncalibrated');
+  if (about) {
+    sheet.para('About the strength numbers', 13, { bold: true });
+    sheet.para(about, 10);
+  }
   sheet.para('Contact', 13, { bold: true });
   sheet.blank('Name');
   sheet.blank('How to reach me');

@@ -1,7 +1,8 @@
 import { Badge } from './Badge';
+import { showDisclaimers } from '../content/disclaimers';
 import type { CalibrationProfile } from '../strength/calibration';
 
-/** The mandatory strength badge (PLAN §0): never hidden in v1. */
+/** The mandatory strength badge (CLAUDE.md badge rule). Only the presentation build hides it. */
 export function StrengthBadge({
   calibration,
   fea = false,
@@ -9,6 +10,7 @@ export function StrengthBadge({
   calibration: CalibrationProfile | null;
   fea?: boolean;
 }) {
+  if (!showDisclaimers()) return null;
   if (calibration) {
     return (
       <Badge tone="ok" title="Strength constants come from your test bars. They apply only to that printer.">

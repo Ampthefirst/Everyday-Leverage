@@ -1,6 +1,7 @@
 import { lazy, Suspense, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { IsIsNotTable } from '../components/IsIsNot';
+import { showDisclaimers } from '../content/disclaimers';
 import { BlockTitle } from '../components/home/BlockTitle';
 import { Board } from '../components/home/Board';
 import { getFamily } from '../families';
@@ -165,22 +166,24 @@ export function HomePage() {
         </div>
       </section>
 
-      <section aria-labelledby="isnot" className="mx-auto max-w-7xl px-4 py-14">
-        <h2 id="isnot" className="text-5xl">
-          What it is, and isn’t
-        </h2>
-        <div className="mt-6 overflow-x-auto border border-border bg-surface">
-          <IsIsNotTable />
-        </div>
-        <p className="mt-4 flex flex-wrap gap-x-6 gap-y-2">
-          <Link to="/limits" className="font-semibold text-primary underline">
-            Read the limits and safety notes
-          </Link>
-          <Link to="/print-help" className="font-semibold text-primary underline">
-            No printer? Here’s how to get it printed
-          </Link>
-        </p>
-      </section>
+      {showDisclaimers() && (
+        <section aria-labelledby="isnot" className="mx-auto max-w-7xl px-4 py-14">
+          <h2 id="isnot" className="text-5xl">
+            What it is, and isn’t
+          </h2>
+          <div className="mt-6 overflow-x-auto border border-border bg-surface">
+            <IsIsNotTable />
+          </div>
+          <p className="mt-4 flex flex-wrap gap-x-6 gap-y-2">
+            <Link to="/limits" className="font-semibold text-primary underline">
+              Read the limits and safety notes
+            </Link>
+            <Link to="/print-help" className="font-semibold text-primary underline">
+              No printer? Here’s how to get it printed
+            </Link>
+          </p>
+        </section>
+      )}
     </>
   );
 }

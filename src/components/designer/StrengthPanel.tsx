@@ -14,6 +14,7 @@ import type { MaterialId } from '../../strength/materials';
 import { ExplainBox } from '../../llm/ExplainBox';
 import { factsFrom } from '../../llm/facts';
 import { MATERIALS } from '../../strength/materials';
+import { disclaimer } from '../../content/disclaimers';
 
 export const LOCATIONS: { value: UseLocation; label: string }[] = [
   { value: 'kitchen', label: 'Kitchen' },
@@ -131,7 +132,7 @@ export function StrengthPanel() {
             {w.text}
           </Note>
         ))}
-        <Note tone="info">Not food-safe: printed plastic is porous. Keep it from touching food.</Note>
+        {disclaimer('foodSafe') && <Note tone="info">{disclaimer('foodSafe')}</Note>}
       </section>
 
       <section>
@@ -182,8 +183,8 @@ export function StrengthPanel() {
             ))}
             <p className="text-muted">
               Model: the part is treated as a hollow shell (walls × line width) with the infill adding 30% of
-              its density in stiffness. Stress concentrations (Kt) and layer direction are included. These are
-              analytic estimates — not finite-element analysis and not test-verified.
+              its density in stiffness. Stress concentrations (Kt) and layer direction are included.{' '}
+              {disclaimer('modelNote')}
             </p>
           </div>
         )}
