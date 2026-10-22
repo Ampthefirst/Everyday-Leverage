@@ -9,7 +9,9 @@ import { useDesign } from '../state/design';
 import { useCalibration } from '../state/calibration';
 import { prefersReducedMotion, useSettings } from '../state/settings';
 import { usePageKeys } from '../app/hotkeys';
-import { QuickPanel } from '../components/designer/QuickPanel';
+import { QuickPanel, type QuickStepKind } from '../components/designer/QuickPanel';
+import { StepStrip } from '../components/StepStrip';
+import { useProjects, type StepId } from '../state/projects';
 import { useProfiles } from '../state/profiles';
 import { analyse } from '../app/analysis';
 import { geometry, StaleError } from '../geometry/client';
@@ -72,7 +74,20 @@ function Designer({ familyId }: { familyId: FamilyId }) {
   const calibrationFor = useCalibration((s) => s.activeFor);
   const handBreadth = useProfiles((s) => s.current().handBreadth);
 
-  const [tab, setTab] = useState<TabId>('fit');
+  const location = useLocation();
+  const nav = (location.state ?? {}) as { fromPreset?: boolean; project?: string };
+  const projects = useProjects((s) => s.projects);
+  const activeId = useProjects((s) => s.activeId);
+  const saveProject = useProjects((s) => s.save);
+  const updateProject = useProjects((s) => s.update);
+  const setActive = useProjects((s) => s.setActive);
+  // Opening a saved project restores where it stopped; a fresh start from a preset is a new design.
+  const opened = nav.project
+    ? projects.find((x) => x.id === nav.project && x.familyId === familyId)
+    : undefined;
+  const [tab, setTab] = useState<TabId>(() =>
+    opened?.step === 'check' ? 'strength' : opened?.step === 'print' ? 'files' : 'fit',
+  );
   const mode = useSettings((s) => s.designerMode);
   const hotkeys = useSettings((s) => s.hotkeys);
   const setSettings = useSettings((s) => s.set);
@@ -81,11 +96,61 @@ function Designer({ familyId }: { familyId: FamilyId }) {
     if (t) setTab(t);
     setMode('full');
   };
-  const location = useLocation();
-  const startAtMeasure = !!(location.state as { fromPreset?: boolean } | null)?.fromPreset;
+  const startAt: 'task' | 'measure' | 'result' = opened
+    ? opened.step === 'brief'
+      ? 'task'
+      : opened.step === 'measure'
+        ? 'measure'
+        : 'result'
+    : nav.fromPreset
+      ? 'measure'
+      : 'task';
+  useEffect(() => {
+    if (opened) setActive(opened.id);
+    else if (nav.fromPreset) setActive(null);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+  const active = projects.find((x) => x.id === activeId && x.familyId === familyId);
+
+  // Where this design is on Brief → Measure → Check → Print.
+  const [quickKind, setQuickKind] = useState<QuickStepKind>('task');
+  const [printed, setPrinted] = useState(opened?.step === 'print');
+  useEffect(() => {
+    const on = () => setPrinted(true);
+    window.addEventListener('el:download', on);
+    return () => window.removeEventListener('el:download', on);
+  }, []);
+  const step: StepId =
+    mode === 'quick'
+      ? quickKind === 'task'
+        ? 'brief'
+        : quickKind === 'field'
+          ? 'measure'
+          : printed
+            ? 'print'
+            : 'check'
+      : tab === 'strength'
+        ? 'check'
+        : tab === 'print' || tab === 'files'
+          ? 'print'
+          : 'measure';
   usePageKeys((k) => {
     if (mode === 'full' && (k === 'q' || k === 'Q')) return (setMode('quick'), true);
   });
+  const paramsKey = JSON.stringify(params);
+  // The open project keeps its sizes and step up to date automatically.
+  const presetIdNow = useDesign((s) => s.presetId[familyId]);
+  useEffect(() => {
+    if (!active) return;
+    if (
+      active.step === step &&
+      JSON.stringify(active.params) === paramsKey &&
+      active.presetId === presetIdNow
+    )
+      return;
+    updateProject(active.id, { params, step, presetId: presetIdNow });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [active?.id, paramsKey, step, presetIdNow]);
   const [build, setBuild] = useState<BuildResult | null>(null);
   const [building, setBuilding] = useState(false);
   const [buildError, setBuildError] = useState<string | null>(null);
@@ -96,7 +161,6 @@ function Designer({ familyId }: { familyId: FamilyId }) {
   const [camCmd, setCamCmd] = useState<{ c: CameraCommand; n: number } | null>(null);
   const reduced = prefersReducedMotion();
 
-  const paramsKey = JSON.stringify(params);
   const hasSchemaErrors = !family.schema.safeParse(params).success;
 
   // Geometry size first without split; split decided from the bed fit of the whole part.
@@ -229,6 +293,20 @@ function Designer({ familyId }: { familyId: FamilyId }) {
             <Link to="/design" className="text-sm text-primary underline">
               Change design
             </Link>
+            {active ? (
+              <Link to="/#shelf" className="text-sm text-muted underline">
+                On your shelf: {active.name}
+              </Link>
+            ) : (
+              <Button
+                variant="secondary"
+
+                onClick={() => saveProject({ familyId, params, presetId: presetIdNow, step })}
+              >
+                Save to shelf
+              </Button>
+            )}
+            <StepStrip current={step} compact className="hidden lg:flex" />
             <span className="ml-auto text-sm text-muted" role="status" aria-live="polite">
               {building
                 ? 'Updating…'
@@ -306,7 +384,8 @@ function Designer({ familyId }: { familyId: FamilyId }) {
         >
           {mode === 'quick' ? (
             <QuickPanel
-              startAtMeasure={startAtMeasure}
+              startAt={startAt}
+              onStep={setQuickKind}
               banner={<ErrorBanner onShow={() => showFull('print')} />}
               onAllSettings={() => showFull()}
               onShowMath={() => showFull('strength')}

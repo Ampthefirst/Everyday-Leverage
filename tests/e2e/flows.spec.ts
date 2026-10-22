@@ -142,3 +142,28 @@ test('quick mode: one decision per screen, then the files', async ({ page }) => 
   ]);
   expect(dl.suggestedFilename()).toMatch(/\.zip$/);
 });
+
+test('save to the shelf, then continue where you stopped from Home', async ({ page }) => {
+  await page.goto('/home-reset-not-a-route');
+  await page.evaluate(() => localStorage.removeItem('el-projects'));
+  await page.goto('/');
+  await expect(page.getByText('Nothing on the shelf yet.')).toBeVisible();
+  await page.goto('/design/B1');
+  await expect(page.getByText(/Built in \d+ ms/)).toBeVisible({ timeout: 60_000 });
+  await page.getByRole('button', { name: /Bottle caps/ }).click();
+  await page.getByRole('button', { name: 'Save to shelf' }).click();
+  await expect(page.getByRole('link', { name: /On your shelf/ })).toBeVisible();
+  await page.goto('/');
+  await expect(page.getByRole('heading', { name: /Lid and jar opener · Bottle caps/ })).toBeVisible();
+  await expect(page.getByText(/You stopped at/)).toContainText('Measure');
+  // Rename it, then continue from the hero.
+  await page.getByRole('button', { name: /Rename/ }).click();
+  await page.getByLabel('Name').fill('Kitchen caps');
+  await page.getByRole('button', { name: 'Save', exact: true }).click();
+  await expect(page.getByRole('heading', { name: 'Kitchen caps' })).toBeVisible();
+  await page.reload();
+  await page.getByRole('button', { name: /Continue where you stopped/ }).click();
+  await expect(page).toHaveURL(/\/design\/B1$/);
+  await expect(page.getByText(/Step 2/)).toBeVisible();
+  await expect(page.getByRole('link', { name: /On your shelf: Kitchen caps/ })).toBeVisible();
+});

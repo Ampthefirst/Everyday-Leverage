@@ -4,6 +4,7 @@ import { Page } from '../components/Card';
 import { Button, LinkButton } from '../components/Button';
 import { useSettings } from '../state/settings';
 import { usePageKeys } from '../app/hotkeys';
+import { StepStrip } from '../components/StepStrip';
 import { OutOfScope } from '../components/OutOfScope';
 import {
   optionsFor,
@@ -51,6 +52,7 @@ export default function FinderPage() {
   if (step === -1) {
     return (
       <Page narrow>
+        <StepStrip current="brief" compact className="mb-6" />
         <h1 ref={headingRef} tabIndex={-1} className="text-5xl outline-none sm:text-6xl">
           Help me find a design
         </h1>
@@ -87,6 +89,7 @@ export default function FinderPage() {
     const opts = optionsFor(q, answers);
     return (
       <Page narrow>
+        <StepStrip current="brief" compact className="mb-6" />
         <div className="flex items-center gap-3">
           <p className="font-display text-2xl" aria-live="polite">
             Question {step + 1} <span className="text-muted">of {QUESTIONS.length}</span>

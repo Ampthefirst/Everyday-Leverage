@@ -95,4 +95,6 @@ export function downloadBlob(data: BlobPart | Uint8Array, filename: string, type
   a.click();
   a.remove();
   setTimeout(() => URL.revokeObjectURL(url), 2000);
+  // Lets the step strip mark "Print" as reached.
+  window.dispatchEvent(new CustomEvent('el:download', { detail: filename }));
 }

@@ -6,6 +6,9 @@ import { BlockTitle } from '../components/home/BlockTitle';
 import { Board } from '../components/home/Board';
 import { getFamily } from '../families';
 import { useSettings } from '../state/settings';
+import { sortedProjects, useProjects } from '../state/projects';
+import { Shelf, stepLabel, useOpenProject } from '../components/home/Shelf';
+import { usePageKeys } from '../app/hotkeys';
 import type { LiveState } from '../components/home/LivePart';
 
 const LivePart = lazy(() => import('../components/home/LivePart'));
@@ -96,6 +99,35 @@ function Choice({
   );
 }
 
+/** Shown when the shelf has something on it: reopens the most recent design where it stopped. */
+function ContinueChoice() {
+  const latest = sortedProjects(useProjects((s) => s.projects))[0];
+  const open = useOpenProject();
+  const hotkeys = useSettings((s) => s.hotkeys);
+  usePageKeys((k) => {
+    if (latest && (k === 'c' || k === 'C')) return (open(latest), true);
+  });
+  if (!latest) return null;
+  return (
+    <button
+      type="button"
+      onClick={() => open(latest)}
+      aria-keyshortcuts={hotkeys ? 'c' : undefined}
+      className="group grid min-h-20 grid-cols-[auto_1fr] items-center gap-x-4 border-2 border-accent px-4 py-3 text-left text-text hover:bg-surface-2"
+    >
+      <span aria-hidden="true" className="font-display row-span-2 text-5xl leading-none">
+        <span className="text-accent">[</span>
+        <span className="text-primary">C</span>
+        <span className="text-accent">]</span>
+      </span>
+      <span className="font-display text-[2rem] leading-none">Continue where you stopped</span>
+      <span className="text-sm text-muted">
+        {latest.name}: stopped at {stepLabel(latest)}.
+      </span>
+    </button>
+  );
+}
+
 export function HomePage() {
   return (
     <>
@@ -122,6 +154,7 @@ export function HomePage() {
                 primary
               />
               <Choice to="/design" k="P" title="Pick a design" d="Browse all nine and their presets." />
+              <ContinueChoice />
             </div>
             <p className="pour mt-5 text-sm text-muted" style={{ animationDelay: '1150ms' }}>
               No account. Works offline. Nothing you enter leaves this device.
@@ -142,6 +175,8 @@ export function HomePage() {
           <Board />
         </div>
       </section>
+
+      <Shelf />
 
       <section aria-labelledby="how" className="border-y-[3px] border-double border-rule bg-surface">
         <div className="mx-auto max-w-7xl px-4 py-12">

@@ -5,6 +5,7 @@ import type { Params } from '../families/types';
 import { useDesign } from '../state/design';
 import { usePageKeys } from '../app/hotkeys';
 import { useSettings } from '../state/settings';
+import { StepStrip } from '../components/StepStrip';
 
 function Bracket({ children, inverse = false }: { children: string; inverse?: boolean }) {
   // Key hints are for keyboards: hidden on small (touch-first) screens.
@@ -94,6 +95,7 @@ export default function DesignScreen() {
         </span>
       </nav>
 
+      <StepStrip current="brief" compact className="mt-4" />
       <div className="mt-6 grid gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)] lg:gap-12">
         <figure className="self-start border border-border bg-surface">
           <div className="font-display flex items-center justify-between border-b border-border px-3 text-2xl">

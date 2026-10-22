@@ -28,16 +28,21 @@ function Hint({ k, inverse = false }: { k: string; inverse?: boolean }) {
  * Quick mode: one decision per screen (task → each fit measurement → result and files). It edits the same
  * stored parameters as the full designer, so switching modes never loses a value.
  */
+export type QuickStepKind = Step['kind'];
+
 export function QuickPanel({
-  startAtMeasure,
+  startAt,
   banner,
   onAllSettings,
   onShowMath,
+  onStep,
 }: {
-  startAtMeasure: boolean;
+  /** Where to open: the task list, the first measurement, or the result. */
+  startAt: 'task' | 'measure' | 'result';
   banner: ReactNode;
   onAllSettings: () => void;
   onShowMath: () => void;
+  onStep?: (kind: QuickStepKind) => void;
 }) {
   const { family, params, analysis, setParam, openMeasure } = useDesigner();
   const presetId = useDesign((s) => s.presetId[family.id]);
@@ -51,9 +56,10 @@ export function QuickPanel({
       .map((f) => ({ kind: 'field' as const, key: f.key })),
     { kind: 'result' },
   ];
-  const [index, setIndex] = useState(startAtMeasure ? 1 : 0);
+  const [index, setIndex] = useState(startAt === 'task' ? 0 : startAt === 'measure' ? 1 : steps.length - 1);
   const i = Math.min(index, steps.length - 1);
   const step = steps[i];
+  useEffect(() => onStep?.(step.kind), [step.kind, onStep]);
   const go = (n: number) => setIndex(Math.max(0, Math.min(steps.length - 1, n)));
 
   // Each new screen moves focus to its heading, so screen readers announce the question.
