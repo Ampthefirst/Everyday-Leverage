@@ -27,3 +27,4 @@ One line each: decision — reason.
 - Impeccable design skill (v0.1.16, Apache-2.0) vendored into `.claude/skills/impeccable` from github.com/pbakaus/impeccable so every session has it; its engine binary downloads (checksum-verified) to ~/.impeccable on first use. Auto-check hooks not enabled yet.
 - PRODUCT.md (Impeccable init): v2 redesign is tuned first for judges/evaluators at a presentation or competition; only the product name is a fixed brand commitment; presentation mode recorded as a planned capability.
 - v2 visual direction: 'Bulletin board at 2 a.m.' (ANSI BBS world), chosen by the owner after two re-rolls steered to techy/bold dark; brief in docs/v2-ui-brief.md.
+- v2 is dark-only (owner); fonts VT323 (display/menus) + Atkinson Hyperlegible Mono (text) — terminal character with a low-vision-designed reading face, both OFL and self-hostable via @fontsource.

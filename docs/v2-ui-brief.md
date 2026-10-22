@@ -169,7 +169,11 @@ Under reduced motion, every one of these becomes a still frame.
 - Existing stack (React 19, Vite, Tailwind, three.js / R3F).
 - Fonts self-hosted for offline use.
 
-### Open decisions for the owner
+### Decided (2026-10-22)
 
-- Whether a light theme exists at all, or the site is dark-only.
-- The exact pixel and monospaced faces (free licences, self-hosted).
+- **Dark-only.** No light theme. The high-contrast mode stays as the accessibility alternative.
+- **Display, menus and labels:** VT323, a DEC VT320 terminal face (OFL-1.1, `@fontsource/vt323`).
+  Used at large sizes only.
+- **Running text, numbers and form fields:** Atkinson Hyperlegible Mono (OFL-1.1,
+  `@fontsource/atkinson-hyperlegible-mono`). It is a monospaced face from the Braille Institute's
+  low-vision family, so the terminal feel holds without sacrificing readability.
