@@ -1,3 +1,4 @@
+import { openFullDesigner } from './helpers';
 import { expect, test } from '@playwright/test';
 
 test('calibration end to end with example numbers switches the badge', async ({ page }) => {
@@ -10,7 +11,7 @@ test('calibration end to end with example numbers switches the badge', async ({ 
   await expect(page.getByText(/Saved and switched on/)).toBeVisible();
 
   await page.goto('/design/B1');
-  await expect(page.getByText(/Built in \d+ ms/)).toBeVisible({ timeout: 60_000 });
+  await openFullDesigner(page);
   await expect(page.getByText('Calibrated to Test MK4').first()).toBeVisible();
   // Switching to PLA (not calibrated) brings the uncalibrated badge back.
   await page.getByRole('tab', { name: 'Strength' }).click();
@@ -20,7 +21,7 @@ test('calibration end to end with example numbers switches the badge', async ({ 
 
 test('a long C3 prints in two parts with two STL files', async ({ page }) => {
   await page.goto('/design/C3');
-  await expect(page.getByText(/Built in \d+ ms/)).toBeVisible({ timeout: 60_000 });
+  await openFullDesigner(page);
   const ext = page.getByRole('spinbutton', { name: 'Extension length' });
   await ext.fill('300');
   await ext.press('Enter');

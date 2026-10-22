@@ -43,3 +43,7 @@ One line each: decision — reason.
 - Favicon/logo redrawn as a 16×16 pixel lever on a fulcrum in the world palette.
 - v2 scope set by the owner: redesign + local saved projects + step strip; new features and accounts deferred. Presentation mode also hides the strength badge (owner decision); CLAUDE.md badge rule carries that one exception.
 - Pick flow: board → /pick/:id design screen (render, blurb, leverage line, presets as a numbered list, Enter opens the designer) → /design/:id. Home and Pick share the board; number keys 1–9 on Pick, 1–n presets, ←/→ neighbours, Esc back. Key hints hide below md (touch-first).
+- Designer quick mode is the default (settings.designerMode, remembered per device): task → each visible fit field (with its measuring illustration inline) → result (meter, verdict, badge, "Show the math", files). Same stored params as full mode. A/Q switch modes; ←/→ step. Arriving from a preset on /pick skips the task screen.
+- Designer part uses its group's filament colour (high contrast keeps the theme colour); second split piece is light grey. Camera buttons use authored 7×7 pixel glyphs instead of Unicode arrows. On phones the toolbar is one scrollable row so the quick panel stays in view.
+- Shared Button/Tabs/Badge/Card/Field restyled: square, VT323 labels, inverse-video selection; Meter is a 30-cell block bar with a large percentage readout (same role/aria as before).
+- E2E: existing designer flows switch to all settings via a helper; a new test covers quick mode through to the zip download.

@@ -2,17 +2,20 @@ import { lazy, Suspense, useCallback, useContext, useEffect, useMemo, useRef, us
 
 // PDF/zip generation (jsPDF, fflate) loads only when the Get files tab opens.
 const FilesPanel = lazy(() => import('../components/designer/FilesPanel'));
-import { Link, useParams } from 'react-router-dom';
+import { Link, useLocation, useParams } from 'react-router-dom';
 import { getFamily } from '../families';
 import type { FamilyId } from '../families/types';
 import { useDesign } from '../state/design';
 import { useCalibration } from '../state/calibration';
-import { prefersReducedMotion } from '../state/settings';
+import { prefersReducedMotion, useSettings } from '../state/settings';
+import { usePageKeys } from '../app/hotkeys';
+import { QuickPanel } from '../components/designer/QuickPanel';
 import { useProfiles } from '../state/profiles';
 import { analyse } from '../app/analysis';
 import { geometry, StaleError } from '../geometry/client';
 import type { BuildResult, SectionResult } from '../geometry/protocol';
 import { Viewer, type CameraCommand } from '../viewer/Viewer';
+import { GROUP_FILAMENT } from '../viewer/Studio';
 import { Tabs } from '../components/Tabs';
 import { DesignerCtx } from '../components/designer/context';
 import { FitPanel, StylePanel } from '../components/designer/FitPanel';
@@ -70,6 +73,19 @@ function Designer({ familyId }: { familyId: FamilyId }) {
   const handBreadth = useProfiles((s) => s.current().handBreadth);
 
   const [tab, setTab] = useState<TabId>('fit');
+  const mode = useSettings((s) => s.designerMode);
+  const hotkeys = useSettings((s) => s.hotkeys);
+  const setSettings = useSettings((s) => s.set);
+  const setMode = (m: 'quick' | 'full') => setSettings({ designerMode: m });
+  const showFull = (t?: TabId) => {
+    if (t) setTab(t);
+    setMode('full');
+  };
+  const location = useLocation();
+  const startAtMeasure = !!(location.state as { fromPreset?: boolean } | null)?.fromPreset;
+  usePageKeys((k) => {
+    if (mode === 'full' && (k === 'q' || k === 'Q')) return (setMode('quick'), true);
+  });
   const [build, setBuild] = useState<BuildResult | null>(null);
   const [building, setBuilding] = useState(false);
   const [buildError, setBuildError] = useState<string | null>(null);
@@ -201,14 +217,14 @@ function Designer({ familyId }: { familyId: FamilyId }) {
 
   return (
     <DesignerCtx.Provider value={ctx}>
-      <div className="flex flex-col lg:h-[calc(100vh-4.1rem)] lg:flex-row">
+      <div className="flex flex-col lg:h-[calc(100vh-51px)] lg:flex-row">
         <section
           aria-label="3D preview"
-          className="sticky top-0 z-20 flex min-h-0 flex-col bg-surface shadow-sm lg:static lg:flex-1 lg:shadow-none [@media(max-height:699px)]:static"
+          className="sticky top-[51px] z-20 flex min-h-0 flex-col bg-surface shadow-sm lg:static lg:flex-1 lg:shadow-none [@media(max-height:699px)]:static"
         >
           <div className="flex flex-wrap items-center gap-x-4 gap-y-1 border-b border-border bg-surface px-3 py-2">
-            <h1 className="text-xl font-bold">
-              <span className="text-muted">{family.id}</span> {family.name}
+            <h1 className="text-3xl">
+              <span className="text-accent">{family.id}</span> {family.name}
             </h1>
             <Link to="/design" className="text-sm text-primary underline">
               Change design
@@ -233,6 +249,7 @@ function Designer({ familyId }: { familyId: FamilyId }) {
           <SectionSlider />
           <div className="relative h-[38vh] min-h-56 lg:h-auto lg:flex-1">
             <Viewer
+              partColor={GROUP_FILAMENT[family.group]}
               mesh={build?.mesh ?? null}
               pieces={build?.pieces ?? []}
               field={analysis.field}
@@ -252,11 +269,11 @@ function Designer({ familyId }: { familyId: FamilyId }) {
               className={`pointer-events-none absolute inset-0 flex items-start justify-center p-3 transition-opacity ${building ? 'opacity-100' : 'opacity-0'}`}
               aria-hidden="true"
             >
-              <span className="rounded-full bg-surface/90 px-3 py-1 text-sm shadow">Updating…</span>
+              <span className="live-badge font-display px-3 py-0.5 text-xl">Updating…</span>
             </div>
             {caption && (
               <div
-                className="absolute inset-x-3 top-3 rounded-xl border border-border bg-surface/95 p-3 text-lg font-semibold shadow"
+                className="absolute inset-x-3 top-3 border border-primary bg-surface/95 p-3 text-lg font-semibold"
                 aria-live="polite"
               >
                 Step {animStep + 1} of {animation.steps.length}: {caption}
@@ -264,14 +281,14 @@ function Designer({ familyId }: { familyId: FamilyId }) {
             )}
             {buildError && (
               <div
-                className="absolute inset-x-3 bottom-3 rounded-xl border border-bad bg-bad-bg p-3"
+                className="absolute inset-x-3 bottom-3 border border-bad bg-bad-bg p-3"
                 role="alert"
               >
                 {buildError}
               </div>
             )}
             <HeatLegend />
-            <div className="meter-overlay absolute right-3 top-3 hidden w-64 rounded-xl border border-border bg-surface/95 p-3 shadow sm:block">
+            <div className="meter-overlay absolute right-3 top-3 hidden w-72 border border-border bg-surface/95 p-3 sm:block">
               <Meter u={v.utilization} level={v.level} />
               <div className="mt-2 flex items-center justify-between gap-2">
                 <StrengthBadge calibration={analysis.calibration} />
@@ -290,18 +307,39 @@ function Designer({ familyId }: { familyId: FamilyId }) {
           aria-label="Design settings"
           className="flex min-h-0 flex-col border-l border-border bg-surface lg:w-[30rem]"
         >
-          <ErrorBanner onShow={() => setTab('print')} />
-          <Tabs tabs={TABS} active={tab} onChange={setTab} label="Design steps">
-            {tab === 'fit' && <FitPanel />}
-            {tab === 'style' && <StylePanel />}
-            {tab === 'strength' && <StrengthPanel />}
-            {tab === 'print' && <PrintPanel />}
-            {tab === 'files' && (
-              <Suspense fallback={<p role="status">Loading file tools…</p>}>
-                <FilesPanel />
-              </Suspense>
-            )}
-          </Tabs>
+          {mode === 'quick' ? (
+            <QuickPanel
+              startAtMeasure={startAtMeasure}
+              banner={<ErrorBanner onShow={() => showFull('print')} />}
+              onAllSettings={() => showFull()}
+              onShowMath={() => showFull('strength')}
+            />
+          ) : (
+            <>
+              <div className="flex items-center justify-between gap-2 border-b border-rule px-4 py-1">
+                <p className="font-display text-2xl text-muted">All settings</p>
+                <Button
+                  variant="ghost"
+                  onClick={() => setMode('quick')}
+                  aria-keyshortcuts={hotkeys ? 'q' : undefined}
+                >
+                  {hotkeys && <KeyHint k="Q" />} Quick mode
+                </Button>
+              </div>
+              <ErrorBanner onShow={() => setTab('print')} />
+              <Tabs tabs={TABS} active={tab} onChange={setTab} label="Design steps">
+                {tab === 'fit' && <FitPanel />}
+                {tab === 'style' && <StylePanel />}
+                {tab === 'strength' && <StrengthPanel />}
+                {tab === 'print' && <PrintPanel />}
+                {tab === 'files' && (
+                  <Suspense fallback={<p role="status">Loading file tools…</p>}>
+                    <FilesPanel />
+                  </Suspense>
+                )}
+              </Tabs>
+            </>
+          )}
         </aside>
       </div>
       <Dialog open={!!measure} onClose={() => setMeasure(null)} title="How to measure">
@@ -309,7 +347,7 @@ function Designer({ familyId }: { familyId: FamilyId }) {
           {family.measureGuide.map((s, i) => (
             <li
               key={s.id}
-              className={`rounded-xl border-2 p-4 ${s.id === measure ? 'border-primary' : 'border-border'}`}
+              className={`border-2 p-4 ${s.id === measure ? 'border-primary' : 'border-border'}`}
             >
               <h3 className="text-lg font-bold">
                 {i + 1}. {s.title}
@@ -325,6 +363,16 @@ function Designer({ familyId }: { familyId: FamilyId }) {
   );
 }
 
+function KeyHint({ k }: { k: string }) {
+  return (
+    <span aria-hidden="true" className="font-display hidden md:inline">
+      <span className="text-accent">[</span>
+      <span className="text-primary">{k}</span>
+      <span className="text-accent">]</span>
+    </span>
+  );
+}
+
 /** Shown above the tabs whenever the design has a blocking problem. */
 function ErrorBanner({ onShow }: { onShow: () => void }) {
   const { analysis, family, params } = useContext(DesignerCtx)!;
@@ -332,7 +380,7 @@ function ErrorBanner({ onShow }: { onShow: () => void }) {
   const errors = analysis.issues.filter((i) => i.severity === 'error');
   if (!errors.length) return null;
   return (
-    <div role="alert" className="m-3 rounded-xl border-l-4 border-bad bg-bad-bg p-3">
+    <div role="alert" className="m-3 border border-bad bg-bad-bg p-3">
       <p className="font-semibold">{errors[0].message}</p>
       {errors[0].fix && <p>{errors[0].fix}</p>}
       <div className="mt-2 flex flex-wrap gap-2">

@@ -13,6 +13,8 @@ interface SettingsState {
   reduceMotion: boolean;
   /** Single-letter shortcuts (H, F, P, M). WCAG 2.1.4: users can turn them off. */
   hotkeys: boolean;
+  /** Designer layout: one decision per screen, or every setting in tabs. Remembered on this device. */
+  designerMode: 'quick' | 'full';
   /** Gemini features are off until the user opts in. */
   llmOptIn: boolean;
   /** Free text shown on the request-a-print sheet. */
@@ -30,6 +32,7 @@ export const useSettings = create<SettingsState>()(
       textScale: '100',
       reduceMotion: false,
       hotkeys: true,
+      designerMode: 'quick',
       llmOptIn: false,
       wherePrint: DEFAULT_WHERE_PRINT,
       set: (patch) => set(patch),

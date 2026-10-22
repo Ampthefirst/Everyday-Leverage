@@ -38,7 +38,7 @@ export function Tabs<T extends string>({
       <div
         role="tablist"
         aria-label={label}
-        className="flex gap-1 overflow-x-auto border-b border-border px-2"
+        className="flex overflow-x-auto border-b-[3px] border-double border-rule"
       >
         {tabs.map((t, i) => (
           <button
@@ -54,7 +54,7 @@ export function Tabs<T extends string>({
             tabIndex={active === t.id ? 0 : -1}
             onClick={() => onChange(t.id)}
             onKeyDown={(e) => onKey(e, i)}
-            className={`tap whitespace-nowrap border-b-4 px-3 font-semibold ${active === t.id ? 'border-primary text-primary' : 'border-transparent text-muted hover:text-text'}`}
+            className={`tap font-display whitespace-nowrap px-3 text-2xl ${active === t.id ? 'bg-primary text-on-primary' : 'text-text hover:bg-surface-2 hover:text-primary'}`}
           >
             {t.label}
           </button>

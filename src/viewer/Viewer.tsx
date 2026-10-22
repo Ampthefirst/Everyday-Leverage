@@ -16,6 +16,8 @@ const VIEW_DIR = new THREE.Vector3(0.65, 0.55, 0.75).normalize();
 
 export interface ViewerProps {
   mesh: MeshData | null;
+  /** The part's filament colour; high-contrast mode overrides it with the theme's part colour. */
+  partColor?: string;
   pieces: MeshData[];
   field: StressFieldFn | null;
   heat: boolean;
@@ -369,7 +371,7 @@ function Scene(props: ViewerProps & { color: string }) {
             <group ref={partRef} matrixAutoUpdate={false}>
               {shown.map((m, i) => (
                 <group key={m.name} position={pieces.length ? [0, 0, i * 6] : [0, 0, 0]}>
-                  <Part mesh={m} field={field} heat={heat} clip={clip} color={i === 1 ? '#0d9488' : color} />
+                  <Part mesh={m} field={field} heat={heat} clip={clip} color={i === 1 ? '#c9d1e0' : color} />
                 </group>
               ))}
               {section?.data && (
@@ -399,18 +401,20 @@ function Scene(props: ViewerProps & { color: string }) {
 }
 
 export function Viewer(props: ViewerProps) {
-  const [color, setColor] = useState('#2563eb');
-  const [bg, setBg] = useState('#e2e8f0');
+  const [color, setColor] = useState('#33e0e0');
+  const [bg, setBg] = useState('#0b0c14');
+  const { partColor } = props;
   useEffect(() => {
     const update = () => {
-      setColor(readCssVar('--color-part', '#2563eb'));
-      setBg(readCssVar('--color-viewer-bg', '#e2e8f0'));
+      const hc = document.documentElement.dataset.contrast === 'high';
+      setColor(partColor && !hc ? partColor : readCssVar('--color-part', '#33e0e0'));
+      setBg(readCssVar('--color-viewer-bg', '#0b0c14'));
     };
     update();
     const mo = new MutationObserver(update);
     mo.observe(document.documentElement, { attributes: true, attributeFilter: ['class', 'data-contrast'] });
     return () => mo.disconnect();
-  }, []);
+  }, [partColor]);
   return (
     <div className="relative h-full w-full" style={{ background: bg }}>
       <Canvas

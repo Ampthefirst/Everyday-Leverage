@@ -34,7 +34,8 @@ export default function DesignScreen() {
     if (!family) return;
     const p = family.presets[n];
     setParams(family.id, { ...family.defaults, ...p.params } as Params, { preset: p.id });
-    navigate(`/design/${family.id}`);
+    // Quick mode skips its own "what is it for?" screen: the task was just chosen here.
+    navigate(`/design/${family.id}`, { state: { fromPreset: true } });
   };
 
   usePageKeys((k) => {

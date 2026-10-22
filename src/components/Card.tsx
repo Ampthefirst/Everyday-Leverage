@@ -1,15 +1,13 @@
 import type { ReactNode } from 'react';
 
 export function Card({ children, className = '' }: { children: ReactNode; className?: string }) {
-  return (
-    <section className={`rounded-2xl border border-border bg-surface p-5 ${className}`}>{children}</section>
-  );
+  return <section className={`border border-border bg-surface p-5 ${className}`}>{children}</section>;
 }
 
 export function PageHeader({ title, lead }: { title: string; lead?: ReactNode }) {
   return (
     <header className="mb-6 space-y-2">
-      <h1 className="text-3xl font-bold">{title}</h1>
+      <h1 className="text-5xl sm:text-6xl">{title}</h1>
       {lead && <p className="max-w-3xl text-lg text-muted">{lead}</p>}
     </header>
   );
@@ -32,5 +30,5 @@ export function Note({
     bad: 'border-bad bg-bad-bg',
     ok: 'border-ok bg-ok-bg',
   }[tone];
-  return <div className={`rounded-xl border-l-4 p-3 ${cls}`}>{children}</div>;
+  return <div className={`border p-3 ${cls}`}>{children}</div>;
 }

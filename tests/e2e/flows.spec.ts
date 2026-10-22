@@ -1,3 +1,4 @@
+import { openFullDesigner } from './helpers';
 import { expect, test, type Page } from '@playwright/test';
 
 async function answer(page: Page, label: string) {
@@ -16,7 +17,7 @@ async function finishFinder(page: Page) {
 }
 
 async function downloadPackage(page: Page) {
-  await expect(page.getByText(/Built in \d+ ms/)).toBeVisible({ timeout: 60_000 });
+  await openFullDesigner(page);
   await page.getByRole('tab', { name: 'Get files' }).click();
   const [dl] = await Promise.all([
     page.waitForEvent('download', { timeout: 60_000 }),
@@ -83,7 +84,7 @@ test('out-of-scope answers show the OT note and no design', async ({ page }) => 
 
 test('strength verdict always shows the uncalibrated badge', async ({ page }) => {
   await page.goto('/design/B3');
-  await expect(page.getByText(/Built in \d+ ms/)).toBeVisible({ timeout: 60_000 });
+  await openFullDesigner(page);
   await page.getByRole('tab', { name: 'Strength' }).click();
   await expect(page.getByRole('meter', { name: 'Strength' }).first()).toBeVisible();
   await expect(page.getByText('Uncalibrated estimate').first()).toBeVisible();
@@ -99,7 +100,7 @@ test('large-text mode scales the page', async ({ page }) => {
 
 test('fit-check template downloads as a PDF', async ({ page }) => {
   await page.goto('/design/A1');
-  await expect(page.getByText(/Built in \d+ ms/)).toBeVisible({ timeout: 60_000 });
+  await openFullDesigner(page);
   await page.getByRole('tab', { name: 'Get files' }).click();
   const [dl] = await Promise.all([
     page.waitForEvent('download'),
@@ -116,5 +117,28 @@ test('pick a design by number keys, then a preset opens the designer with it app
   await expect(page.getByRole('heading', { name: /B1 Lid and jar opener/ })).toBeVisible();
   await page.keyboard.press('2');
   await expect(page).toHaveURL(/\/design\/B1$/);
+  // Quick mode starts at the first measurement because the task was already chosen.
+  await expect(page.getByText(/Step 2/)).toBeVisible();
+  await page.getByRole('button', { name: /Back/ }).click();
   await expect(page.getByRole('button', { name: /Bottle caps/ })).toHaveAttribute('aria-pressed', 'true');
+});
+
+test('quick mode: one decision per screen, then the files', async ({ page }) => {
+  await page.goto('/design/A1');
+  await expect(page.getByText(/Built in \d+ ms/)).toBeVisible({ timeout: 60_000 });
+  await expect(page.getByRole('heading', { name: 'What is it for?' })).toBeVisible();
+  await page.getByRole('button', { name: /Spoon or fork/ }).click();
+  // Step through every measurement screen to the result.
+  for (let i = 0; i < 8; i++) {
+    const next = page.getByRole('button', { name: /^(Next|See the result)/ });
+    if (!(await next.isVisible())) break;
+    await next.click();
+  }
+  await expect(page.getByRole('meter', { name: 'Strength' }).last()).toBeVisible();
+  await expect(page.getByText('Uncalibrated estimate').first()).toBeVisible();
+  const [dl] = await Promise.all([
+    page.waitForEvent('download', { timeout: 60_000 }),
+    page.getByRole('button', { name: 'Download everything (.zip)' }).click(),
+  ]);
+  expect(dl.suggestedFilename()).toMatch(/\.zip$/);
 });

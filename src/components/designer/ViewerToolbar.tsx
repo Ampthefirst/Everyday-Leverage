@@ -21,20 +21,51 @@ function ToggleButton({
       aria-pressed={pressed}
       title={label}
       onClick={onClick}
-      className={`tap rounded-xl border-2 px-3 text-sm font-semibold ${pressed ? 'border-primary bg-primary text-on-primary' : 'border-border bg-surface text-text hover:border-primary'}`}
+      className={`tap font-display shrink-0 whitespace-nowrap border-2 px-3 text-xl ${pressed ? 'border-primary bg-primary text-on-primary' : 'border-border bg-surface text-text hover:border-primary'}`}
     >
       {children}
     </button>
   );
 }
 
-const CAM: { c: CameraCommand; label: string; icon: string }[] = [
-  { c: 'left', label: 'Turn view left', icon: '⟲' },
-  { c: 'right', label: 'Turn view right', icon: '⟳' },
-  { c: 'up', label: 'Tilt view up', icon: '▲' },
-  { c: 'down', label: 'Tilt view down', icon: '▼' },
-  { c: 'in', label: 'Zoom in', icon: '+' },
-  { c: 'out', label: 'Zoom out', icon: '−' },
+// 7×7 pixel glyphs drawn on the same grid as the logo and menu bars.
+const LEFT = ['...#...', '..##...', '.######', '#######', '.######', '..##...', '...#...'];
+const UP = ['...#...', '..###..', '.#####.', '#######', '..###..', '..###..', '..###..'];
+const PIXELS: Record<CameraCommand, string[]> = {
+  left: LEFT,
+  right: LEFT.map((row) => [...row].reverse().join('')),
+  up: UP,
+  down: [...UP].reverse(),
+  in: ['..###..', '..###..', '#######', '#######', '#######', '..###..', '..###..'],
+  out: ['.......', '.......', '#######', '#######', '#######', '.......', '.......'],
+};
+
+function PixelIcon({ rows }: { rows: string[] }) {
+  return (
+    <svg
+      viewBox="0 0 7 7"
+      width="18"
+      height="18"
+      aria-hidden="true"
+      shapeRendering="crispEdges"
+      fill="currentColor"
+    >
+      {rows.flatMap((row, y) =>
+        [...row].map((c, x) =>
+          c === '#' ? <rect key={`${x}-${y}`} x={x} y={y} width={1} height={1} /> : null,
+        ),
+      )}
+    </svg>
+  );
+}
+
+const CAM: { c: CameraCommand; label: string }[] = [
+  { c: 'left', label: 'Turn view left' },
+  { c: 'right', label: 'Turn view right' },
+  { c: 'up', label: 'Tilt view up' },
+  { c: 'down', label: 'Tilt view down' },
+  { c: 'in', label: 'Zoom in' },
+  { c: 'out', label: 'Zoom out' },
 ];
 
 export function ViewerToolbar({
@@ -54,7 +85,7 @@ export function ViewerToolbar({
   const setView = useDesign((s) => s.setView);
   return (
     <div
-      className="flex flex-wrap items-center gap-1.5 border-b border-border bg-surface p-2"
+      className="flex items-center gap-1.5 overflow-x-auto border-b border-border bg-surface p-2 sm:flex-wrap"
       role="toolbar"
       aria-label="3D view controls"
     >
@@ -91,9 +122,9 @@ export function ViewerToolbar({
         onClick={onPlay}
         label={reduced ? 'Show the next how-to-use step' : 'Play the how-to-use animation'}
       >
-        {reduced ? 'How to use ›' : playing ? 'Stop' : 'How to use'}
+        {reduced ? 'How to use: next step' : playing ? 'Stop' : 'How to use'}
       </ToggleButton>
-      <span className="ml-auto flex flex-wrap items-center gap-1" role="group" aria-label="Move the view">
+      <span className="ml-auto flex shrink-0 items-center gap-1" role="group" aria-label="Move the view">
         {CAM.map((b) => (
           <button
             key={b.c}
@@ -101,9 +132,9 @@ export function ViewerToolbar({
             aria-label={b.label}
             title={b.label}
             onClick={() => onCamera(b.c)}
-            className="tap rounded-lg border border-border bg-surface px-2 text-lg font-bold hover:border-primary"
+            className="tap inline-flex items-center justify-center border border-border bg-surface px-2 text-text hover:border-primary hover:text-primary"
           >
-            <span aria-hidden="true">{b.icon}</span>
+            <PixelIcon rows={PIXELS[b.c]} />
           </button>
         ))}
         <Button variant="ghost" onClick={onReset}>
@@ -143,10 +174,10 @@ export function HeatLegend() {
   const view = useDesign((s) => s.view);
   if (!view.heat) return null;
   return (
-    <div className="pointer-events-none absolute bottom-3 left-3 rounded-xl border border-border bg-surface/95 p-3 text-sm shadow">
+    <div className="pointer-events-none absolute bottom-3 left-3 border border-border bg-surface/95 p-3 text-sm">
       <div className="mb-1 font-semibold">Stress map</div>
       <div
-        className="h-3 w-48 rounded"
+        className="h-3 w-48"
         style={{ background: 'linear-gradient(90deg, #2659d9 0%, #1ab373 30%, #f2bf1a 60%, #d91a1a 100%)' }}
         aria-hidden="true"
       />
