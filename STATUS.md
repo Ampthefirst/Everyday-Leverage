@@ -1,6 +1,35 @@
-# Status — Everyday Leverage v1
+# Status — Everyday Leverage
 
-Last updated by the overnight build. `PLAN.md` is the spec; choices made along the way are in `DECISIONS.md`.
+## v2 (overnight build, 2026-10-22) — complete
+
+`V2PLAN.md` is the spec; every judgment call is in `DECISIONS.md`. All seven milestones are pushed to `main`:
+
+1. **Pick a design:** a 3×3 board (number keys 1–9) leads to a screen per design with its presets as a numbered list.
+2. **Designer:** in the new world, with **quick mode** as the default: one decision per screen, and all settings one key away (A/Q).
+3. **Every other page:** restyled in the new world, with the shared components rebuilt in its vocabulary.
+4. **How-to-use animation:** the articulated hand opens while the part is lined up and closes onto it.
+5. **Presentation mode:** `VITE_PRESENTATION_MODE=1` hides every disclaimer, including the strength badge. See the README.
+6. **Saved projects:** a shelf on Home with a "Continue where you stopped" choice, plus the Brief → Measure → Check → Print step strip.
+7. **Impeccable finish review:**
+   - Round 1 returned *fix* with seven findings.
+   - Round 2 scored six resolved and one partial (the phone toolbar), and found one regression (the 512 px turn frames looked soft on high-density screens).
+   - Both remaining items are fixed (the toolbar wraps; turn frames are 1024 px) but were not re-scored, because the run's two-round budget was used.
+   - `DESIGN.md` and `.impeccable/design.json` document the built world.
+
+Results:
+- `npm run check`: 167 unit tests.
+- `npm run e2e`: 27 tests, all passing.
+
+Deferred to a later version (owner decision):
+- new user-facing features;
+- accounts and an online dashboard;
+- calibration data from real break tests.
+
+---
+
+# v1 status
+
+Last updated by the v1 overnight build. `PLAN.md` is the v1 spec.
 
 ## Summary
 
@@ -33,7 +62,6 @@ pages, profiles/share links, offline support and the optional Gemini features ar
 ## Partial / known gaps
 
 - **Stress map and strength numbers are uncalibrated estimates** (by design, badge always shown).
-- v2 redesign in progress (docs/v2-ui-brief.md, direction contract in .impeccable/surfaces/): new tokens, fonts, top bar + side menu, Settings page and home page are done. Still to do: Pick-a-design page, Designer quick mode, the remaining pages in the new world, routing all disclaimers through src/content/disclaimers.ts, then the Impeccable finish review and DESIGN.md.
 - Ghost objects are simple stylised shapes; the hand is a procedural articulated mannequin hand (`src/viewer/Hand.tsx`, `handModel.ts`) posed by joint angles. In the how-to-use animation the hand opens while the part is lined up and closes onto it (per-step `hand` closure, eased; instant under reduced motion).
 - Fillets are approximated with hull blends and rounded profiles (no true 3D fillets).
 - The 3MF stores settings as metadata; slicers will not read them as slicer settings.

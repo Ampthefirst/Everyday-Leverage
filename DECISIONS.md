@@ -61,3 +61,4 @@ One line each: decision — reason.
   - surfaces moved to neutral black.
   - a block cursor blinks four times after the promise.
 - Not taken from the review: an ANSI status line, and type-on text animation. The world already has one signature pour-in, and more motion would fight the plan's "instant screen swaps".
+- Finish review round 2 (verdict pass): fixes 1–4, 6, 7 resolved; 5 partial (camera row clipped at 390 px) and a regression (512 px turn frames soft on DPR-2). Both addressed (camera row wraps; turn frames re-rendered at 1024 px, ~1.3 MB total), not re-scored: the unattended two-round budget is spent.
