@@ -10,6 +10,7 @@ import type { StressFieldFn } from '../strength/field';
 import type { Vec3 } from '../types/geom';
 import { applyHeat, toGeometry } from './meshGeometry';
 import { Ghost } from './Ghosts';
+import { HandClosure } from './Hand';
 
 const deg = (d: number) => (d * Math.PI) / 180;
 const VIEW_DIR = new THREE.Vector3(0.65, 0.55, 0.75).normalize();
@@ -322,6 +323,14 @@ function Scene(props: ViewerProps & { color: string }) {
   } = props;
   const controls = useRef<OrbitControlsImpl>(null);
   const { partRef, ghostRefs } = useAnimatedPose(animation);
+  // The hand opens for steps where it is not holding the part yet, and closes when it is.
+  const handClosure = useMemo(
+    () => ({
+      target: animation ? (animation.spec.steps[animation.step]?.hand ?? 1) : 1,
+      reduced: !!animation?.reduced,
+    }),
+    [animation],
+  );
   const root = useRef<THREE.Group>(null);
   const { gl } = useThree();
   useEffect(() => {
@@ -378,18 +387,20 @@ function Scene(props: ViewerProps & { color: string }) {
                 <SectionOverlay data={section.data} axis={section.axis} offset={section.offset} />
               )}
             </group>
-            {showGhost &&
-              ghost?.objects.map((o, i) => (
-                <group
-                  key={i}
-                  ref={(g) => {
-                    ghostRefs.current[i] = g;
-                  }}
-                  matrixAutoUpdate={false}
-                >
-                  <Ghost o={o} breadth={handBreadth} />
-                </group>
-              ))}
+            <HandClosure.Provider value={handClosure}>
+              {showGhost &&
+                ghost?.objects.map((o, i) => (
+                  <group
+                    key={i}
+                    ref={(g) => {
+                      ghostRefs.current[i] = g;
+                    }}
+                    matrixAutoUpdate={false}
+                  >
+                    <Ghost o={o} breadth={handBreadth} />
+                  </group>
+                ))}
+            </HandClosure.Provider>
           </group>
         </group>
       </group>

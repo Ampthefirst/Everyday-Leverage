@@ -389,9 +389,10 @@ export const A2: Family<A2P> = {
       steps: [
         {
           caption: 'Open the hand flat and slide the cuff over the palm.',
+          hand: 0,
           part: { translate: [0, 0, -p.bandWidth * 2.5] },
         },
-        { caption: 'The pocket sits on the palm side.', part: {} },
+        { caption: 'The pocket sits on the palm side.', hand: 0, part: {} },
         { caption: 'Push the utensil handle into the pocket from the thumb side.', part: {}, ghosts: [1] },
       ],
     };

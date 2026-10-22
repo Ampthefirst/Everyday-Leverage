@@ -442,8 +442,8 @@ export const A1: Family<A1P> = {
   animation(p) {
     return {
       steps: [
-        { caption: 'Slide the grip onto the handle.', part: { translate: [0, 0, p.length + 30] } },
-        { caption: 'Push it all the way on.', part: {} },
+        { caption: 'Slide the grip onto the handle.', hand: 0, part: { translate: [0, 0, p.length + 30] } },
+        { caption: 'Push it all the way on.', hand: 0, part: {} },
         {
           caption: 'Hold it like a normal handle — less squeezing needed.',
           part: { rotate: { axis: [1, 0, 0], pivot: [0, 0, 0], deg: 25 } },

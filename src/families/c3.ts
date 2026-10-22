@@ -323,8 +323,12 @@ export const C3: Family<C3P> = {
   animation() {
     return {
       steps: [
-        { caption: 'Line the clip up with the end of the door lever.', part: { translate: [0, 0, 40] } },
-        { caption: 'Press it down until it snaps on.', part: {} },
+        {
+          caption: 'Line the clip up with the end of the door lever.',
+          hand: 0,
+          part: { translate: [0, 0, 40] },
+        },
+        { caption: 'Press it down until it snaps on.', hand: 0, part: {} },
         {
           caption: 'Push the end down to open the door.',
           part: { rotate: { axis: [0, 1, 0], pivot: [-120, 0, 0], deg: 25 } },

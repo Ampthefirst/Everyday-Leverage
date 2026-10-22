@@ -34,7 +34,7 @@ pages, profiles/share links, offline support and the optional Gemini features ar
 
 - **Stress map and strength numbers are uncalibrated estimates** (by design, badge always shown).
 - v2 redesign in progress (docs/v2-ui-brief.md, direction contract in .impeccable/surfaces/): new tokens, fonts, top bar + side menu, Settings page and home page are done. Still to do: Pick-a-design page, Designer quick mode, the remaining pages in the new world, routing all disclaimers through src/content/disclaimers.ts, then the Impeccable finish review and DESIGN.md.
-- Ghost objects are simple stylised shapes; the hand is a procedural articulated mannequin hand (`src/viewer/Hand.tsx`, `handModel.ts`) posed by joint angles. The how-to-use animation still slides the hand rather than moving its joints.
+- Ghost objects are simple stylised shapes; the hand is a procedural articulated mannequin hand (`src/viewer/Hand.tsx`, `handModel.ts`) posed by joint angles. In the how-to-use animation the hand opens while the part is lined up and closes onto it (per-step `hand` closure, eased; instant under reduced motion).
 - Fillets are approximated with hull blends and rounded profiles (no true 3D fillets).
 - The 3MF stores settings as metadata; slicers will not read them as slicer settings.
 - `GEMINI_MODEL` in Vercel was not in the API's name format; the server now normalises friendly

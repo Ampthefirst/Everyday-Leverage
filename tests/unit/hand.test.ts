@@ -1,5 +1,8 @@
 import { describe, expect, it } from 'vitest';
+import { familyList } from '../../src/families';
 import {
+  blendAngles,
+  OPEN_ANGLES,
   gripCylinder,
   handSpec,
   indexTip,
@@ -35,6 +38,32 @@ describe('articulated hand', () => {
       const i = indexTip(spec, a);
       expect(Math.hypot(t[0] - i[0], t[1] - i[1], t[2] - i[2])).toBeLessThan(30 * spec.scale);
       expect(pinchSolution(spec).point.every(Number.isFinite)).toBe(true);
+    }
+  });
+
+  it('blends from an open hand to the pose for the how-to-use animation', () => {
+    const spec = handSpec();
+    const grip = poseAngles('grip', spec, 32);
+    const flat = (a: typeof grip) => [
+      ...a.fingers.flatMap((f) => [...f.flex, f.splay]),
+      ...a.thumb.flex,
+      a.thumb.oppose,
+      a.thumb.abduct,
+      a.thumb.roll,
+    ];
+    flat(blendAngles(OPEN_ANGLES, grip, 0)).forEach((v, i) => expect(v).toBeCloseTo(flat(OPEN_ANGLES)[i], 9));
+    flat(blendAngles(OPEN_ANGLES, grip, 1)).forEach((v, i) => expect(v).toBeCloseTo(flat(grip)[i], 9));
+    const half = blendAngles(OPEN_ANGLES, grip, 0.5);
+    expect(half.fingers[1].flex[1]).toBeCloseTo(
+      (OPEN_ANGLES.fingers[1].flex[1] + grip.fingers[1].flex[1]) / 2,
+      6,
+    );
+  });
+
+  it('every design ends its how-to-use animation with the hand holding (closed)', () => {
+    for (const f of familyList()) {
+      const steps = f.animation(f.defaults).steps;
+      expect(steps.at(-1)!.hand ?? 1, f.id).toBe(1);
     }
   });
 });

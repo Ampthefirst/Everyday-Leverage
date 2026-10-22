@@ -572,7 +572,11 @@ export const B1: Family<B1P> = {
     }
     return {
       steps: [
-        { caption: 'Hold the opener with the cup facing the lid.', part: { translate: [0, 0, -40] } },
+        {
+          caption: 'Hold the opener with the cup facing the lid.',
+          hand: 0,
+          part: { translate: [0, 0, -40] },
+        },
         { caption: 'Press the cup down over the lid.', part: {} },
         {
           caption: 'Push the lever end to turn the lid anticlockwise.',

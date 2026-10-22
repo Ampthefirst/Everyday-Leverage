@@ -379,6 +379,7 @@ export const C1: Family<C1P> = {
               : p.attach === 'hook'
                 ? 'Hook it through the hole or under the tab.'
                 : 'Thread a split ring through the zipper pull.',
+          hand: 0,
           part: { translate: [0, 0, 30] },
         },
         { caption: 'Hook your fingers through the loop.', part: {} },

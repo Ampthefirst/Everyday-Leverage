@@ -399,7 +399,7 @@ export const B2: Family<B2P> = {
   animation() {
     return {
       steps: [
-        { caption: 'Slot the key (or knob) into the turner.', part: { translate: [0, 0, 25] } },
+        { caption: 'Slot the key (or knob) into the turner.', hand: 0, part: { translate: [0, 0, 25] } },
         { caption: 'Hold a wing — no pinching needed.', part: {} },
         {
           caption: 'Push the wing to turn.',

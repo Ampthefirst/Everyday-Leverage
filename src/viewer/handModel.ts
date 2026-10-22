@@ -206,6 +206,32 @@ export function indexTip(spec: HandSpec, a: PoseAngles): [number, number, number
   return [f.base[0] - dy * Math.sin(s), f.base[1] + dy * Math.cos(s), z - f.width * 0.25];
 }
 
+/** A relaxed, open hand: the start of every "how to use" grasp. */
+export const OPEN_ANGLES: PoseAngles = {
+  fingers: [0, 1, 2, 3].map(() => ({ flex: [6, 8, 4] as [number, number, number], splay: 0 })),
+  thumb: { oppose: 12, abduct: 35, roll: -20, flex: [4, 8, 6] },
+};
+
+/** Joint angles part-way from an open hand (t = 0) to a pose (t = 1). */
+export function blendAngles(open: PoseAngles, pose: PoseAngles, t: number): PoseAngles {
+  const k = clamp(t, 0, 1);
+  const mix = (a: number, b: number) => a + (b - a) * k;
+  const tri = (a: [number, number, number], b: [number, number, number]) =>
+    [mix(a[0], b[0]), mix(a[1], b[1]), mix(a[2], b[2])] as [number, number, number];
+  return {
+    fingers: pose.fingers.map((f, i) => ({
+      flex: tri(open.fingers[i].flex, f.flex),
+      splay: mix(open.fingers[i].splay, f.splay),
+    })),
+    thumb: {
+      oppose: mix(open.thumb.oppose, pose.thumb.oppose),
+      abduct: mix(open.thumb.abduct, pose.thumb.abduct),
+      roll: mix(open.thumb.roll, pose.thumb.roll),
+      flex: tri(open.thumb.flex, pose.thumb.flex),
+    },
+  };
+}
+
 export function poseAngles(pose: HandPose, spec: HandSpec, gripD = 32): PoseAngles {
   if (pose === 'grip' || pose === 'hook') {
     const { wrapR } = gripCylinder(spec, gripD);

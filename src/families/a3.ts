@@ -393,8 +393,8 @@ export const A3: Family<A3P> = {
   animation() {
     return {
       steps: [
-        { caption: 'Push the tool into the socket.', part: { translate: [0, 0, 40] } },
-        { caption: 'Tighten the set screw (if fitted).', part: {} },
+        { caption: 'Push the tool into the socket.', hand: 0, part: { translate: [0, 0, 40] } },
+        { caption: 'Tighten the set screw (if fitted).', hand: 0, part: {} },
         {
           caption: 'Turn the handle — the bigger grip does the work.',
           part: { rotate: { axis: [0, 0, 1], pivot: [0, 0, 0], deg: 90 } },

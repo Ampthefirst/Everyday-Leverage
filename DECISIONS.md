@@ -48,3 +48,4 @@ One line each: decision — reason.
 - Shared Button/Tabs/Badge/Card/Field restyled: square, VT323 labels, inverse-video selection; Meter is a 30-cell block bar with a large percentage readout (same role/aria as before).
 - E2E: existing designer flows switch to all settings via a helper; a new test covers quick mode through to the zip download.
 - Remaining pages: Finder questions use numbered options with number keys (←: back) and block progress; results show the design's render instead of the old line icon (FamilyIcon removed). Card h2s use the display face at 3xl/4xl; Calibrate steps use [1]/[2]/[3]. Glyph-only controls (✕) became text ("Remove", "Close"); Is/Isn't uses +/− markers hidden from screen readers.
+- How-to-use: AnimationStep gains optional hand closure (0 open … 1 posed, default 1). Steps that line the part up open the hand; the final step always holds (unit-tested). The ghost hand eases joint angles toward the target each frame; reduced motion jumps.

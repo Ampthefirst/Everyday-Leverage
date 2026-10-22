@@ -1,7 +1,9 @@
-import { useMemo } from 'react';
+import { createContext, useContext, useMemo } from 'react';
 import * as THREE from 'three';
 import { RoundedBox } from '@react-three/drei';
 import {
+  blendAngles,
+  OPEN_ANGLES,
   gripCylinder,
   handSpec,
   indexTip,
@@ -46,6 +48,10 @@ function Phalanx({
   );
 }
 
+/** Target hand closure for the current "how to use" step, and whether to jump there without easing. */
+export const HandClosure = createContext<{ target: number; reduced: boolean }>({ target: 1, reduced: false });
+export const useHandClosure = () => useContext(HandClosure);
+
 /** A chain of three phalanges; each joint flexes about its local X axis toward the palm (−Z). */
 function Chain({
   lengths,
@@ -77,14 +83,17 @@ function CanonicalHand({
   spec,
   pose,
   gripD,
+  closure,
   mat,
 }: {
   spec: HandSpec;
   pose: HandPose;
   gripD: number;
+  closure: number;
   mat: THREE.Material;
 }) {
-  const a = poseAngles(pose, spec, gripD);
+  const target = poseAngles(pose, spec, gripD);
+  const a = closure >= 1 ? target : blendAngles(OPEN_ANGLES, target, closure);
   const { palm, wrist, thumb } = spec;
   return (
     <group>
@@ -138,12 +147,15 @@ export function ArticulatedHand({
   pose = 'grip',
   gripD = 32,
   side = 'right',
+  closure = 1,
   mat,
 }: {
   breadth?: number;
   pose?: HandPose;
   gripD?: number;
   side?: 'left' | 'right';
+  /** 0 = open and relaxed, 1 = fully in the pose (see the "how to use" animation). */
+  closure?: number;
   mat: THREE.Material;
 }) {
   const spec = useMemo(() => handSpec(breadth), [breadth]);
@@ -180,11 +192,11 @@ export function ArticulatedHand({
         <group position={inner}>
           {seeThrough && (
             <group renderOrder={1}>
-              <CanonicalHand spec={spec} pose={pose} gripD={gripD} mat={depthMat} />
+              <CanonicalHand spec={spec} pose={pose} gripD={gripD} closure={closure} mat={depthMat} />
             </group>
           )}
           <group renderOrder={2}>
-            <CanonicalHand spec={spec} pose={pose} gripD={gripD} mat={mat} />
+            <CanonicalHand spec={spec} pose={pose} gripD={gripD} closure={closure} mat={mat} />
           </group>
         </group>
       </group>

@@ -1,5 +1,6 @@
-import { createContext, useContext, useMemo } from 'react';
-import { ArticulatedHand } from './Hand';
+import { createContext, useContext, useMemo, useRef, useState } from 'react';
+import { useFrame } from '@react-three/fiber';
+import { ArticulatedHand, useHandClosure } from './Hand';
 import * as THREE from 'three';
 import type { GhostObject } from '../families/types';
 
@@ -116,12 +117,24 @@ function Box({
 /** Articulated mannequin hand, scaled by hand breadth, mirrored for the left hand. */
 function Hand({ o, breadth }: { o: GhostObject; breadth: number }) {
   const mat = useGhostMaterial('#ece9e4', 0.34, 'mannequin');
+  // Ease the fingers toward the current step's closure (open → holding), or jump under reduced motion.
+  const { target, reduced } = useHandClosure();
+  const [closure, setClosure] = useState(target);
+  const cur = useRef(target);
+  useFrame((_, dt) => {
+    const d = target - cur.current;
+    if (Math.abs(d) < 0.002) return;
+    cur.current = reduced ? target : cur.current + d * (1 - Math.exp(-dt * 7));
+    if (Math.abs(target - cur.current) < 0.002) cur.current = target;
+    setClosure(cur.current);
+  });
   return (
     <ArticulatedHand
       breadth={breadth}
       pose={o.pose ?? 'grip'}
       gripD={o.size.grip ?? 32}
       side={o.hand ?? 'right'}
+      closure={closure}
       mat={mat}
     />
   );

@@ -430,8 +430,8 @@ export const B3: Family<B3P> = {
   animation() {
     return {
       steps: [
-        { caption: 'Line up the socket with the cap or tap.', part: { translate: [0, 0, -30] } },
-        { caption: 'Push it on.', part: {} },
+        { caption: 'Line up the socket with the cap or tap.', hand: 0, part: { translate: [0, 0, -30] } },
+        { caption: 'Push it on.', hand: 0, part: {} },
         {
           caption: 'Push the lever to turn.',
           part: { rotate: { axis: [0, 0, 1], pivot: [0, 0, 0], deg: 45 } },
