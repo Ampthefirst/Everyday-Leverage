@@ -166,6 +166,17 @@ input[type='range'] {
   }
 }
 
+/* Block cursor at the end of the title screen's promise: blinks a few times, then holds. */
+.blink-cursor {
+  display: inline-block;
+  width: 0.55em;
+  height: 1em;
+  margin-left: 0.15em;
+  vertical-align: -0.12em;
+  background: var(--color-primary);
+  animation: blink 1s steps(1, end) 1.2s 4;
+}
+
 /* Side menu slides in from the right edge. */
 .side-menu[open] {
   animation: menu-in 180ms cubic-bezier(0.16, 1, 0.3, 1);
@@ -179,12 +190,11 @@ input[type='range'] {
 /* Board tiles: each part faces the cursor; the hovered window comes forward. */
 .tile {
   --rx: 0deg;
-  --ry: 0deg;
   position: relative;
   transition: transform 220ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 .tile-img {
-  transform: rotateX(var(--rx)) rotateY(var(--ry));
+  transform: rotateX(var(--rx));
   transition: transform 260ms cubic-bezier(0.16, 1, 0.3, 1);
   will-change: transform;
 }
@@ -212,7 +222,7 @@ input[type='range'] {
 }
 .tile:hover .tile-img,
 .tile:focus-visible .tile-img {
-  transform: rotateX(calc(var(--rx) * 1.8)) rotateY(calc(var(--ry) * 1.8)) scale(1.04);
+  transform: rotateX(calc(var(--rx) * 1.6)) scale(1.04);
 }
 .tile:hover .tile-open,
 .tile:focus-visible .tile-open {

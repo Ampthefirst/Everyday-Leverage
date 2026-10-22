@@ -30,7 +30,7 @@ function LiveWindow() {
   const [ready, setReady] = useState(false);
   const fam = getFamily(LIVE_ID)!;
   return (
-    <figure className="border border-border bg-surface shadow-[0_24px_60px_-20px_rgb(0_0_0/0.9)]">
+    <figure className="border-[3px] border-double border-border bg-surface shadow-[0_24px_60px_-20px_rgb(0_0_0/0.9)]">
       <div className="font-display flex items-center justify-between gap-3 bg-primary px-3 text-2xl text-on-primary">
         <span>
           {fam.id} {fam.name}
@@ -82,7 +82,7 @@ function Choice({
     <Link
       to={to}
       aria-keyshortcuts={hotkeys ? k.toLowerCase() : undefined}
-      className={`group grid min-h-20 grid-cols-[auto_1fr] items-center gap-x-4 border-2 px-4 py-3 ${
+      className={`group grid min-h-20 grid-cols-[auto_1fr] items-center gap-x-4 border-[3px] border-double px-4 py-3 ${
         primary
           ? 'border-primary bg-primary text-on-primary hover:border-primary-strong hover:bg-primary-strong'
           : 'border-primary text-text hover:bg-surface-2'
@@ -113,7 +113,7 @@ function ContinueChoice() {
       type="button"
       onClick={() => open(latest)}
       aria-keyshortcuts={hotkeys ? 'c' : undefined}
-      className="group grid min-h-20 grid-cols-[auto_1fr] items-center gap-x-4 border-2 border-accent px-4 py-3 text-left text-text hover:bg-surface-2"
+      className="group grid min-h-20 grid-cols-[auto_1fr] items-center gap-x-4 border-[3px] border-double border-accent px-4 py-3 text-left text-text hover:bg-surface-2"
     >
       <span aria-hidden="true" className="font-display row-span-2 text-5xl leading-none">
         <span className="text-accent">[</span>
@@ -144,6 +144,7 @@ export function HomePage() {
             >
               Describe a task that’s hard. Get a printable aid sized to your hand, checked for strength before
               you print it.
+              <span aria-hidden="true" className="blink-cursor" />
             </p>
             <div className="pour mt-8 grid max-w-xl gap-3" style={{ animationDelay: '1050ms' }}>
               <Choice

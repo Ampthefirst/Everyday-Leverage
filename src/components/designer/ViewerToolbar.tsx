@@ -85,7 +85,7 @@ export function ViewerToolbar({
   const setView = useDesign((s) => s.setView);
   return (
     <div
-      className="flex items-center gap-1.5 overflow-x-auto border-b border-border bg-surface p-2 sm:flex-wrap"
+      className="flex flex-wrap items-center gap-1.5 border-b border-border bg-surface p-2"
       role="toolbar"
       aria-label="3D view controls"
     >

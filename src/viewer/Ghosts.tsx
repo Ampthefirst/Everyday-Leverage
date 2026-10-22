@@ -7,7 +7,7 @@ import type { GhostObject } from '../families/types';
 const deg = (d: number) => (d * Math.PI) / 180;
 
 /** Studio mode renders context objects as real materials (for product renders), not translucent ghosts. */
-export const GhostStudio = createContext(false);
+export const GhostStudio = createContext<boolean | 'viewer'>(false);
 
 type Finish = 'glass' | 'metal' | 'wood' | 'plastic' | 'skin' | 'mannequin';
 
@@ -54,17 +54,20 @@ function useGhostMaterial(color: string, opacity = 0.32, finish: Finish = 'plast
   const studio = useContext(GhostStudio);
   return useMemo(
     () =>
-      studio
-        ? studioMaterial(finish)
-        : new THREE.MeshStandardMaterial({
-            color,
-            transparent: true,
-            opacity,
-            depthWrite: false,
-            roughness: 0.6,
-            metalness: 0.05,
-            side: THREE.DoubleSide,
-          }),
+      studio === 'viewer' && finish === 'mannequin'
+        ? // In the designer the hand keeps the studio look but stays see-through, so the part shows inside it.
+          Object.assign(studioMaterial(finish), { transparent: true, opacity: 0.55, depthWrite: false })
+        : studio
+          ? studioMaterial(finish)
+          : new THREE.MeshStandardMaterial({
+              color,
+              transparent: true,
+              opacity,
+              depthWrite: false,
+              roughness: 0.6,
+              metalness: 0.05,
+              side: THREE.DoubleSide,
+            }),
     [color, opacity, finish, studio],
   );
 }

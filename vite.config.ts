@@ -16,6 +16,7 @@ function precacheManifest(): Plugin {
         .map((f) => `/${f}`);
       // Studio renders of the nine designs (public/renders) are part of the offline app too.
       for (const f of readdirSync('public/renders')) if (f.endsWith('.webp')) files.push(`/renders/${f}`);
+      for (const f of readdirSync('public/renders/turn')) if (f.endsWith('.webp')) files.push(`/renders/turn/${f}`);
       this.emitFile({ type: 'asset', fileName: 'precache.json', source: JSON.stringify(files) });
     },
   };

@@ -51,3 +51,13 @@ One line each: decision — reason.
 - How-to-use: AnimationStep gains optional hand closure (0 open … 1 posed, default 1). Steps that line the part up open the hand; the final step always holds (unit-tested). The ghost hand eases joint angles toward the target each frame; reduced motion jumps.
 - Presentation mode: showDisclaimers() reads VITE_PRESENTATION_MODE at call time (stub-able in tests); every standing disclaimer (footer, Home Is/Isn't section, food-safe/model notes, the strength badge everywhere, verdict caveat sentence, print/request sheet lines, PDF footers, zip README) goes through src/content/disclaimers.ts. The Limits link leaves the side menu in that build; the page stays reachable. Verified with a real VITE_PRESENTATION_MODE=1 build.
 - Saved projects (el-projects, this browser only): name, family, params, preset, step, updated time — never finder answers. Save from the Designer header; the open project autosaves sizes and step. Home shows a [C] Continue choice for the latest and a shelf (open, rename, duplicate, two-step delete, empty state). Step strip Brief → Measure → Check → Print on Finder, design screens and the Designer (lg+); quick mode maps task/fields/result to Brief/Measure/Check, a download marks Print; full mode maps tabs. Opening a project resumes at its step (quick screen or tab).
+- Finish review round 1 (disposition: fix) applied:
+  - live part sways ±0.5 rad around a front view instead of spinning, because edge-on the back of the hand read as a block; framing is tighter.
+  - board parts really turn: seven 512 px renders per part (camera yaw −30…+30°, `render:parts -- --turn`, provenance embedded) swap by cursor position; the CSS tilt is now pitch only.
+  - names overlay the image foot as an inverse bar on Home, and are always shown on Pick.
+  - the Designer uses studio materials for context objects (glass jar with contents, metal), lit by a procedural environment; the hand stays white and see-through so the part shows inside it.
+  - the mobile toolbar wraps instead of clipping.
+  - double-line frames on tiles, the LIVE window, the home choices and the Designer side panel.
+  - surfaces moved to neutral black.
+  - a block cursor blinks four times after the promise.
+- Not taken from the review: an ANSI status line, and type-on text animation. The world already has one signature pour-in, and more motion would fight the plan's "instant screen swaps".

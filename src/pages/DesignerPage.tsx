@@ -380,7 +380,7 @@ function Designer({ familyId }: { familyId: FamilyId }) {
         </section>
         <aside
           aria-label="Design settings"
-          className="flex min-h-0 flex-col border-l border-border bg-surface lg:w-[30rem]"
+          className="flex min-h-0 flex-col border-border bg-surface lg:w-[30rem] lg:border-l-[3px] lg:border-double"
         >
           {mode === 'quick' ? (
             <QuickPanel

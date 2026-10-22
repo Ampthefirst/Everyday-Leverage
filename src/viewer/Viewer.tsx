@@ -9,7 +9,8 @@ import type { AnimationSpec, GhostSpec, Pose } from '../families/types';
 import type { StressFieldFn } from '../strength/field';
 import type { Vec3 } from '../types/geom';
 import { applyHeat, toGeometry } from './meshGeometry';
-import { Ghost } from './Ghosts';
+import { Ghost, GhostStudio } from './Ghosts';
+import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
 import { HandClosure } from './Hand';
 
 const deg = (d: number) => (d * Math.PI) / 180;
@@ -171,6 +172,7 @@ function Part({
           vertexColors={heat}
           roughness={0.55}
           metalness={0.05}
+          envMapIntensity={0.35}
           clippingPlanes={clip}
           clipShadows
         />
@@ -306,6 +308,22 @@ function CameraFit({
   return null;
 }
 
+/** Reflections for the context objects (glass, metal) from a procedural studio room; no network needed. */
+function StudioEnvironment() {
+  const { gl, scene } = useThree();
+  useEffect(() => {
+    const pmrem = new THREE.PMREMGenerator(gl);
+    const env = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
+    scene.environment = env;
+    return () => {
+      scene.environment = null;
+      env.dispose();
+      pmrem.dispose();
+    };
+  }, [gl, scene]);
+  return null;
+}
+
 function Scene(props: ViewerProps & { color: string }) {
   const {
     mesh,
@@ -370,7 +388,8 @@ function Scene(props: ViewerProps & { color: string }) {
   const shown = pieces.length ? pieces : mesh ? [mesh] : [];
   return (
     <>
-      <ambientLight intensity={0.55} />
+      <StudioEnvironment />
+      <ambientLight intensity={0.35} />
       <directionalLight position={[200, 300, 250]} intensity={1.6} />
       <directionalLight position={[-250, -100, -200]} intensity={0.5} />
       <hemisphereLight args={['#ffffff', '#64748b', 0.4]} />
@@ -387,20 +406,22 @@ function Scene(props: ViewerProps & { color: string }) {
                 <SectionOverlay data={section.data} axis={section.axis} offset={section.offset} />
               )}
             </group>
-            <HandClosure.Provider value={handClosure}>
-              {showGhost &&
-                ghost?.objects.map((o, i) => (
-                  <group
-                    key={i}
-                    ref={(g) => {
-                      ghostRefs.current[i] = g;
-                    }}
-                    matrixAutoUpdate={false}
-                  >
-                    <Ghost o={o} breadth={handBreadth} />
-                  </group>
-                ))}
-            </HandClosure.Provider>
+            <GhostStudio.Provider value="viewer">
+              <HandClosure.Provider value={handClosure}>
+                {showGhost &&
+                  ghost?.objects.map((o, i) => (
+                    <group
+                      key={i}
+                      ref={(g) => {
+                        ghostRefs.current[i] = g;
+                      }}
+                      matrixAutoUpdate={false}
+                    >
+                      <Ghost o={o} breadth={handBreadth} />
+                    </group>
+                  ))}
+              </HandClosure.Provider>
+            </GhostStudio.Provider>
           </group>
         </group>
       </group>

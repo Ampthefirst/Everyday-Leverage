@@ -17,6 +17,8 @@ import { prefersReducedMotion } from '../../state/settings';
 export const LIVE_ID = 'A1' as const;
 export const LIVE_STEPS = [32, 42, 26];
 const STEP_MS = 3600;
+const BASE_YAW = 0.1;
+const SWAY = 0.5;
 
 export interface LiveState {
   grip: number;
@@ -26,6 +28,7 @@ export interface LiveState {
 function Turntable({ build, params, still }: { build: BuildResult; params: Params; still: boolean }) {
   const spin = useRef<THREE.Group>(null);
   const framed = useRef(false);
+  const t = useRef(0);
   // Centre on the first build so later sizes grow in place.
   const [centre] = useState<[number, number, number]>(() => {
     const b = build.mesh.bbox;
@@ -44,7 +47,7 @@ function Turntable({ build, params, still }: { build: BuildResult; params: Param
       const half = (box.max.y - box.min.y) / 2;
       const target = new Vector3(0, (box.min.y + box.max.y) / 2, 0);
       const cam = camera as THREE.PerspectiveCamera;
-      const dist = (Math.hypot(reach, half) / Math.sin((cam.fov * Math.PI) / 360)) * 1.0;
+      const dist = (Math.hypot(reach, half) / Math.sin((cam.fov * Math.PI) / 360)) * 0.8;
       cam.position.copy(target).addScaledVector(new Vector3(0.85, 0.45, 1).normalize(), dist);
       cam.near = dist / 50;
       cam.far = dist * 10;
@@ -56,10 +59,14 @@ function Turntable({ build, params, still }: { build: BuildResult; params: Param
     return () => cancelAnimationFrame(raf);
   }, [build, camera, scene, invalidate]);
   useFrame((_, dt) => {
-    if (!still && spin.current) spin.current.rotation.y += dt * 0.35;
+    // Sway around the best view rather than spinning: seen edge-on, the back of the hand reads as a block.
+    if (!still && spin.current) {
+      t.current += dt;
+      spin.current.rotation.y = BASE_YAW + Math.sin(t.current * 0.45) * SWAY;
+    }
   });
   return (
-    <group ref={spin} rotation={[0, -0.5, 0]}>
+    <group ref={spin} rotation={[0, BASE_YAW, 0]}>
       <StudioSubject id={LIVE_ID} mesh={build.mesh} params={params} centreOn={centre} name="live-subject" />
     </group>
   );

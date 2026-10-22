@@ -38,11 +38,13 @@ function Studio({ id, mesh, params }: { id: FamilyId; mesh: MeshData; params: Pa
         raf = requestAnimationFrame(fit);
         return;
       }
-      frameObject(
-        camera as THREE.PerspectiveCamera,
-        scene.getObjectByName('subject')!,
-        shot.view ?? [0.85, 0.62, 1],
+      // render.html?id=B1&yaw=-20 turns the camera about the vertical axis (turn strips for the board).
+      const yaw = (Number(new URLSearchParams(window.location.search).get('yaw') ?? 0) * Math.PI) / 180;
+      const v = new THREE.Vector3(...(shot.view ?? [0.85, 0.62, 1])).applyAxisAngle(
+        new THREE.Vector3(0, 1, 0),
+        yaw,
       );
+      frameObject(camera as THREE.PerspectiveCamera, scene.getObjectByName('subject')!, [v.x, v.y, v.z]);
       requestAnimationFrame(() =>
         requestAnimationFrame(() => {
           window.__capture = (type = 'image/webp', quality = 0.9) => gl.domElement.toDataURL(type, quality);

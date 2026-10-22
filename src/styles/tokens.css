@@ -5,8 +5,8 @@
  */
 :root {
   --color-bg: #07070c;
-  --color-surface: #0e0f18;
-  --color-surface-2: #171a29;
+  --color-surface: #0f0f12;
+  --color-surface-2: #1a1a20;
   --color-border: #3f7f8c;
   --color-rule: #24505a;
   --color-text: #ececec;
@@ -27,7 +27,7 @@
   --color-warn-bg: #2a2208;
   --color-bad-bg: #2d0e0e;
   --color-info-bg: #0a1c33;
-  --color-viewer-bg: #0b0c14;
+  --color-viewer-bg: #0b0b0e;
   --color-part: #33e0e0;
   --radius: 2px;
   --tap: 48px;
