@@ -89,7 +89,7 @@ export function Board({ numbered = false }: { numbered?: boolean }) {
                           )}
                           {f.id}
                         </span>
-                        <span className="tile-open text-base">Open</span>
+                        <span className="tile-open text-lg">Open</span>
                       </span>
                       <span className="relative block overflow-hidden bg-viewer-bg [perspective:700px]">
                         <img

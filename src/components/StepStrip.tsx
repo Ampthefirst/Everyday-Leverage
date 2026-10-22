@@ -41,7 +41,9 @@ export function StepStrip({
                 {done && <span className="sr-only"> (done)</span>}
               </span>
               {stopped === s.id && (
-                <span className={`text-sm leading-none ${here ? '' : 'text-accent'}`}>you stopped here</span>
+                <span className={`font-sans text-sm leading-none ${here ? '' : 'text-accent'}`}>
+                  you stopped here
+                </span>
               )}
             </span>
           </li>

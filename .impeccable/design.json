@@ -1,0 +1,724 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-10-22T05:31:51+00:00",
+  "title": "Design System: Everyday Leverage",
+  "extensions": {
+    "colorMeta": {
+      "bg": {
+        "role": "neutral",
+        "displayName": "Terminal Black",
+        "canonical": "oklch(13.1% 0.012 285)",
+        "tonalRamp": [
+          "oklch(15% 0.012 285)",
+          "oklch(26% 0.012 285)",
+          "oklch(37% 0.012 285)",
+          "oklch(48% 0.012 285)",
+          "oklch(59% 0.012 285)",
+          "oklch(70% 0.012 285)",
+          "oklch(82% 0.012 285)",
+          "oklch(95% 0.012 285)"
+        ]
+      },
+      "surface": {
+        "role": "neutral",
+        "displayName": "Panel Black",
+        "canonical": "oklch(17.0% 0.006 286)",
+        "tonalRamp": [
+          "oklch(15% 0.006 286)",
+          "oklch(26% 0.006 286)",
+          "oklch(37% 0.006 286)",
+          "oklch(48% 0.006 286)",
+          "oklch(59% 0.006 286)",
+          "oklch(70% 0.006 286)",
+          "oklch(82% 0.006 286)",
+          "oklch(95% 0.006 286)"
+        ]
+      },
+      "surface-2": {
+        "role": "neutral",
+        "displayName": "Raised Black",
+        "canonical": "oklch(22.0% 0.012 285)",
+        "tonalRamp": [
+          "oklch(15% 0.012 285)",
+          "oklch(26% 0.012 285)",
+          "oklch(37% 0.012 285)",
+          "oklch(48% 0.012 285)",
+          "oklch(59% 0.012 285)",
+          "oklch(70% 0.012 285)",
+          "oklch(82% 0.012 285)",
+          "oklch(95% 0.012 285)"
+        ]
+      },
+      "viewer-bg": {
+        "role": "neutral",
+        "displayName": "Viewer Black",
+        "canonical": "oklch(15.1% 0.006 286)",
+        "tonalRamp": [
+          "oklch(15% 0.006 286)",
+          "oklch(26% 0.006 286)",
+          "oklch(37% 0.006 286)",
+          "oklch(48% 0.006 286)",
+          "oklch(59% 0.006 286)",
+          "oklch(70% 0.006 286)",
+          "oklch(82% 0.006 286)",
+          "oklch(95% 0.006 286)"
+        ]
+      },
+      "border": {
+        "role": "neutral",
+        "displayName": "Teal Rule",
+        "canonical": "oklch(55.9% 0.068 213)",
+        "tonalRamp": [
+          "oklch(15% 0.024 213)",
+          "oklch(26% 0.041 213)",
+          "oklch(37% 0.059 213)",
+          "oklch(48% 0.068 213)",
+          "oklch(59% 0.068 213)",
+          "oklch(70% 0.068 213)",
+          "oklch(82% 0.061 213)",
+          "oklch(95% 0.040 213)"
+        ]
+      },
+      "rule": {
+        "role": "neutral",
+        "displayName": "Deep Teal Rule",
+        "canonical": "oklch(40.5% 0.051 215)",
+        "tonalRamp": [
+          "oklch(15% 0.018 215)",
+          "oklch(26% 0.031 215)",
+          "oklch(37% 0.044 215)",
+          "oklch(48% 0.051 215)",
+          "oklch(59% 0.051 215)",
+          "oklch(70% 0.051 215)",
+          "oklch(82% 0.045 215)",
+          "oklch(95% 0.030 215)"
+        ]
+      },
+      "text": {
+        "role": "neutral",
+        "displayName": "Screen White",
+        "canonical": "oklch(94.3% 0.000 90)",
+        "tonalRamp": [
+          "oklch(15% 0.000 90)",
+          "oklch(26% 0.000 90)",
+          "oklch(37% 0.000 90)",
+          "oklch(48% 0.000 90)",
+          "oklch(59% 0.000 90)",
+          "oklch(70% 0.000 90)",
+          "oklch(82% 0.000 90)",
+          "oklch(95% 0.000 90)"
+        ]
+      },
+      "muted": {
+        "role": "neutral",
+        "displayName": "Dim Grey",
+        "canonical": "oklch(75.6% 0.023 266)",
+        "tonalRamp": [
+          "oklch(15% 0.008 266)",
+          "oklch(26% 0.014 266)",
+          "oklch(37% 0.020 266)",
+          "oklch(48% 0.023 266)",
+          "oklch(59% 0.023 266)",
+          "oklch(70% 0.023 266)",
+          "oklch(82% 0.020 266)",
+          "oklch(95% 0.013 266)"
+        ]
+      },
+      "primary": {
+        "role": "primary",
+        "displayName": "Phosphor Cyan",
+        "canonical": "oklch(82.5% 0.132 195)",
+        "tonalRamp": [
+          "oklch(15% 0.046 195)",
+          "oklch(26% 0.080 195)",
+          "oklch(37% 0.114 195)",
+          "oklch(48% 0.132 195)",
+          "oklch(59% 0.132 195)",
+          "oklch(70% 0.132 195)",
+          "oklch(82% 0.117 195)",
+          "oklch(95% 0.077 195)"
+        ]
+      },
+      "primary-strong": {
+        "role": "primary",
+        "displayName": "Bright Phosphor",
+        "canonical": "oklch(90.8% 0.096 196)",
+        "tonalRamp": [
+          "oklch(15% 0.033 196)",
+          "oklch(26% 0.058 196)",
+          "oklch(37% 0.083 196)",
+          "oklch(48% 0.096 196)",
+          "oklch(59% 0.096 196)",
+          "oklch(70% 0.096 196)",
+          "oklch(82% 0.085 196)",
+          "oklch(95% 0.056 196)"
+        ]
+      },
+      "on-primary": {
+        "role": "primary",
+        "displayName": "Deep Ink",
+        "canonical": "oklch(16.3% 0.021 219)",
+        "tonalRamp": [
+          "oklch(15% 0.007 219)",
+          "oklch(26% 0.013 219)",
+          "oklch(37% 0.018 219)",
+          "oklch(48% 0.021 219)",
+          "oklch(59% 0.021 219)",
+          "oklch(70% 0.021 219)",
+          "oklch(82% 0.018 219)",
+          "oklch(95% 0.012 219)"
+        ]
+      },
+      "accent": {
+        "role": "secondary",
+        "displayName": "ANSI Magenta",
+        "canonical": "oklch(72.9% 0.228 341)",
+        "tonalRamp": [
+          "oklch(15% 0.080 341)",
+          "oklch(26% 0.138 341)",
+          "oklch(37% 0.197 341)",
+          "oklch(48% 0.228 341)",
+          "oklch(59% 0.228 341)",
+          "oklch(70% 0.228 341)",
+          "oklch(82% 0.202 341)",
+          "oklch(95% 0.133 341)"
+        ]
+      },
+      "shade": {
+        "role": "secondary",
+        "displayName": "Magenta Shade",
+        "canonical": "oklch(38.7% 0.137 336)",
+        "tonalRamp": [
+          "oklch(15% 0.048 336)",
+          "oklch(26% 0.083 336)",
+          "oklch(37% 0.119 336)",
+          "oklch(48% 0.137 336)",
+          "oklch(59% 0.137 336)",
+          "oklch(70% 0.137 336)",
+          "oklch(82% 0.122 336)",
+          "oklch(95% 0.080 336)"
+        ]
+      },
+      "focus": {
+        "role": "tertiary",
+        "displayName": "Cursor Yellow",
+        "canonical": "oklch(90.9% 0.163 97)",
+        "tonalRamp": [
+          "oklch(15% 0.057 97)",
+          "oklch(26% 0.099 97)",
+          "oklch(37% 0.141 97)",
+          "oklch(48% 0.163 97)",
+          "oklch(59% 0.163 97)",
+          "oklch(70% 0.163 97)",
+          "oklch(82% 0.144 97)",
+          "oklch(95% 0.095 97)"
+        ]
+      },
+      "live": {
+        "role": "tertiary",
+        "displayName": "Modem Blue",
+        "canonical": "oklch(46.3% 0.233 266)",
+        "tonalRamp": [
+          "oklch(15% 0.082 266)",
+          "oklch(26% 0.141 266)",
+          "oklch(37% 0.201 266)",
+          "oklch(48% 0.233 266)",
+          "oklch(59% 0.233 266)",
+          "oklch(70% 0.233 266)",
+          "oklch(82% 0.207 266)",
+          "oklch(95% 0.136 266)"
+        ]
+      },
+      "on-live": {
+        "role": "tertiary",
+        "displayName": "White",
+        "canonical": "oklch(100.0% 0.000 90)",
+        "tonalRamp": [
+          "oklch(15% 0.000 90)",
+          "oklch(26% 0.000 90)",
+          "oklch(37% 0.000 90)",
+          "oklch(48% 0.000 90)",
+          "oklch(59% 0.000 90)",
+          "oklch(70% 0.000 90)",
+          "oklch(82% 0.000 90)",
+          "oklch(95% 0.000 90)"
+        ]
+      },
+      "ok": {
+        "role": "status",
+        "displayName": "OK Green",
+        "canonical": "oklch(81.0% 0.182 148)",
+        "tonalRamp": [
+          "oklch(15% 0.064 148)",
+          "oklch(26% 0.110 148)",
+          "oklch(37% 0.157 148)",
+          "oklch(48% 0.182 148)",
+          "oklch(59% 0.182 148)",
+          "oklch(70% 0.182 148)",
+          "oklch(82% 0.161 148)",
+          "oklch(95% 0.106 148)"
+        ]
+      },
+      "warn": {
+        "role": "status",
+        "displayName": "Warn Amber",
+        "canonical": "oklch(89.1% 0.144 91)",
+        "tonalRamp": [
+          "oklch(15% 0.050 91)",
+          "oklch(26% 0.087 91)",
+          "oklch(37% 0.124 91)",
+          "oklch(48% 0.144 91)",
+          "oklch(59% 0.144 91)",
+          "oklch(70% 0.144 91)",
+          "oklch(82% 0.127 91)",
+          "oklch(95% 0.084 91)"
+        ]
+      },
+      "bad": {
+        "role": "status",
+        "displayName": "Bad Red",
+        "canonical": "oklch(71.2% 0.181 23)",
+        "tonalRamp": [
+          "oklch(15% 0.063 23)",
+          "oklch(26% 0.110 23)",
+          "oklch(37% 0.156 23)",
+          "oklch(48% 0.181 23)",
+          "oklch(59% 0.181 23)",
+          "oklch(70% 0.181 23)",
+          "oklch(82% 0.161 23)",
+          "oklch(95% 0.106 23)"
+        ]
+      },
+      "info": {
+        "role": "status",
+        "displayName": "Info Blue",
+        "canonical": "oklch(75.8% 0.129 250)",
+        "tonalRamp": [
+          "oklch(15% 0.045 250)",
+          "oklch(26% 0.078 250)",
+          "oklch(37% 0.112 250)",
+          "oklch(48% 0.129 250)",
+          "oklch(59% 0.129 250)",
+          "oklch(70% 0.129 250)",
+          "oklch(82% 0.115 250)",
+          "oklch(95% 0.075 250)"
+        ]
+      },
+      "ok-bg": {
+        "role": "status",
+        "displayName": "OK Ground",
+        "canonical": "oklch(23.5% 0.044 153)",
+        "tonalRamp": [
+          "oklch(15% 0.015 153)",
+          "oklch(26% 0.027 153)",
+          "oklch(37% 0.038 153)",
+          "oklch(48% 0.044 153)",
+          "oklch(59% 0.044 153)",
+          "oklch(70% 0.044 153)",
+          "oklch(82% 0.039 153)",
+          "oklch(95% 0.026 153)"
+        ]
+      },
+      "warn-bg": {
+        "role": "status",
+        "displayName": "Warn Ground",
+        "canonical": "oklch(25.5% 0.042 92)",
+        "tonalRamp": [
+          "oklch(15% 0.015 92)",
+          "oklch(26% 0.026 92)",
+          "oklch(37% 0.036 92)",
+          "oklch(48% 0.042 92)",
+          "oklch(59% 0.042 92)",
+          "oklch(70% 0.042 92)",
+          "oklch(82% 0.037 92)",
+          "oklch(95% 0.025 92)"
+        ]
+      },
+      "bad-bg": {
+        "role": "status",
+        "displayName": "Bad Ground",
+        "canonical": "oklch(21.4% 0.051 22)",
+        "tonalRamp": [
+          "oklch(15% 0.018 22)",
+          "oklch(26% 0.031 22)",
+          "oklch(37% 0.044 22)",
+          "oklch(48% 0.051 22)",
+          "oklch(59% 0.051 22)",
+          "oklch(70% 0.051 22)",
+          "oklch(82% 0.046 22)",
+          "oklch(95% 0.030 22)"
+        ]
+      },
+      "info-bg": {
+        "role": "status",
+        "displayName": "Info Ground",
+        "canonical": "oklch(22.5% 0.051 256)",
+        "tonalRamp": [
+          "oklch(15% 0.018 256)",
+          "oklch(26% 0.031 256)",
+          "oklch(37% 0.044 256)",
+          "oklch(48% 0.051 256)",
+          "oklch(59% 0.051 256)",
+          "oklch(70% 0.051 256)",
+          "oklch(82% 0.045 256)",
+          "oklch(95% 0.030 256)"
+        ]
+      },
+      "filament-a": {
+        "role": "tertiary",
+        "displayName": "Filament Cyan",
+        "canonical": "oklch(65.6% 0.111 210)",
+        "tonalRamp": [
+          "oklch(15% 0.039 210)",
+          "oklch(26% 0.067 210)",
+          "oklch(37% 0.096 210)",
+          "oklch(48% 0.111 210)",
+          "oklch(59% 0.111 210)",
+          "oklch(70% 0.111 210)",
+          "oklch(82% 0.099 210)",
+          "oklch(95% 0.065 210)"
+        ]
+      },
+      "filament-b": {
+        "role": "tertiary",
+        "displayName": "Filament Magenta",
+        "canonical": "oklch(54.1% 0.206 342)",
+        "tonalRamp": [
+          "oklch(15% 0.072 342)",
+          "oklch(26% 0.125 342)",
+          "oklch(37% 0.178 342)",
+          "oklch(48% 0.206 342)",
+          "oklch(59% 0.206 342)",
+          "oklch(70% 0.206 342)",
+          "oklch(82% 0.183 342)",
+          "oklch(95% 0.120 342)"
+        ]
+      },
+      "filament-c": {
+        "role": "tertiary",
+        "displayName": "Filament Amber",
+        "canonical": "oklch(73.7% 0.152 76)",
+        "tonalRamp": [
+          "oklch(15% 0.053 76)",
+          "oklch(26% 0.092 76)",
+          "oklch(37% 0.131 76)",
+          "oklch(48% 0.152 76)",
+          "oklch(59% 0.152 76)",
+          "oklch(70% 0.152 76)",
+          "oklch(82% 0.135 76)",
+          "oklch(95% 0.088 76)"
+        ]
+      },
+      "high-contrast": {
+        "role": "neutral",
+        "displayName": "High contrast set (data-contrast=high)",
+        "canonical": "#000000",
+        "tonalRamp": [
+          "#000000",
+          "#555555",
+          "#0000c8",
+          "#ff6666",
+          "#00ff66",
+          "#ffcc00",
+          "#ffff00",
+          "#ffffff"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Display",
+        "purpose": "Page titles (h1), VT323 at 3rem rising to 3.75rem, font-size-adjust 0.5, font-synthesis none."
+      },
+      "headline": {
+        "displayName": "Headline",
+        "purpose": "Section headings (h2); 2.25rem inside panels, 3.75rem for the home board title."
+      },
+      "title": {
+        "displayName": "Title",
+        "purpose": "Choice titles, menu items, board group rows, shelf names, the verdict and its percentage."
+      },
+      "label": {
+        "displayName": "Label",
+        "purpose": "Control labels and short readouts: buttons 1.35rem, nav/tabs/step strip/number fields 1.5rem, window title bars 1.25rem."
+      },
+      "body-lead": {
+        "displayName": "Body Lead",
+        "purpose": "Lead paragraphs, 36 to 62ch; the home promise runs 1.25rem to 1.5rem."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Running text with tabular numerals, 60 to 75ch."
+      },
+      "body-small": {
+        "displayName": "Body Small",
+        "purpose": "Helper text, option descriptions, footer, badges."
+      },
+      "field-label": {
+        "displayName": "Field Label",
+        "purpose": "Form labels, legends and inline text links; the only weight above 400."
+      }
+    },
+    "shadows": [
+      {
+        "name": "window-forward",
+        "value": "0 18px 40px -12px rgb(0 0 0 / 0.85)",
+        "purpose": "A board tile on hover or focus, with its 1.1 scale and cyan frame."
+      },
+      {
+        "name": "live-window",
+        "value": "0 24px 60px -20px rgb(0 0 0 / 0.9)",
+        "purpose": "The home LIVE window, always in front of the hero."
+      },
+      {
+        "name": "dialog-backdrop",
+        "value": "rgb(0 0 0 / 0.7)",
+        "purpose": "Backdrop behind the side menu dialog."
+      }
+    ],
+    "motion": [
+      {
+        "name": "pour",
+        "value": "40ms steps(1, end) backwards; rows 45ms apart from 120ms",
+        "purpose": "Block title and hero lines arriving like a screen over a modem (promise 900ms, choices 1050ms, note 1150ms)."
+      },
+      {
+        "name": "blink",
+        "value": "1s steps(1, end) x4",
+        "purpose": "LIVE badge and the block cursor (cursor starts after 1.2s); always stops within 5s."
+      },
+      {
+        "name": "ease-out-expo",
+        "value": "cubic-bezier(0.16, 1, 0.3, 1)",
+        "purpose": "All object motion: side menu, tile scale, render turn."
+      },
+      {
+        "name": "menu-in",
+        "value": "180ms cubic-bezier(0.16, 1, 0.3, 1)",
+        "purpose": "Side menu slides in from the right edge."
+      },
+      {
+        "name": "tile-forward",
+        "value": "220ms cubic-bezier(0.16, 1, 0.3, 1)",
+        "purpose": "Board tile scales to 1.1 on hover/focus."
+      },
+      {
+        "name": "tile-turn",
+        "value": "260ms cubic-bezier(0.16, 1, 0.3, 1)",
+        "purpose": "Tile render pitch tilt (up to 6deg) toward the cursor."
+      },
+      {
+        "name": "tile-name",
+        "value": "120ms steps(1, end)",
+        "purpose": "Name bar appears instantly on hover/focus."
+      },
+      {
+        "name": "live-step",
+        "value": "3600ms",
+        "purpose": "Live A1 part rebuilds at 32, 42 and 26 mm grip."
+      },
+      {
+        "name": "still-fade",
+        "value": "500ms opacity",
+        "purpose": "Still render fades out once the first live build lands."
+      },
+      {
+        "name": "reduced",
+        "value": "0.01ms",
+        "purpose": "prefers-reduced-motion and the in-app Reduce motion setting cut every animation and transition."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "sm",
+        "value": "640px"
+      },
+      {
+        "name": "md",
+        "value": "768px",
+        "note": "key hints appear"
+      },
+      {
+        "name": "lg",
+        "value": "1024px",
+        "note": "two-column hero, Designer aside 30rem, Designer step strip"
+      },
+      {
+        "name": "xl",
+        "value": "1280px",
+        "note": "three-column shelf"
+      },
+      {
+        "name": "touch",
+        "value": "(hover: none)",
+        "note": "tile names always shown"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Solid inverse-video block for the main action.",
+      "html": "<button class=\"ds-btn-primary\">Download files</button>",
+      "css": ".ds-btn-primary { font-family: 'VT323', 'Atkinson Hyperlegible Mono', ui-monospace, monospace; font-weight: 400; font-size-adjust: 0.5; display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 48px; min-width: 48px; padding: 4px 16px; font-size: 1.35rem; line-height: 1; border: 2px solid; border-radius: 0; cursor: pointer; background: var(--color-primary, #33e0e0); border-color: var(--color-primary, #33e0e0); color: var(--color-on-primary, #041014); } .ds-btn-primary:hover { background: var(--color-primary-strong, #8ff5f5); border-color: var(--color-primary-strong, #8ff5f5); } .ds-btn-primary:focus-visible { outline: 3px solid var(--color-focus, #ffe14d); outline-offset: 2px; } .ds-btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }"
+    },
+    {
+      "name": "Secondary Button",
+      "kind": "button",
+      "refersTo": "button-secondary",
+      "description": "Cyan outline that inverts on hover.",
+      "html": "<button class=\"ds-btn-secondary\">Save</button>",
+      "css": ".ds-btn-secondary { font-family: 'VT323', 'Atkinson Hyperlegible Mono', ui-monospace, monospace; font-weight: 400; font-size-adjust: 0.5; display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 48px; min-width: 48px; padding: 4px 16px; font-size: 1.35rem; line-height: 1; border: 2px solid; border-radius: 0; cursor: pointer; background: var(--color-surface, #0f0f12); border-color: var(--color-primary, #33e0e0); color: var(--color-primary, #33e0e0); } .ds-btn-secondary:hover { background: var(--color-primary, #33e0e0); color: var(--color-on-primary, #041014); } .ds-btn-secondary:focus-visible { outline: 3px solid var(--color-focus, #ffe14d); outline-offset: 2px; }"
+    },
+    {
+      "name": "Ghost Button",
+      "kind": "button",
+      "refersTo": "button-ghost",
+      "description": "Quiet action; raised black fill and cyan text on hover.",
+      "html": "<button class=\"ds-btn-ghost\">Rename</button>",
+      "css": ".ds-btn-ghost { font-family: 'VT323', 'Atkinson Hyperlegible Mono', ui-monospace, monospace; font-weight: 400; font-size-adjust: 0.5; display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 48px; min-width: 48px; padding: 4px 16px; font-size: 1.35rem; line-height: 1; border: 2px solid; border-radius: 0; cursor: pointer; background: transparent; border-color: transparent; color: var(--color-text, #ececec); } .ds-btn-ghost:hover { background: var(--color-surface-2, #1a1a20); color: var(--color-primary, #33e0e0); } .ds-btn-ghost:focus-visible { outline: 3px solid var(--color-focus, #ffe14d); outline-offset: 2px; }"
+    },
+    {
+      "name": "Top Bar Navigation",
+      "kind": "nav",
+      "refersTo": "nav-item",
+      "description": "Sticky bar with full-height inverse-video items and [K] key hints.",
+      "html": "<nav class=\"ds-nav\"><a class=\"ds-nav-item is-active\" href=\"#\"><span class=\"ds-key\"><b>[</b><i>H</i><b>]</b></span>Home</a><a class=\"ds-nav-item\" href=\"#\"><span class=\"ds-key\"><b>[</b><i>F</i><b>]</b></span>Find a design</a><a class=\"ds-nav-item\" href=\"#\"><span class=\"ds-key\"><b>[</b><i>P</i><b>]</b></span>Pick a design</a></nav>",
+      "css": ".ds-nav { display: flex; align-items: stretch; gap: 4px; padding: 0 16px; background: var(--color-surface, #0f0f12); border-bottom: 3px double var(--color-rule, #24505a); } .ds-nav-item { font-family: 'VT323', 'Atkinson Hyperlegible Mono', ui-monospace, monospace; font-weight: 400; font-size-adjust: 0.5; display: flex; align-items: center; gap: 6px; min-height: 48px; padding: 0 12px; font-size: 1.5rem; color: var(--color-text, #ececec); text-decoration: none; } .ds-nav-item:hover { background: var(--color-surface-2, #1a1a20); color: var(--color-primary, #33e0e0); } .ds-nav-item.is-active { background: var(--color-primary, #33e0e0); color: var(--color-on-primary, #041014); } .ds-nav-item:focus-visible { outline: 3px solid var(--color-focus, #ffe14d); outline-offset: 2px; } .ds-key b { font-weight: 400; color: var(--color-accent, #ff5fd2); } .ds-key i { font-style: normal; color: var(--color-primary, #33e0e0); } .ds-nav-item.is-active .ds-key b, .ds-nav-item.is-active .ds-key i { color: var(--color-on-primary, #041014); }"
+    },
+    {
+      "name": "Number Field",
+      "kind": "input",
+      "refersTo": "input-number",
+      "description": "Measurement box: cyan readout in the terminal face, unit beside it.",
+      "html": "<label class=\"ds-field\"><span class=\"ds-field-label\">Grip diameter</span><span class=\"ds-field-row\"><input class=\"ds-input-number\" type=\"number\" value=\"32\"><span class=\"ds-unit\">mm</span></span></label>",
+      "css": ".ds-field { font-family: 'Atkinson Hyperlegible Mono', ui-monospace, monospace; display: grid; gap: 4px; color: var(--color-text, #ececec); } .ds-field-label { font-weight: 600; } .ds-field-row { display: flex; align-items: center; gap: 4px; } .ds-input-number { font-family: 'VT323', 'Atkinson Hyperlegible Mono', ui-monospace, monospace; font-weight: 400; font-size-adjust: 0.5; width: 96px; min-height: 48px; padding: 0 8px; font-size: 1.5rem; text-align: right; font-variant-numeric: tabular-nums; color: var(--color-primary, #33e0e0); background: var(--color-bg, #07070c); border: 1px solid var(--color-border, #3f7f8c); border-radius: 0; } .ds-input-number:focus-visible { outline: 3px solid var(--color-focus, #ffe14d); outline-offset: 2px; } .ds-unit { font-size: 0.875rem; color: var(--color-muted, #a9b0bf); }"
+    },
+    {
+      "name": "Strength Badge",
+      "kind": "chip",
+      "refersTo": "badge-warn",
+      "description": "Mandatory uncalibrated-estimate badge beside every verdict.",
+      "html": "<span class=\"ds-badge-warn\">Uncalibrated estimate</span>",
+      "css": ".ds-badge-warn { font-family: 'Atkinson Hyperlegible Mono', ui-monospace, monospace; display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px; font-size: 0.875rem; font-weight: 600; color: var(--color-warn, #ffd75f); background: var(--color-warn-bg, #2a2208); border: 1px solid var(--color-warn, #ffd75f); border-radius: 0; }"
+    },
+    {
+      "name": "Card",
+      "kind": "card",
+      "refersTo": "card",
+      "description": "Panel-black container with a single teal line.",
+      "html": "<section class=\"ds-card\"><h2 class=\"ds-card-title\">Get your files</h2><p class=\"ds-card-body\">STL, 3MF and a one-page print sheet.</p></section>",
+      "css": ".ds-card { padding: 20px; background: var(--color-surface, #0f0f12); border: 1px solid var(--color-border, #3f7f8c); border-radius: 0; color: var(--color-text, #ececec); } .ds-card-title { font-family: 'VT323', 'Atkinson Hyperlegible Mono', ui-monospace, monospace; font-weight: 400; font-size-adjust: 0.5; margin: 0; font-size: 1.875rem; line-height: 1.1; } .ds-card-body { font-family: 'Atkinson Hyperlegible Mono', ui-monospace, monospace; margin: 8px 0 0; line-height: 1.55; color: var(--color-muted, #a9b0bf); }"
+    },
+    {
+      "name": "Numbered Menu Choice",
+      "kind": "custom",
+      "refersTo": "button-primary",
+      "description": "BBS menu option: large [n] key, title and description; inverts on hover and focus.",
+      "html": "<a class=\"ds-choice\" href=\"#\"><span class=\"ds-choice-key\"><b>[</b>1<b>]</b></span><span class=\"ds-choice-title\">Learn</span><span class=\"ds-choice-desc\">How leverage, grip size and strength work.</span></a>",
+      "css": ".ds-choice { display: grid; grid-template-columns: 3.5rem 1fr; align-items: center; column-gap: 8px; min-height: 64px; padding: 8px 12px; color: var(--color-text, #ececec); text-decoration: none; background: var(--color-surface, #0f0f12); } .ds-choice-key { font-family: 'VT323', 'Atkinson Hyperlegible Mono', ui-monospace, monospace; font-weight: 400; font-size-adjust: 0.5; grid-row: span 2; font-size: 2.25rem; } .ds-choice-key b { font-weight: 400; color: var(--color-accent, #ff5fd2); } .ds-choice-title { font-family: 'VT323', 'Atkinson Hyperlegible Mono', ui-monospace, monospace; font-weight: 400; font-size-adjust: 0.5; font-size: 1.875rem; line-height: 1; } .ds-choice-desc { font-family: 'Atkinson Hyperlegible Mono', ui-monospace, monospace; font-size: 0.875rem; color: var(--color-muted, #a9b0bf); } .ds-choice:hover, .ds-choice:focus-visible { background: var(--color-primary, #33e0e0); color: var(--color-on-primary, #041014); } .ds-choice:hover b, .ds-choice:hover .ds-choice-desc, .ds-choice:focus-visible b, .ds-choice:focus-visible .ds-choice-desc { color: var(--color-on-primary, #041014); } .ds-choice:focus-visible { outline: 3px solid var(--color-focus, #ffe14d); outline-offset: 2px; }"
+    },
+    {
+      "name": "Picture Window",
+      "kind": "custom",
+      "refersTo": "window-title-bar",
+      "description": "Double-framed render window; comes forward on hover with an inverted title bar and LIVE badge.",
+      "html": "<figure class=\"ds-window\" tabindex=\"0\"><div class=\"ds-window-bar\"><span>A1 Build-up grip</span><span class=\"ds-live\">LIVE</span></div><div class=\"ds-window-view\"></div><figcaption class=\"ds-window-cap\">Grip 32 mm <span>· built in 41 ms</span></figcaption></figure>",
+      "css": ".ds-window { margin: 0; width: 260px; background: var(--color-surface, #0f0f12); border: 3px double var(--color-border, #3f7f8c); border-radius: 0; transition: transform 220ms cubic-bezier(0.16, 1, 0.3, 1); } .ds-window-bar { font-family: 'VT323', 'Atkinson Hyperlegible Mono', ui-monospace, monospace; font-weight: 400; font-size-adjust: 0.5; display: flex; justify-content: space-between; align-items: center; gap: 8px; padding: 0 8px; font-size: 1.25rem; color: var(--color-text, #ececec); border-bottom: 1px solid var(--color-border, #3f7f8c); } .ds-live { padding: 0 8px; background: var(--color-live, #1f3fd8); color: var(--color-on-live, #ffffff); animation: ds-blink 1s steps(1, end) 4; } @keyframes ds-blink { 50% { opacity: 0; } } .ds-window-view { aspect-ratio: 1; background: var(--color-viewer-bg, #0b0b0e); } .ds-window-cap { font-family: 'VT323', 'Atkinson Hyperlegible Mono', ui-monospace, monospace; font-weight: 400; font-size-adjust: 0.5; padding: 8px 12px; font-size: 1.25rem; color: var(--color-primary, #33e0e0); border-top: 1px solid var(--color-border, #3f7f8c); } .ds-window-cap span { color: var(--color-muted, #a9b0bf); } .ds-window:hover, .ds-window:focus-visible { transform: scale(1.1); border-color: var(--color-primary, #33e0e0); box-shadow: 0 18px 40px -12px rgb(0 0 0 / 0.85); outline: none; } .ds-window:hover .ds-window-bar, .ds-window:focus-visible .ds-window-bar { background: var(--color-primary, #33e0e0); color: var(--color-on-primary, #041014); }"
+    },
+    {
+      "name": "Strength Meter",
+      "kind": "custom",
+      "refersTo": "badge-ok",
+      "description": "Verdict readout over a 30-cell block bar in three zones.",
+      "html": "<div class=\"ds-meter\"><div class=\"ds-meter-head\"><span>Comfortable</span><span>42%</span></div><div class=\"ds-meter-bar\"><span class=\"z1\"></span><span class=\"z1\"></span><span class=\"z1\"></span><span class=\"z1\"></span><span class=\"z1\"></span><span class=\"z1\"></span><span class=\"z1\"></span><span class=\"z1\"></span><span class=\"z1\"></span><span class=\"z1 off\"></span><span class=\"z1 off\"></span><span class=\"z1 off\"></span><span class=\"z2 off\"></span><span class=\"z2 off\"></span><span class=\"z2 off\"></span><span class=\"z2 off\"></span><span class=\"z2 off\"></span><span class=\"z2 off\"></span><span class=\"z2 off\"></span><span class=\"z2 off\"></span><span class=\"z3 off\"></span><span class=\"z3 off\"></span><span class=\"z3 off\"></span><span class=\"z3 off\"></span><span class=\"z3 off\"></span><span class=\"z3 off\"></span><span class=\"z3 off\"></span><span class=\"z3 off\"></span><span class=\"z3 off\"></span><span class=\"z3 off\"></span></div></div>",
+      "css": ".ds-meter { width: 320px; } .ds-meter-head { font-family: 'VT323', 'Atkinson Hyperlegible Mono', ui-monospace, monospace; font-weight: 400; font-size-adjust: 0.5; display: flex; justify-content: space-between; align-items: baseline; font-size: 1.875rem; line-height: 1; color: var(--color-ok, #5fe07a); font-variant-numeric: tabular-nums; } .ds-meter-bar { display: grid; grid-template-columns: repeat(30, 1fr); gap: 2px; height: 20px; margin-top: 8px; } .ds-meter-bar .z1 { background: var(--color-ok, #5fe07a); } .ds-meter-bar .z2 { background: var(--color-warn, #ffd75f); } .ds-meter-bar .z3 { background: var(--color-bad, #ff6b6b); } .ds-meter-bar .off { opacity: 0.2; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "Bulletin board at 2 a.m.",
+    "overview": "The site is a dial-up bulletin board seen late at night: a terminal-black ground, ANSI cyan and magenta drawing the structure, plain white text, and one white-on-blue block reserved for whatever is live right now. Screens are built from double-ruled frames, square corners, inverse-video selection bars and numbered `[K]` key hints, so every choice reads like a menu option you could press a key for, and usually can. The world is dark-only by decision; high contrast (black, white and yellow) is its accessibility alternative, not a light theme.\n\nDensity is a terminal's density: big terminal-face labels for menus and headings, a calm monospaced reading face for everything the user actually reads, generous 48px targets, and a fixed palette with no gradients or glow. Depth comes from frames, rules and inverse video, not from shadows; only a window that comes forward casts one. Real 3D renders of the app's own parts sit inside the frames as picture windows, lit in a neutral studio and coloured in the three group filaments, which is where the world gets its warmth.\n\nMotion is stepped where the world is text and eased where it is physical: rows pour in one at a time like a screen arriving over a modem, a block cursor and the LIVE badge blink a few times and then hold, while tiles and the side menu move on a soft expo-out curve. The text-mode look is never a costume in the way of the task: no long paragraphs in pixel type, no neon glow, scanlines or matrix rain.",
+    "keyCharacteristics": [
+      "Terminal-black ground (`bg` #07070c) with neutral near-black surfaces; dark-only.",
+      "Cyan (`primary`) and magenta (`accent`) carry rules, brackets, chrome and selection; white carries text.",
+      "White on blue (`live` / `on-live`) appears only on LIVE or new things.",
+      "VT323 for display, menus, labels and readouts; Atkinson Hyperlegible Mono for running text and numbers.",
+      "Square corners, 3px double-line frames on windows and major rules, inverse-video active states.",
+      "`[K]` bracket key hints: magenta brackets, cyan key, part of the visible label.",
+      "Stepped reveals for text, eased transforms for objects; every animation becomes a still frame under reduced motion."
+    ],
+    "rules": [
+      {
+        "name": "The Two-Chrome Rule",
+        "body": "Cyan and magenta draw the board; white is for words. A new surface uses cyan for structure and selection, magenta for brackets and markers, and does not introduce a third chrome hue.",
+        "section": "colors"
+      },
+      {
+        "name": "The Blue Means Live Rule",
+        "body": "White on blue marks something live or new, nothing else. If it is not updating in front of the user, it is not blue.",
+        "section": "colors"
+      },
+      {
+        "name": "The Inverse Selection Rule",
+        "body": "Active and selected states are a solid cyan block with `on-primary` text (nav, tabs, menu rows on hover and focus, the current step, toggles). Never a tint, an underline bar or a coloured outline alone.",
+        "section": "colors"
+      },
+      {
+        "name": "The Yellow Is Focus Rule",
+        "body": "Yellow belongs to the keyboard focus ring. Status warnings use `warn`, which sits on its own dark background.",
+        "section": "colors"
+      },
+      {
+        "name": "The Big Pixels Rule",
+        "body": "VT323 is for headings, menus, labels, key hints and numeric readouts, set at 1.25rem or larger. Sentences and paragraphs are always Atkinson Hyperlegible Mono.",
+        "section": "typography"
+      },
+      {
+        "name": "The Tabular Rule",
+        "body": "Numbers line up: body text uses tabular numerals, and measurements, percentages and build times are readouts in the display face.",
+        "section": "typography"
+      },
+      {
+        "name": "The Flat Board Rule",
+        "body": "Surfaces are flat at rest. A shadow means \"this window is in front\", and only a framed picture window earns it.",
+        "section": "elevation"
+      },
+      {
+        "name": "The No Glow Rule",
+        "body": "No outer glow, bloom, scanline overlays or CRT curvature. The terminal reading comes from type, frames and colour, not from simulated phosphor.",
+        "section": "elevation"
+      },
+      {
+        "name": "The Square Corner Rule",
+        "body": "Nothing is rounded. 2px is the ceiling any legacy utility can reach, not a style to apply.",
+        "section": "shapes"
+      },
+      {
+        "name": "The Double Frame Rule",
+        "body": "A double line means a window or a boundary of the screen; a single line divides inside one. Do not double-rule a control or an inner divider.",
+        "section": "shapes"
+      }
+    ],
+    "dos": [
+      "**Do** draw selection and active state as a solid `primary` block with `on-primary` text.",
+      "**Do** frame windows and screen boundaries with a 3px double line, and divide inside them with 1px.",
+      "**Do** label choices with `[K]` bracket hints (magenta brackets, cyan key) and wire the key when it is a real shortcut.",
+      "**Do** set headings, menus, labels and readouts in VT323 at 1.25rem or larger, and all sentences in Atkinson Hyperlegible Mono.",
+      "**Do** keep every target at least 48px and show the 3px `focus` outline at 2px offset on everything focusable.",
+      "**Do** show real renders of the app's own parts inside picture windows on `viewer-bg`.",
+      "**Do** make text reveals stepped (`steps(1, end)`) and object motion eased (`cubic-bezier(0.16, 1, 0.3, 1)`), and stop every blink within four cycles.",
+      "**Do** keep the strength badge beside every verdict, the meter and the print sheet."
+    ],
+    "donts": [
+      "**Don't** round corners; 2px is the ceiling the theme allows, not a style.",
+      "**Don't** use white on blue for anything that is not live or new.",
+      "**Don't** add glow, bloom, scanlines, CRT curvature or matrix rain.",
+      "**Don't** set paragraphs or long text in VT323.",
+      "**Don't** add a light theme or tinted surfaces; contrast needs go through the high-contrast set.",
+      "**Don't** add a shadow to a control or card; only a picture window that has come forward casts one.",
+      "**Don't** use Unicode arrows or glyph-only controls; draw pixel glyphs on the logo grid or use a text label."
+    ]
+  }
+}
