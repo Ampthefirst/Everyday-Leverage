@@ -41,3 +41,4 @@ One line each: decision — reason.
 - LIVE badge blinks four times and then holds (WCAG 2.2.2). Board tiles turn toward a mouse cursor only (not touch), and show names on hover/focus, or always on touch screens.
 - Design renders (public/renders) are precached by the service worker for offline use.
 - Favicon/logo redrawn as a 16×16 pixel lever on a fulcrum in the world palette.
+- v2 scope set by the owner: redesign + local saved projects + step strip; new features and accounts deferred. Presentation mode also hides the strength badge (owner decision); CLAUDE.md badge rule carries that one exception.

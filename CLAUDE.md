@@ -1,6 +1,6 @@
 # Everyday Leverage — conventions for Claude Code
 
-`PLAN.md` is authoritative for v1; `docs/everyday-leverage-guide.md` is the product spec.
+`V2PLAN.md` is authoritative for v2 (`PLAN.md` for v1); `docs/everyday-leverage-guide.md` is the product spec.
 Log every judgment call in `DECISIONS.md` (one line: decision + reason). Keep `STATUS.md` current.
 
 ## Commands
@@ -11,7 +11,9 @@ Log every judgment call in `DECISIONS.md` (one line: decision + reason). Keep `S
 ## Hard rules
 - **Units:** mm, N, N·mm, MPa internally. Display torque in N·m. Conversions live in `src/types/units.ts`.
 - **Badge rule:** every strength verdict, the heat-map, and the print sheet show the
-  "Uncalibrated estimate" badge (or "Calibrated to [printer]" when calibration is active). Never hide it.
+  "Uncalibrated estimate" badge (or "Calibrated to [printer]" when calibration is active). Never hide it,
+  with one exception: the separate presentation build (`VITE_PRESENTATION_MODE=1`) hides it, along with every
+  other disclaimer, through `src/content/disclaimers.ts`.
 - **Heat-map is computed** from the same strength model as the verdicts (`src/strength/field.ts`).
 - **Validation lives on parameters**, not mesh analysis. Family schemas enforce cross-parameter
   constraints with zod `superRefine` and return plain-language fixes.

@@ -58,11 +58,11 @@ thicker grip, a better angle) delivered through four things together:
 - Calibration to a real printer, Learn pages, local profiles, share links, offline after first visit,
   optional opt-in Gemini features.
 - Existing stack (React 19, Vite, TypeScript, Tailwind, three.js/R3F) stays.
-- **Presentation mode (planned):** a temporary, separately deployed build that hides disclaimers via a
-  build flag (e.g. `VITE_PRESENTATION_MODE`). The redesign must route every disclaimer through one
+- **Presentation mode (v2):** a temporary, separately deployed build that hides disclaimers, including the
+  "Uncalibrated estimate" badge (owner decision), via the build flag `VITE_PRESENTATION_MODE=1`. The redesign must route every disclaimer through one
   place so this flag can switch them off. The standard site is unaffected.
-- Open for v2: projects and a user dashboard (local first; accounts optional and later), new
-  user-oriented features, calibration data from real tests (deferred to a future version).
+- v2 (see `V2PLAN.md`): the redesign, saved projects on this device and a step strip. New user-facing
+  features, accounts and calibration data from real tests are deferred to a future version.
 
 ## Brand Commitments
 
