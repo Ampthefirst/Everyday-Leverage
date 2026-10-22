@@ -15,6 +15,8 @@ import type { FamilyId, Params } from '../families/types';
 import { toGeometry } from '../viewer/meshGeometry';
 import { Ghost, GhostStudio } from '../viewer/Ghosts';
 import { GROUP_FILAMENT, RENDER_SIZE, SHOTS } from './config';
+import { ArticulatedHand } from '../viewer/Hand';
+import type { HandPose } from '../viewer/handModel';
 
 declare global {
   interface Window {
@@ -35,7 +37,7 @@ function Studio({ id, mesh, params }: { id: FamilyId; mesh: MeshData; params: Pa
     () => new THREE.MeshPhysicalMaterial({ color: GROUP_FILAMENT[family.group], roughness: 0.55, envMapIntensity: 0.45 }),
     [family.group],
   );
-  const ghosts = family.ghost(params).objects.filter((o) => o.kind !== 'hand' && !shot.hideGhosts?.includes(o.kind));
+  const ghosts = family.ghost(params).objects.filter((o) => !shot.hideGhosts?.includes(o.kind));
   const dr = family.displayRotation ?? [0, 0, 0];
   const b = mesh.bbox;
   const centre: [number, number, number] = [-(b.min[0] + b.max[0]) / 2, -(b.min[1] + b.max[1]) / 2, -(b.min[2] + b.max[2]) / 2];
@@ -118,8 +120,45 @@ function Studio({ id, mesh, params }: { id: FamilyId; mesh: MeshData; params: Pa
   );
 }
 
+/** Hand check: render.html?hand=grip&d=32 shows the articulated hand alone (with the handle for grips). */
+function HandCheck({ pose, d }: { pose: HandPose; d: number }) {
+  const { gl, scene, camera } = useThree();
+  const mat = useMemo(() => new THREE.MeshPhysicalMaterial({ color: '#e9e7e3', roughness: 0.5, clearcoat: 0.15 }), []);
+  const handle = useMemo(() => new THREE.MeshPhysicalMaterial({ color: GROUP_FILAMENT.A, roughness: 0.55 }), []);
+  useEffect(() => {
+    const pmrem = new THREE.PMREMGenerator(gl);
+    scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
+    gl.toneMapping = THREE.NeutralToneMapping;
+    const cam = camera as THREE.PerspectiveCamera;
+    const v = (new URLSearchParams(window.location.search).get('view') ?? '260,180,320').split(',').map(Number);
+    cam.position.set(v[0], v[1], v[2]);
+    cam.lookAt(0, 0, 0);
+    requestAnimationFrame(() =>
+      requestAnimationFrame(() => {
+        window.__capture = (type = 'image/png', quality = 0.9) => gl.domElement.toDataURL(type, quality);
+        window.__renderReady = true;
+      }),
+    );
+  }, [gl, scene, camera]);
+  return (
+    <>
+      <directionalLight position={[260, 520, 380]} intensity={3} />
+      <directionalLight position={[-420, 260, -360]} intensity={2} color="#bfe6ff" />
+      <group rotation={[-Math.PI / 2, 0, 0]}>
+        <ArticulatedHand pose={pose} gripD={d} mat={mat} />
+        {(pose === 'grip' || pose === 'hook') && (
+          <mesh rotation={[Math.PI / 2, 0, 0]} material={handle}>
+            <cylinderGeometry args={[d / 2, d / 2, 140, 40]} />
+          </mesh>
+        )}
+      </group>
+    </>
+  );
+}
+
 export function RenderPage() {
   const q = new URLSearchParams(window.location.search);
+  const handPose = q.get('hand') as HandPose | null;
   const id = (q.get('id') ?? 'B1').toUpperCase() as FamilyId;
   const size = Number(q.get('size') ?? RENDER_SIZE);
   const [state, setState] = useState<{ mesh: MeshData; params: Params } | null>(null);
@@ -138,6 +177,13 @@ export function RenderPage() {
       .catch((e) => (window.__renderError = String(e)));
   }, [id]);
 
+  if (handPose) {
+    return (
+      <Canvas dpr={1} gl={{ alpha: true, antialias: true, preserveDrawingBuffer: true }} camera={{ fov: 35 }} style={{ width: size, height: size }}>
+        <HandCheck pose={handPose} d={Number(q.get('d') ?? 32)} />
+      </Canvas>
+    );
+  }
   if (!state) return null;
   return (
     <div style={{ width: size, height: size }}>

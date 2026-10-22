@@ -25,10 +25,11 @@ export const SHOTS: Record<FamilyId, RenderShot> = {
   A1: { preset: 'spoon' },
   A2: { preset: 'spoon' },
   A3: { preset: 'bit' },
-  B1: { preset: 'jam' },
+  B1: { preset: 'jam', view: [300, 110, 300] },
   B2: { preset: 'house-key' },
-  B3: { preset: 'tap' },
-  C1: { preset: 'zipper' },
+  B3: { preset: 'tap', view: [300, 110, 300] },
+  // The hook hand covers the small pull loop entirely, so this tile shows the pull on its zipper.
+  C1: { preset: 'zipper', hideGhosts: ['hand'] },
   C2: { preset: 'lift' },
   C3: { preset: 'door' },
 };

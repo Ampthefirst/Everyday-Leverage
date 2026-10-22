@@ -555,7 +555,8 @@ export const B1: Family<B1P> = {
           position: [B / 2 + p.lever * 0.7, 0, p.leverH / 2],
           hand: 'right',
           pose: 'grip',
-          rotation: [0, 90, 0],
+          // Overhand: the palm rests on the lever's top face (−Z here; the part is shown flipped), wrist toward −Y.
+          rotation: [0, 90, 180],
         },
       ],
     };

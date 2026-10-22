@@ -33,7 +33,7 @@ pages, profiles/share links, offline support and the optional Gemini features ar
 ## Partial / known gaps
 
 - **Stress map and strength numbers are uncalibrated estimates** (by design, badge always shown).
-- Ghost objects are simple stylised shapes (the hand is capsules + a rounded palm).
+- Ghost objects are simple stylised shapes; the hand is a procedural articulated mannequin hand (`src/viewer/Hand.tsx`, `handModel.ts`) posed by joint angles. The how-to-use animation still slides the hand rather than moving its joints.
 - Fillets are approximated with hull blends and rounded profiles (no true 3D fillets).
 - The 3MF stores settings as metadata; slicers will not read them as slicer settings.
 - `GEMINI_MODEL` in Vercel was not in the API's name format; the server now normalises friendly

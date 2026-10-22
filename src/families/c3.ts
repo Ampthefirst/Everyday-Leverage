@@ -311,10 +311,11 @@ export const C3: Family<C3P> = {
         {
           kind: 'hand',
           size: { breadth: 0 },
-          position: [p.clipW + p.extension * 0.85, 0, 30],
+          // Palm flat on top of the bar near its end, fingers toward the tip, pressing down.
+          position: [p.clipW + p.extension - 100, 0, p.barH / 2 + 23],
           hand: 'right',
           pose: 'palm',
-          rotation: [0, 180, 0],
+          rotation: [0, 0, -90],
         },
       ],
     };

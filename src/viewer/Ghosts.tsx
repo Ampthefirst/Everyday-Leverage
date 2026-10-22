@@ -1,5 +1,5 @@
 import { createContext, useContext, useMemo } from 'react';
-import { RoundedBox } from '@react-three/drei';
+import { ArticulatedHand } from './Hand';
 import * as THREE from 'three';
 import type { GhostObject } from '../families/types';
 
@@ -8,7 +8,7 @@ const deg = (d: number) => (d * Math.PI) / 180;
 /** Studio mode renders context objects as real materials (for product renders), not translucent ghosts. */
 export const GhostStudio = createContext(false);
 
-type Finish = 'glass' | 'metal' | 'wood' | 'plastic' | 'skin';
+type Finish = 'glass' | 'metal' | 'wood' | 'plastic' | 'skin' | 'mannequin';
 
 function studioMaterial(finish: Finish): THREE.Material {
   switch (finish) {
@@ -19,6 +19,8 @@ function studioMaterial(finish: Finish): THREE.Material {
       return new THREE.MeshPhysicalMaterial({ color: '#d7dce2', metalness: 1, roughness: 0.16, envMapIntensity: 1.3 });
     case 'wood':
       return new THREE.MeshPhysicalMaterial({ color: '#8a6440', roughness: 0.7 });
+    case 'mannequin':
+      return new THREE.MeshPhysicalMaterial({ color: '#e9e7e3', roughness: 0.5, clearcoat: 0.15, clearcoatRoughness: 0.6 });
     case 'skin':
       return new THREE.MeshPhysicalMaterial({ color: '#c99a7c', roughness: 0.6, sheen: 0.3 });
     default:
@@ -91,99 +93,10 @@ function Box({
   );
 }
 
-function Capsule({ a, b, r, mat }: { a: THREE.Vector3; b: THREE.Vector3; r: number; mat: THREE.Material }) {
-  const { pos, quat, len } = useMemo(() => {
-    const d = new THREE.Vector3().subVectors(b, a);
-    const len = d.length();
-    const quat = new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0, 1, 0), d.clone().normalize());
-    return { pos: new THREE.Vector3().addVectors(a, b).multiplyScalar(0.5), quat, len };
-  }, [a, b]);
-  return (
-    <mesh position={pos} quaternion={quat} material={mat}>
-      <capsuleGeometry args={[r, Math.max(0.01, len), 6, 12]} />
-    </mesh>
-  );
-}
-
-/** Stylised hand built from capsules, scaled by hand breadth, mirrored for the left hand. */
+/** Articulated mannequin hand, scaled by hand breadth, mirrored for the left hand. */
 function Hand({ o, breadth }: { o: GhostObject; breadth: number }) {
-  const mat = useGhostMaterial('#e0a17a', 0.3, 'skin');
-  const s = breadth / 85;
-  const grip = o.size.grip ?? 32;
-  const pose = o.pose ?? 'grip';
-  const fingers = useMemo(() => {
-    const out: { a: THREE.Vector3; b: THREE.Vector3; r: number }[] = [];
-    const fr = 9 * s;
-    const lens = [44, 50, 47, 38].map((l) => l * s);
-    const zs = [1.5, 0.5, -0.5, -1.5].map((k) => k * 20 * s);
-    if (pose === 'grip' || pose === 'hook') {
-      // Fingers wrap around a cylinder of diameter `grip` on the Z axis, palm on the −X side.
-      const R = grip / 2 + fr;
-      lens.forEach((L, i) => {
-        const z = zs[i];
-        const steps = 3;
-        let prev = new THREE.Vector3(-R, 0, z);
-        const sweep = Math.min(Math.PI * 1.25, L / R);
-        for (let k = 1; k <= steps; k++) {
-          const a = Math.PI + (sweep * k) / steps;
-          const pt = new THREE.Vector3(R * Math.cos(a), R * Math.sin(a), z);
-          out.push({ a: prev, b: pt, r: fr * (1 - k * 0.06) });
-          prev = pt;
-        }
-      });
-      // thumb across the front
-      out.push({
-        a: new THREE.Vector3(-R, -R * 0.6, zs[0] + 18 * s),
-        b: new THREE.Vector3(R * 0.2, -R * 1.05, zs[0] + 6 * s),
-        r: fr * 1.05,
-      });
-    } else if (pose === 'palm') {
-      lens.forEach((L, i) =>
-        out.push({
-          a: new THREE.Vector3(zs[i], 0, -10 * s),
-          b: new THREE.Vector3(zs[i] * 1.1, L, -10 * s),
-          r: fr,
-        }),
-      );
-      out.push({
-        a: new THREE.Vector3(-45 * s, -20 * s, -10 * s),
-        b: new THREE.Vector3(-70 * s, 10 * s, -10 * s),
-        r: fr * 1.1,
-      });
-    } else if (pose === 'point' || pose === 'pinch') {
-      out.push({ a: new THREE.Vector3(0, 0, -50 * s), b: new THREE.Vector3(0, 0, -50 * s + lens[0]), r: fr });
-      out.push({
-        a: new THREE.Vector3(-15 * s, -20 * s, -50 * s),
-        b: new THREE.Vector3(-8 * s, -14 * s, pose === 'pinch' ? -6 * s : -30 * s),
-        r: fr * 1.1,
-      });
-    }
-    return out;
-  }, [s, grip, pose]);
-  const palm =
-    pose === 'grip' || pose === 'hook'
-      ? {
-          size: [26 * s, 80 * s, 85 * s] as [number, number, number],
-          pos: [-(grip / 2 + 9 * s) - 16 * s, 25 * s, 0] as [number, number, number],
-        }
-      : pose === 'palm'
-        ? {
-            size: [85 * s, 90 * s, 24 * s] as [number, number, number],
-            pos: [0, -45 * s, -10 * s] as [number, number, number],
-          }
-        : {
-            size: [80 * s, 26 * s, 90 * s] as [number, number, number],
-            pos: [-20 * s, -30 * s, -100 * s] as [number, number, number],
-          };
-  const rr = Math.min(...palm.size) * 0.45;
-  return (
-    <group scale={[o.hand === 'left' ? -1 : 1, 1, 1]}>
-      <RoundedBox args={palm.size} radius={rr} smoothness={4} position={palm.pos} material={mat} />
-      {fingers.map((f, i) => (
-        <Capsule key={i} a={f.a} b={f.b} r={f.r} mat={mat} />
-      ))}
-    </group>
-  );
+  const mat = useGhostMaterial('#ece9e4', 0.34, 'mannequin');
+  return <ArticulatedHand breadth={breadth} pose={o.pose ?? 'grip'} gripD={o.size.grip ?? 32} side={o.hand ?? 'right'} mat={mat} />;
 }
 
 function GhostShape({ o, breadth }: { o: GhostObject; breadth: number }) {

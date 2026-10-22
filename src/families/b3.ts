@@ -422,7 +422,7 @@ export const B3: Family<B3P> = {
           position: [B / 2 + p.lever * 0.6, 0, p.leverH / 2],
           hand: 'right',
           pose: 'grip',
-          rotation: [0, 90, 0],
+          rotation: [0, 90, 180],
         },
       ],
     };

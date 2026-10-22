@@ -387,10 +387,11 @@ export const B2: Family<B2P> = {
         {
           kind: 'hand',
           size: { breadth: 0 },
-          position: [p.lever * 0.75, -20, p.leverW / 2],
+          // Thumb and index pinch one wing across its thickness; the hand reaches in from behind, palm down.
+          position: [p.lever * 0.6, 0, p.leverW * 0.6],
           hand: 'right',
           pose: 'pinch',
-          rotation: [0, 0, 0],
+          rotation: [90, 0, 180],
         },
       ],
     };
