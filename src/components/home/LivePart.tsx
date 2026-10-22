@@ -89,6 +89,15 @@ export default function LivePart({
     return () => io.disconnect();
   }, []);
 
+  // Hold still while a dialog (such as the side menu) is open, so its own motion gets the frames.
+  const [covered, setCovered] = useState(false);
+  useEffect(() => {
+    const check = () => setCovered(!!document.querySelector('dialog[open]'));
+    const mo = new MutationObserver(check);
+    mo.observe(document.body, { subtree: true, attributes: true, attributeFilter: ['open'] });
+    return () => mo.disconnect();
+  }, []);
+
   useEffect(() => {
     const family = getFamily(LIVE_ID)!;
     const preset = family.presets.find((p) => p.id === 'spoon');
@@ -129,7 +138,7 @@ export default function LivePart({
       {current && (
         <Canvas
           dpr={[1, 2]}
-          frameloop={visible && !still ? 'always' : 'demand'}
+          frameloop={visible && !still && !covered ? 'always' : 'demand'}
           gl={{ alpha: true, antialias: true }}
           camera={{ fov: 30 }}
           shadows
