@@ -2,6 +2,7 @@ import { Link, NavLink, Outlet, useLocation, useNavigate } from 'react-router-do
 import { useEffect, useRef, useState } from 'react';
 import { useSettings } from '../state/settings';
 import { DISCLAIMERS, SHOW_DISCLAIMERS } from '../content/disclaimers';
+import { isTyping } from './hotkeys';
 
 /** The top bar keeps only the three ways in; everything else lives in the side menu. */
 const TOP = [
@@ -45,12 +46,6 @@ function MenuGlyph() {
       <rect y="5.6" width="8" height="1.4" />
     </svg>
   );
-}
-
-function typing(t: EventTarget | null) {
-  const el = t as HTMLElement | null;
-  if (!el) return false;
-  return el.isContentEditable || ['INPUT', 'TEXTAREA', 'SELECT'].includes(el.tagName);
 }
 
 function SideMenu({ open, onClose }: { open: boolean; onClose: () => void }) {
@@ -159,7 +154,7 @@ export function Layout() {
   useEffect(() => {
     if (!hotkeys) return;
     const onKey = (e: KeyboardEvent) => {
-      if (e.defaultPrevented || e.ctrlKey || e.metaKey || e.altKey || typing(e.target)) return;
+      if (e.defaultPrevented || e.ctrlKey || e.metaKey || e.altKey || isTyping(e.target)) return;
       if (document.querySelector('dialog[open]')) return;
       const k = e.key.toLowerCase();
       const to = k === 'h' ? '/' : k === 'f' ? '/find' : k === 'p' ? '/design' : null;
@@ -176,6 +171,7 @@ export function Layout() {
   }, [hotkeys, navigate]);
 
   const isDesigner = location.pathname.startsWith('/design/');
+  const onPick = location.pathname.startsWith('/pick/');
   const inMenu = MENU.some((m) => location.pathname.startsWith(m.to));
 
   return (
@@ -200,24 +196,27 @@ export function Layout() {
               <NavLink
                 key={n.to}
                 to={n.to}
-                end={n.to === '/' || n.to === '/design'}
+                end={n.to === '/'}
                 aria-keyshortcuts={hotkeys ? n.key.toLowerCase() : undefined}
                 className={({ isActive }) =>
-                  `tap font-display flex items-center gap-1.5 px-2 text-2xl sm:px-3 ${isActive ? 'bg-primary text-on-primary' : 'text-text hover:bg-surface-2 hover:text-primary'}`
+                  `tap font-display flex items-center gap-1.5 px-2 text-2xl sm:px-3 ${isActive || (n.to === '/design' && onPick) ? 'bg-primary text-on-primary' : 'text-text hover:bg-surface-2 hover:text-primary'}`
                 }
               >
-                {({ isActive }) => (
-                  <>
-                    {hotkeys && (
-                      <Key
-                        k={n.key}
-                        className={`hidden md:inline ${isActive ? '[&_span]:!text-on-primary' : ''}`}
-                      />
-                    )}
-                    <span className="sm:hidden">{n.short}</span>
-                    <span className="hidden sm:inline">{n.label}</span>
-                  </>
-                )}
+                {({ isActive: own }) => {
+                  const isActive = own || (n.to === '/design' && onPick);
+                  return (
+                    <>
+                      {hotkeys && (
+                        <Key
+                          k={n.key}
+                          className={`hidden md:inline ${isActive ? '[&_span]:!text-on-primary' : ''}`}
+                        />
+                      )}
+                      <span className="sm:hidden">{n.short}</span>
+                      <span className="hidden sm:inline">{n.label}</span>
+                    </>
+                  );
+                }}
               </NavLink>
             ))}
           </nav>

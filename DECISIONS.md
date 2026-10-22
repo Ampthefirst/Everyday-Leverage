@@ -42,3 +42,4 @@ One line each: decision — reason.
 - Design renders (public/renders) are precached by the service worker for offline use.
 - Favicon/logo redrawn as a 16×16 pixel lever on a fulcrum in the world palette.
 - v2 scope set by the owner: redesign + local saved projects + step strip; new features and accounts deferred. Presentation mode also hides the strength badge (owner decision); CLAUDE.md badge rule carries that one exception.
+- Pick flow: board → /pick/:id design screen (render, blurb, leverage line, presets as a numbered list, Enter opens the designer) → /design/:id. Home and Pick share the board; number keys 1–9 on Pick, 1–n presets, ←/→ neighbours, Esc back. Key hints hide below md (touch-first).

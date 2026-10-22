@@ -8,6 +8,7 @@ import { NotFoundPage } from '../pages/NotFoundPage';
 // The designer pulls in three.js and the geometry kernel, so it is code-split.
 const DesignerPage = lazy(() => import('../pages/DesignerPage'));
 const PickPage = lazy(() => import('../pages/PickPage'));
+const DesignScreen = lazy(() => import('../pages/DesignScreen'));
 const FinderPage = lazy(() => import('../pages/FinderPage'));
 const CalibratePage = lazy(() => import('../pages/CalibratePage'));
 const LearnPage = lazy(() => import('../pages/LearnPage'));
@@ -34,6 +35,7 @@ export function App() {
             <Route path="find" element={<FinderPage />} />
             <Route path="design" element={<PickPage />} />
             <Route path="design/:familyId" element={<DesignerPage />} />
+            <Route path="pick/:familyId" element={<DesignScreen />} />
             <Route path="calibrate" element={<CalibratePage />} />
             <Route path="learn" element={<LearnPage />} />
             <Route path="limits" element={<LimitsPage />} />

@@ -1,15 +1,16 @@
 import { useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { familyList } from '../../families';
-import { GROUPS } from '../../pages/PickPage';
+import { GROUPS } from '../../families/groups';
 import { prefersReducedMotion } from '../../state/settings';
 
 /**
  * The nine designs as framed picture windows, three rows by group. Every part turns a little to face
  * the cursor; the one under it comes forward, turns further and shows its name.
  */
-export function Board() {
+export function Board({ numbered = false }: { numbered?: boolean }) {
   const fams = familyList();
+  const order = fams.map((f) => f.id);
   const root = useRef<HTMLDivElement>(null);
   const frame = useRef(0);
 
@@ -52,10 +53,24 @@ export function Board() {
               .filter((f) => f.group === g.id)
               .map((f) => (
                 <li key={f.id} className="flex">
-                  <Link to={`/design/${f.id}`} data-tile className="tile group flex w-full">
+                  <Link
+                    to={`/pick/${f.id}`}
+                    data-tile
+                    aria-keyshortcuts={numbered ? String(order.indexOf(f.id) + 1) : undefined}
+                    className="tile group flex w-full"
+                  >
                     <span className="tile-frame flex w-full flex-col border border-border bg-surface">
                       <span className="tile-bar font-display flex items-center justify-between gap-2 border-b border-border px-2 text-xl">
-                        <span>{f.id}</span>
+                        <span>
+                          {numbered && (
+                            <span className="tile-num mr-1.5 text-muted">
+                              <span className="text-accent">[</span>
+                              {order.indexOf(f.id) + 1}
+                              <span className="text-accent">]</span>
+                            </span>
+                          )}
+                          {f.id}
+                        </span>
                         <span className="tile-open text-base">Open</span>
                       </span>
                       <span className="block overflow-hidden bg-viewer-bg [perspective:700px]">

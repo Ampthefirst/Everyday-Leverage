@@ -7,6 +7,7 @@ const PAGES = [
   '/design',
   '/design/B1',
   '/design/C3',
+  '/pick/B2',
   '/calibrate',
   '/learn',
   '/limits',

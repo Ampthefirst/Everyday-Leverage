@@ -228,3 +228,9 @@ input[type='range'] {
     opacity: 1;
   }
 }
+.tile:hover .tile-num,
+.tile:hover .tile-num span,
+.tile:focus-visible .tile-num,
+.tile:focus-visible .tile-num span {
+  color: inherit;
+}

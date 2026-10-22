@@ -107,3 +107,14 @@ test('fit-check template downloads as a PDF', async ({ page }) => {
   ]);
   expect(dl.suggestedFilename()).toMatch(/template-(letter|a4)\.pdf$/);
 });
+
+test('pick a design by number keys, then a preset opens the designer with it applied', async ({ page }) => {
+  await page.goto('/design');
+  await expect(page.getByRole('heading', { name: 'Pick a design' })).toBeVisible();
+  await page.keyboard.press('4');
+  await expect(page).toHaveURL(/\/pick\/B1$/);
+  await expect(page.getByRole('heading', { name: /B1 Lid and jar opener/ })).toBeVisible();
+  await page.keyboard.press('2');
+  await expect(page).toHaveURL(/\/design\/B1$/);
+  await expect(page.getByRole('button', { name: /Bottle caps/ })).toHaveAttribute('aria-pressed', 'true');
+});
