@@ -41,7 +41,8 @@ thicker grip, a better angle) delivered through four things together:
 
 ## Operating Context
 
-- Live demos on a laptop or projector; evaluators may also open the site on their own phones.
+- A hackathon: judges watch a presentation, then try the site for a couple of minutes on their own
+  laptops (desktop first; mobile must still work).
 - Real-world use: measuring with a ruler or printable gauges, holding paper templates against real
   objects, taking files or a request sheet to a library, school or makerspace, printing in PLA/PETG
   on a 256 × 256 × 256 mm bed.

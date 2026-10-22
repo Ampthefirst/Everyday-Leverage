@@ -26,3 +26,4 @@ One line each: decision — reason.
 - No `maxOutputTokens` on Gemini calls: on thinking models the thinking tokens count against it and cut replies off; the prompts keep replies short and the server truncates text to 1200 characters.
 - Impeccable design skill (v0.1.16, Apache-2.0) vendored into `.claude/skills/impeccable` from github.com/pbakaus/impeccable so every session has it; its engine binary downloads (checksum-verified) to ~/.impeccable on first use. Auto-check hooks not enabled yet.
 - PRODUCT.md (Impeccable init): v2 redesign is tuned first for judges/evaluators at a presentation or competition; only the product name is a fixed brand commitment; presentation mode recorded as a planned capability.
+- v2 visual direction: 'Bulletin board at 2 a.m.' (ANSI BBS world), chosen by the owner after two re-rolls steered to techy/bold dark; brief in docs/v2-ui-brief.md.
