@@ -36,7 +36,11 @@
         { "value": "can", "label": "Can ring-pull", "tasks": ["pull", "open"] },
         { "value": "button", "label": "Button or switch", "tasks": ["press", "reach"] },
         { "value": "screen", "label": "Phone or tablet screen", "tasks": ["press"] },
-        { "value": "other", "label": "Something else", "tasks": ["open", "hold", "turn", "pull", "press", "reach"] }
+        {
+          "value": "other",
+          "label": "Something else",
+          "tasks": ["open", "hold", "turn", "pull", "press", "reach"]
+        }
       ]
     },
     {

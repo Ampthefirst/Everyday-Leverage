@@ -10,7 +10,7 @@ export default function PrintHelpPage() {
       />
       <div className="space-y-6">
         <Card>
-          <h2 className="text-xl font-bold">Where to print</h2>
+          <h2 className="text-3xl">Where to print</h2>
           <p className="mt-2">
             Many schools, libraries and makerspaces have 3D printers, and online print services will post a
             part to you. Ask before you go — opening hours, costs and file rules differ. Write the place you
@@ -18,7 +18,7 @@ export default function PrintHelpPage() {
           </p>
         </Card>
         <Card>
-          <h2 className="text-xl font-bold">What to bring</h2>
+          <h2 className="text-3xl">What to bring</h2>
           <ol className="mt-2 list-decimal space-y-1 pl-6">
             <li>
               The <strong>request-a-print sheet</strong> (PDF) — it explains the part, the material and the
@@ -35,7 +35,7 @@ export default function PrintHelpPage() {
           </ol>
         </Card>
         <Card>
-          <h2 className="text-xl font-bold">Useful without a printer</h2>
+          <h2 className="text-3xl">Useful without a printer</h2>
           <ul className="mt-2 list-disc space-y-1 pl-6">
             <li>
               The <strong>1:1 fit-check template</strong>: print on paper at 100% and hold it against the jar
@@ -51,14 +51,14 @@ export default function PrintHelpPage() {
           </ul>
         </Card>
         <Note tone="info">
-          <h2 className="text-lg font-bold">Paper printing tip</h2>
+          <h2 className="text-3xl">Paper printing tip</h2>
           <p>
             Printers often shrink pages to fit. Choose "Actual size" or 100%, turn off "Fit to page", and
             check the 25 mm square with a ruler before trusting any template.
           </p>
         </Note>
         <Card>
-          <h2 className="text-xl font-bold">Words you might hear</h2>
+          <h2 className="text-3xl">Words you might hear</h2>
           <dl className="mt-2 space-y-2">
             <div>
               <dt className="font-semibold">Walls / perimeters</dt>

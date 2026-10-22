@@ -280,10 +280,7 @@ function Designer({ familyId }: { familyId: FamilyId }) {
               </div>
             )}
             {buildError && (
-              <div
-                className="absolute inset-x-3 bottom-3 border border-bad bg-bad-bg p-3"
-                role="alert"
-              >
+              <div className="absolute inset-x-3 bottom-3 border border-bad bg-bad-bg p-3" role="alert">
                 {buildError}
               </div>
             )}

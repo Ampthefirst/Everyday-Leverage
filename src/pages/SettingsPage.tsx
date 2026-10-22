@@ -16,7 +16,7 @@ export default function SettingsPage() {
       />
       <div className="space-y-6">
         <Card className="space-y-5">
-          <h2 className="text-xl font-bold">Display</h2>
+          <h2 className="text-3xl">Display</h2>
           <Choice
             label="Text size"
             value={s.textScale}
@@ -47,7 +47,7 @@ export default function SettingsPage() {
           />
         </Card>
         <Card className="space-y-3">
-          <h2 className="text-xl font-bold">Describe it in your own words (optional)</h2>
+          <h2 className="text-3xl">Describe it in your own words (optional)</h2>
           <Toggle
             label="Use Gemini to understand free-text descriptions"
             checked={s.llmOptIn}
@@ -70,7 +70,7 @@ function ProfilesCard() {
   const [name, setName] = useState('');
   return (
     <Card className="space-y-4">
-      <h2 className="text-xl font-bold">Profiles</h2>
+      <h2 className="text-3xl">Profiles</h2>
       <p className="text-muted">
         A profile keeps measurements you use often (like hand size) and your preferred hand. Stored only in
         this browser — never uploaded. Share links never include a profile.

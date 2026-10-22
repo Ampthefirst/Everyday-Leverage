@@ -184,7 +184,15 @@ export default function CalibratePage() {
       />
       <div className="space-y-6">
         <Card className="space-y-3">
-          <h2 className="text-xl font-bold">1. Print the test bars</h2>
+          <h2 className="text-3xl">
+            <span aria-hidden="true">
+              <span className="text-accent">[</span>
+              <span className="text-primary">1</span>
+              <span className="text-accent">]</span>{' '}
+            </span>
+            <span className="sr-only">Step 1: </span>
+            Print the test bars
+          </h2>
           <p>
             {TEST_BAR.length} × {TEST_BAR.width} × {TEST_BAR.thickness} mm. Print at least {MIN_BREAKS} lying
             flat and {MIN_BREAKS} standing upright, in the same material and settings you use for parts.
@@ -213,14 +221,30 @@ export default function CalibratePage() {
           </div>
         </Card>
         <Card className="space-y-3">
-          <h2 className="text-xl font-bold">2. Break them</h2>
+          <h2 className="text-3xl">
+            <span aria-hidden="true">
+              <span className="text-accent">[</span>
+              <span className="text-primary">2</span>
+              <span className="text-accent">]</span>{' '}
+            </span>
+            <span className="sr-only">Step 2: </span>
+            Break them
+          </h2>
           <p>
             Clamp the bar up to the groove ({TEST_BAR.clamp} mm), hang weight from the hole ({TEST_BAR.arm} mm
             out) and add weight slowly until it breaks. Wear eye protection.
           </p>
         </Card>
         <Card className="space-y-4">
-          <h2 className="text-xl font-bold">3. Enter the results</h2>
+          <h2 className="text-3xl">
+            <span aria-hidden="true">
+              <span className="text-accent">[</span>
+              <span className="text-primary">3</span>
+              <span className="text-accent">]</span>{' '}
+            </span>
+            <span className="sr-only">Step 3: </span>
+            Enter the results
+          </h2>
           <label className="block">
             <span className="font-semibold">Printer name</span>
             <input
@@ -302,12 +326,8 @@ export default function CalibratePage() {
                     </td>
                     <td className="py-2 text-right">{n > 0 ? `${fmt(barStress(F), 1)} MPa` : '—'}</td>
                     <td className="py-2 text-right">
-                      <Button
-                        variant="ghost"
-                        aria-label={`Remove bar ${i + 1}`}
-                        onClick={() => setRows(rows.filter((x) => x.id !== r.id))}
-                      >
-                        ✕
+                      <Button variant="ghost" onClick={() => setRows(rows.filter((x) => x.id !== r.id))}>
+                        Remove<span className="sr-only"> bar {i + 1}</span>
                       </Button>
                     </td>
                   </tr>
@@ -370,7 +390,7 @@ export default function CalibratePage() {
           {msg && <Note tone="ok">{msg}</Note>}
         </Card>
         <Card className="space-y-3">
-          <h2 className="text-xl font-bold">Saved calibrations</h2>
+          <h2 className="text-3xl">Saved calibrations</h2>
           {profiles.length === 0 && (
             <p className="text-muted">
               None yet. Until you add one, every strength check shows <StrengthBadge calibration={null} />
