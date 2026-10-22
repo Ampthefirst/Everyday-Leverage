@@ -133,6 +133,31 @@ Under reduced motion, every one of these becomes a still frame.
 - Big numbered choices.
 - Quick mode by default for newcomers.
 
+## 5b. 3D visuals: articulated hand (owner request, 2026-10-22)
+
+The current hand (capsule "blobs" and a box palm) is replaced by a medium-fidelity articulated hand.
+The owner's reference is a segmented mannequin / prosthetic-style hand.
+
+- **Structure:** built procedurally in code, with no external model to license.
+  - **Palm:** a rounded slab, wider at the knuckles, with a capsule wrist.
+  - **Fingers:** each has three tapered phalanges with small joint gaps and rounded knuckles.
+  - **Thumb:** has its own metacarpal so it can oppose across the palm.
+  - About 16 segments; no nails or skin detail.
+- **Material:** matte white or light grey mannequin plastic, a neutral reference beside the coloured
+  printed parts.
+- **Poses as joint angles** (forward kinematics):
+  - grip, computed from the design's real grip diameter so the fingers wrap the actual handle;
+  - pinch (keys);
+  - flat palm (cuff);
+  - hook (pull loops);
+  - point (buttons).
+- **Size and side:** scaled by the profile's hand breadth; mirrors for left hands.
+- **Animation:** the how-to-use animation moves joints instead of sliding shapes.
+- **Renders:** once built, hands return to the studio renders (`npm run render:parts`), so the tiles
+  show parts in use.
+- **Rejected alternative:** a downloaded rigged glTF hand. It needs a licensed asset, adds weight, and
+  is much harder to fit to a specific grip size.
+
 ## 6. States and ranges
 
 - **Content:** 9 designs, 3–5 presets each, and 7 finder questions with up to 17 options.
