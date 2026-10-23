@@ -52,8 +52,8 @@ export default function FinderPage() {
   if (step === -1) {
     return (
       <Page narrow>
-        <StepStrip current="brief" compact className="mb-6" />
-        <h1 ref={headingRef} tabIndex={-1} className="text-5xl outline-none sm:text-6xl">
+        <StepStrip current="brief" className="mb-6" />
+        <h1 ref={headingRef} tabIndex={-1} className="text-[2.6rem] outline-none focus-visible:outline-none sm:text-[3.2rem]">
           Help me find a design
         </h1>
         <p className="mt-3 text-lg">
@@ -89,25 +89,25 @@ export default function FinderPage() {
     const opts = optionsFor(q, answers);
     return (
       <Page narrow>
-        <StepStrip current="brief" compact className="mb-6" />
+        <StepStrip current="brief" className="mb-6" />
         <div className="flex items-center gap-3">
-          <p className="font-display text-2xl" aria-live="polite">
-            Question {step + 1} <span className="text-muted">of {QUESTIONS.length}</span>
+          <p className="text-base text-muted" aria-live="polite">
+            Question {step + 1} of {QUESTIONS.length}
           </p>
-          <div aria-hidden="true" className="flex flex-1 gap-[3px]">
+          <div aria-hidden="true" className="flex flex-1 gap-1">
             {QUESTIONS.map((_, n) => (
-              <span key={n} className={`h-3 flex-1 ${n <= step ? 'bg-primary' : 'bg-surface-2'}`} />
+              <span key={n} className={`h-1 flex-1 rounded-full ${n <= step ? 'bg-text' : 'bg-rule'}`} />
             ))}
           </div>
         </div>
-        <h1 ref={headingRef} tabIndex={-1} className="mt-6 text-4xl outline-none sm:text-5xl">
+        <h1 ref={headingRef} tabIndex={-1} className="mt-6 text-[2.2rem] outline-none focus-visible:outline-none sm:text-[2.75rem]">
           {other ? q.textOther : q.text}
         </h1>
         {hotkeys && opts.length <= 9 && (
-          <p className="mt-2 hidden text-sm text-muted md:block">Press a number, or choose:</p>
+          <p className="mt-2 hidden text-base text-muted md:block">Press a number, or choose.</p>
         )}
         <div
-          className="mt-4 grid gap-2 sm:grid-cols-2"
+          className="mt-6 grid gap-2 sm:grid-cols-2"
           role="group"
           aria-label={other ? q.textOther : q.text}
         >
@@ -118,25 +118,13 @@ export default function FinderPage() {
               onClick={() => answer(q.id, o.value)}
               aria-pressed={answers[q.id] === o.value}
               aria-keyshortcuts={hotkeys && n < 9 ? String(n + 1) : undefined}
-              className={`group tap grid min-h-16 grid-cols-[auto_1fr] items-center gap-x-3 border-2 px-3 py-2 text-left hover:bg-primary hover:text-on-primary focus-visible:bg-primary focus-visible:text-on-primary ${answers[q.id] === o.value ? 'border-primary bg-surface-2' : 'border-border bg-surface'}`}
+              className={`tap grid min-h-16 grid-cols-[2rem_1fr] items-center gap-x-2 rounded-md border px-3 py-2.5 text-left hover:border-text ${answers[q.id] === o.value ? 'border-primary bg-info-bg shadow-[inset_0_0_0_1px_var(--color-primary)]' : 'border-border bg-surface'}`}
             >
-              {n < 9 && (
-                <span aria-hidden="true" className="font-display row-span-2 text-3xl">
-                  <span className="text-accent group-hover:text-on-primary group-focus-visible:text-on-primary">
-                    [
-                  </span>
-                  {n + 1}
-                  <span className="text-accent group-hover:text-on-primary group-focus-visible:text-on-primary">
-                    ]
-                  </span>
-                </span>
-              )}
-              <span className="font-display text-2xl leading-tight">{o.label}</span>
-              {o.hint && (
-                <span className="text-sm text-muted group-hover:text-on-primary group-focus-visible:text-on-primary">
-                  {o.hint}
-                </span>
-              )}
+              <span aria-hidden="true" className="figcaption row-span-2 text-xl text-faint">
+                {n < 9 ? n + 1 : ''}
+              </span>
+              <span className="font-semibold leading-snug">{o.label}</span>
+              {o.hint && <span className="text-base text-muted">{o.hint}</span>}
             </button>
           ))}
         </div>
@@ -154,7 +142,7 @@ export default function FinderPage() {
 
   return (
     <Page narrow>
-      <h1 ref={headingRef} tabIndex={-1} className="text-5xl outline-none sm:text-6xl">
+      <h1 ref={headingRef} tabIndex={-1} className="text-[2.6rem] outline-none focus-visible:outline-none sm:text-[3.2rem]">
         {result?.kind === 'out-of-scope'
           ? 'Thank you'
           : result?.kind === 'none'
@@ -243,22 +231,20 @@ function ResultCard({ s, answers, primary = false }: { s: Suggestion; answers: A
     navigate(`/design/${fam.id}`, { state: { fromPreset: !!preset } });
   };
   return (
-    <article className={`border-2 bg-surface p-4 ${primary ? 'border-primary' : 'border-border'}`}>
+    <article className={`rounded-md border bg-surface p-5 ${primary ? 'border-text' : 'border-border'}`}>
       <div className="flex gap-4">
         <img
           src={`/renders/${fam.id}.webp`}
           alt=""
           width={1024}
           height={1024}
-          className={`shrink-0 border border-border bg-viewer-bg ${primary ? 'h-32 w-32' : 'h-20 w-20'}`}
+          className={`shrink-0 rounded-sm border border-rule bg-viewer-bg ${primary ? 'h-32 w-32' : 'h-20 w-20'}`}
         />
         <div>
-          <h2 className={primary ? 'text-4xl' : 'text-2xl'}>
-            <span className="text-accent">{fam.id}</span> {fam.name}
-          </h2>
+          <h2 className={primary ? 'text-[2rem]' : 'text-2xl'}>{fam.name}</h2>
           <p className="mt-1">{s.why}</p>
           {primary && <p className="mt-2 text-muted">{fam.leverage}</p>}
-          {preset && <p className="mt-2 text-sm">Starts from: {preset.label}</p>}
+          {preset && <p className="mt-2 text-base text-muted">Starts from: {preset.label}</p>}
         </div>
       </div>
       <Button className="mt-4" variant={primary ? 'primary' : 'secondary'} onClick={open}>

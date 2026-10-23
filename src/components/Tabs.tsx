@@ -35,11 +35,7 @@ export function Tabs<T extends string>({
   };
   return (
     <div className="flex min-h-0 flex-1 flex-col">
-      <div
-        role="tablist"
-        aria-label={label}
-        className="flex overflow-x-auto border-b-[3px] border-double border-rule"
-      >
+      <div role="tablist" aria-label={label} className="flex gap-1 overflow-x-auto border-b border-rule px-2">
         {tabs.map((t, i) => (
           <button
             key={t.id}
@@ -54,7 +50,7 @@ export function Tabs<T extends string>({
             tabIndex={active === t.id ? 0 : -1}
             onClick={() => onChange(t.id)}
             onKeyDown={(e) => onKey(e, i)}
-            className={`tap font-display shrink-0 whitespace-nowrap px-3 text-2xl ${active === t.id ? 'bg-primary text-on-primary' : 'text-text hover:bg-surface-2 hover:text-primary'}`}
+            className={`tap shrink-0 whitespace-nowrap px-3 text-base font-semibold ${active === t.id ? 'text-text shadow-[inset_0_-2px_0_var(--color-text)]' : 'text-muted hover:text-text'}`}
           >
             {t.label}
           </button>

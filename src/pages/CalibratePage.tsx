@@ -185,10 +185,8 @@ export default function CalibratePage() {
       <div className="space-y-6">
         <Card className="space-y-3">
           <h2 className="text-3xl">
-            <span aria-hidden="true">
-              <span className="text-accent">[</span>
-              <span className="text-primary">1</span>
-              <span className="text-accent">]</span>{' '}
+            <span aria-hidden="true" className="figcaption mr-2 text-faint">
+              1
             </span>
             <span className="sr-only">Step 1: </span>
             Print the test bars
@@ -222,10 +220,8 @@ export default function CalibratePage() {
         </Card>
         <Card className="space-y-3">
           <h2 className="text-3xl">
-            <span aria-hidden="true">
-              <span className="text-accent">[</span>
-              <span className="text-primary">2</span>
-              <span className="text-accent">]</span>{' '}
+            <span aria-hidden="true" className="figcaption mr-2 text-faint">
+              2
             </span>
             <span className="sr-only">Step 2: </span>
             Break them
@@ -237,10 +233,8 @@ export default function CalibratePage() {
         </Card>
         <Card className="space-y-4">
           <h2 className="text-3xl">
-            <span aria-hidden="true">
-              <span className="text-accent">[</span>
-              <span className="text-primary">3</span>
-              <span className="text-accent">]</span>{' '}
+            <span aria-hidden="true" className="figcaption mr-2 text-faint">
+              3
             </span>
             <span className="sr-only">Step 3: </span>
             Enter the results
@@ -403,7 +397,7 @@ export default function CalibratePage() {
               return (
                 <li
                   key={key}
-                  className={`flex flex-wrap items-center gap-2 rounded-xl border-2 p-3 ${on ? 'border-primary' : 'border-border'}`}
+                  className={`flex flex-wrap items-center gap-2 rounded-md border p-3 ${on ? 'border-primary shadow-[inset_0_0_0_1px_var(--color-primary)]' : 'border-border'}`}
                 >
                   <span>
                     <span className="font-semibold">{p.printerName}</span> · {p.material} · σ_xy{' '}

@@ -140,7 +140,7 @@ export default function FilesPanel() {
         if (!list.length) return null;
         return (
           <section key={g.kind} className="space-y-2">
-            <h3 className="text-lg font-bold">{g.title}</h3>
+            <h3 className="font-serif text-xl">{g.title}</h3>
             <p className="text-sm text-muted">{g.lead}</p>
             <ul className="flex flex-wrap gap-2">
               {list.map((f) => (
@@ -160,7 +160,7 @@ export default function FilesPanel() {
         );
       })}
       <section className="space-y-2">
-        <h3 className="text-lg font-bold">Request-a-print details</h3>
+        <h3 className="font-serif text-xl">Request-a-print details</h3>
         <label htmlFor="where" className="block font-semibold">
           Where you hope to print (shown on the request sheet)
         </label>
@@ -175,7 +175,7 @@ export default function FilesPanel() {
         </p>
       </section>
       <section className="space-y-2">
-        <h3 className="text-lg font-bold">Share this design</h3>
+        <h3 className="font-serif text-xl">Share this design</h3>
         <p className="text-sm text-muted">
           The link holds only the design settings — no names. It is not sent anywhere until you share it.
         </p>

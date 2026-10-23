@@ -1,14 +1,13 @@
 import { STEPS, type StepId } from '../state/projects';
 
 /**
- * Brief → Measure → Check → Print. The current step is an inverse-video block; steps before it are
- * done. `stopped` adds a "you stopped here" marker (used for saved projects).
+ * Brief → Measure → Check → Print. Done steps are filled dots, the current step is an ink-blue dot and
+ * full-strength text. `stopped` adds a "you stopped here" note (saved projects).
  */
 export function StepStrip({
   current,
   stopped,
   className = '',
-  compact = false,
 }: {
   current: StepId;
   stopped?: StepId;
@@ -19,33 +18,24 @@ export function StepStrip({
   return (
     <ol
       aria-label="Progress"
-      className={`font-display flex items-stretch ${compact ? 'text-xl' : 'text-2xl'} ${className}`}
+      className={`flex flex-wrap items-center gap-x-5 gap-y-1 text-sm font-medium ${className}`}
     >
       {STEPS.map((s, i) => {
         const here = i === at;
         const done = i < at;
         return (
-          <li key={s.id} aria-current={here ? 'step' : undefined} className="flex items-center">
-            {i > 0 && (
-              <span
-                aria-hidden="true"
-                className={`h-0 w-3 border-t-2 sm:w-5 ${done || here ? 'border-primary' : 'border-rule'}`}
-              />
-            )}
+          <li
+            key={s.id}
+            aria-current={here ? 'step' : undefined}
+            className={`flex items-center gap-2 ${here ? 'text-text' : done ? 'text-muted' : 'text-faint'}`}
+          >
             <span
-              className={`flex flex-col px-2 leading-tight ${here ? 'bg-primary text-on-primary' : done ? 'text-primary' : 'text-muted'}`}
-            >
-              <span>
-                <span aria-hidden="true">{i + 1} </span>
-                {s.label}
-                {done && <span className="sr-only"> (done)</span>}
-              </span>
-              {stopped === s.id && (
-                <span className={`font-sans text-sm leading-none ${here ? '' : 'text-accent'}`}>
-                  you stopped here
-                </span>
-              )}
-            </span>
+              aria-hidden="true"
+              className={`h-2 w-2 rounded-full border-[1.5px] ${here ? 'border-primary bg-primary' : done ? 'border-muted bg-muted' : 'border-current'}`}
+            />
+            {s.label}
+            {done && <span className="sr-only"> (done)</span>}
+            {stopped === s.id && <span className="text-faint">· you stopped here</span>}
           </li>
         );
       })}

@@ -6,12 +6,15 @@
   --color-surface: var(--color-surface);
   --color-surface-2: var(--color-surface-2);
   --color-border: var(--color-border);
+  --color-rule: var(--color-rule);
   --color-text: var(--color-text);
   --color-muted: var(--color-muted);
+  --color-faint: var(--color-faint);
   --color-primary: var(--color-primary);
   --color-primary-strong: var(--color-primary-strong);
   --color-on-primary: var(--color-on-primary);
   --color-accent: var(--color-accent);
+  --color-focus: var(--color-focus);
   --color-ok: var(--color-ok);
   --color-warn: var(--color-warn);
   --color-bad: var(--color-bad);
@@ -20,23 +23,17 @@
   --color-warn-bg: var(--color-warn-bg);
   --color-bad-bg: var(--color-bad-bg);
   --color-info-bg: var(--color-info-bg);
-  --color-rule: var(--color-rule);
-  --color-live: var(--color-live);
-  --color-on-live: var(--color-on-live);
-  --color-focus: var(--color-focus);
   --color-viewer-bg: var(--color-viewer-bg);
-  --color-shade: var(--color-shade);
-  /* Running text, numbers and fields: a monospaced face from a low-vision family. */
-  --font-sans: 'Atkinson Hyperlegible Mono', ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
-  /* Display, menus and labels: a DEC VT320 terminal face, used large only. */
-  --font-display: 'VT323', 'Atkinson Hyperlegible Mono', ui-monospace, monospace;
-  /* The world has square corners: every rounded utility resolves to a hairline radius. */
-  --radius-sm: 2px;
-  --radius-md: 2px;
-  --radius-lg: 2px;
-  --radius-xl: 2px;
-  --radius-2xl: 2px;
-  --radius-3xl: 2px;
+  /* Interface, labels and numbers. */
+  --font-sans: 'Public Sans', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  /* Headings, figure captions and callouts. */
+  --font-serif: 'Spectral', Georgia, 'Times New Roman', serif;
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 6px;
+  --radius-xl: 8px;
+  --radius-2xl: 10px;
+  --radius-3xl: 12px;
 }
 
 html,
@@ -49,26 +46,34 @@ body {
   background: var(--color-bg);
   color: var(--color-text);
   font-family: var(--font-sans);
+  font-size: 1.125rem;
   line-height: 1.55;
   font-variant-numeric: tabular-nums;
   -webkit-font-smoothing: antialiased;
 }
 
-/* VT323 has a small x-height: font-size-adjust brings it up to the body face so sizes stay honest. */
+/* Headings and figure captions are set in the serif at its regular weight (no faux bold). */
 h1,
 h2,
-.font-display {
-  font-family: var(--font-display);
+.font-serif {
+  font-family: var(--font-serif);
   font-weight: 400;
-  font-size-adjust: 0.5;
   font-synthesis: none;
-  letter-spacing: 0.01em;
-  line-height: 1.1;
+  letter-spacing: -0.012em;
+  line-height: 1.12;
+  text-wrap: balance;
+}
+h3 {
+  text-wrap: balance;
+}
+.figcaption {
+  font-family: var(--font-serif);
+  font-style: italic;
 }
 
 ::selection {
-  background: var(--color-accent);
-  color: var(--color-bg);
+  background: #d6defa;
+  color: var(--color-text);
 }
 
 html {
@@ -79,12 +84,13 @@ html {
 
 a {
   text-underline-offset: 0.2em;
+  text-decoration-thickness: 1px;
 }
 
 :focus-visible {
   outline: 3px solid var(--color-focus);
-  outline-offset: 2px;
-  border-radius: 0;
+  outline-offset: 3px;
+  border-radius: 4px;
 }
 
 /* At extra-large text the viewer is small; the strength tab carries the meter instead. */
@@ -132,7 +138,7 @@ a {
 }
 
 input[type='range'] {
-  accent-color: var(--color-primary);
+  accent-color: var(--color-text);
   height: var(--tap);
 }
 
@@ -140,46 +146,64 @@ input[type='range'] {
   margin-top: 0.75rem;
 }
 
-/* ── Bulletin-board motion and windows ─────────────────────────────── */
+/* ── Patent figure: paper, grid and figures ───────────────────────── */
 
-/* Title screen: rows arrive one at a time, like a screen coming in over a modem. */
-.pour {
-  animation: pour 40ms steps(1, end) backwards;
-}
-@keyframes pour {
-  from {
-    opacity: 0;
-  }
-}
-
-/* Live / new marker: white on blue, blinks a few times then holds (WCAG 2.2.2: stops within 5 s). */
-.live-badge {
-  background: var(--color-live);
-  color: var(--color-on-live);
-}
-.live-badge.blink {
-  animation: blink 1s steps(1, end) 4;
-}
-@keyframes blink {
-  50% {
-    opacity: 0;
-  }
+/* Drafting grid: 24 px squares in hairlines. */
+.graph-paper {
+  background-image:
+    linear-gradient(var(--color-grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--color-grid) 1px, transparent 1px);
+  background-size: 24px 24px;
+  background-position: -1px -1px;
 }
 
-/* Block cursor at the end of the title screen's promise: blinks a few times, then holds. */
-.blink-cursor {
-  display: inline-block;
-  width: 0.55em;
-  height: 1em;
-  margin-left: 0.15em;
-  vertical-align: -0.12em;
-  background: var(--color-primary);
-  animation: blink 1s steps(1, end) 1.2s 4;
+/*
+ * Designer stage: the grid fades to about 18% over the part's on-screen bounds (set by the viewer as
+ * --fx/--fy/--frx/--fry, in %), and is full strength at the edges, so the part reads clearly.
+ */
+.stage-grid {
+  position: relative;
+  isolation: isolate;
+}
+.stage-grid::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background-image:
+    linear-gradient(var(--color-grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--color-grid) 1px, transparent 1px);
+  background-size: 24px 24px;
+  --fade: radial-gradient(
+    ellipse var(--frx, 34%) var(--fry, 38%) at var(--fx, 50%) var(--fy, 52%),
+    rgb(0 0 0 / 0.18) 0,
+    rgb(0 0 0 / 0.18) 55%,
+    #000 100%
+  );
+  -webkit-mask-image: var(--fade);
+  mask-image: var(--fade);
+}
+:root[data-contrast='high'] .stage-grid::before {
+  display: none;
+}
+
+/* The sheet a figure is drawn on. */
+.figure-sheet {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+}
+.figure-svg svg {
+  display: block;
+  width: 100%;
+  height: auto;
 }
 
 /* Side menu slides in from the right edge. */
 .side-menu[open] {
   animation: menu-in 180ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+.side-menu::backdrop {
+  background: rgb(22 24 29 / 0.32);
 }
 @keyframes menu-in {
   from {
@@ -187,60 +211,11 @@ input[type='range'] {
   }
 }
 
-/* Board tiles: each part faces the cursor; the hovered window comes forward. */
-.tile {
-  --rx: 0deg;
-  position: relative;
-  transition: transform 220ms cubic-bezier(0.16, 1, 0.3, 1);
+/* Figures are drawn in ink: the drawing code's black strokes and text take the text colour. */
+.figure-svg [stroke='#000000'],
+.figure-svg [stroke='#000'] {
+  stroke: var(--color-text);
 }
-.tile-img {
-  transform: rotateX(var(--rx));
-  transition: transform 260ms cubic-bezier(0.16, 1, 0.3, 1);
-  will-change: transform;
-}
-.tile-open {
-  visibility: hidden;
-}
-.tile-name {
-  opacity: 0;
-  transition: opacity 120ms steps(1, end);
-}
-.tile:hover,
-.tile:focus-visible {
-  z-index: 10;
-  transform: scale(1.1);
-}
-.tile:hover .tile-frame,
-.tile:focus-visible .tile-frame {
-  border-color: var(--color-primary);
-  box-shadow: 0 18px 40px -12px rgb(0 0 0 / 0.85);
-}
-.tile:hover .tile-bar,
-.tile:focus-visible .tile-bar {
-  background: var(--color-primary);
-  color: var(--color-on-primary);
-}
-.tile:hover .tile-img,
-.tile:focus-visible .tile-img {
-  transform: rotateX(calc(var(--rx) * 1.6)) scale(1.04);
-}
-.tile:hover .tile-open,
-.tile:focus-visible .tile-open {
-  visibility: visible;
-}
-.tile:hover .tile-name,
-.tile:focus-visible .tile-name {
-  opacity: 1;
-}
-/* No hover on touch screens: names always show. */
-@media (hover: none) {
-  .tile-name {
-    opacity: 1;
-  }
-}
-.tile:hover .tile-num,
-.tile:hover .tile-num span,
-.tile:focus-visible .tile-num,
-.tile:focus-visible .tile-num span {
-  color: inherit;
+.figure-svg text {
+  fill: var(--color-muted);
 }

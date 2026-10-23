@@ -96,7 +96,7 @@ describe.each([
     expect(html.includes('not a medical device')).toBe(shown);
     expect(html.includes('What it is, and isn')).toBe(shown);
     // The ways in stay either way.
-    expect(html).toContain('Help me find a design');
+    expect(html).toContain('Find a design for a task');
   });
 
   it('the print sheet, the request sheet and the zip README', () => {

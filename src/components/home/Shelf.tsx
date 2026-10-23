@@ -4,6 +4,7 @@ import { getFamily } from '../../families';
 import { useDesign } from '../../state/design';
 import { sortedProjects, STEPS, useProjects, type Project } from '../../state/projects';
 import { Button } from '../Button';
+import { Figure } from '../Figure';
 
 /** Opens a saved project in the designer where it stopped. */
 export function useOpenProject() {
@@ -26,56 +27,48 @@ function ShelfItem({ p }: { p: Project }) {
   const fam = getFamily(p.familyId);
   if (!fam) return null;
   return (
-    <li className="flex flex-col border border-border bg-surface">
-      <div className="font-display flex items-center justify-between gap-2 border-b border-border px-3 text-xl">
-        <span>
-          <span className="text-accent">{fam.id}</span> {fam.name}
-        </span>
-        <span className="text-muted">{new Date(p.updatedAt).toLocaleDateString()}</span>
+    <li className="grid grid-cols-[6rem_1fr] gap-4 border-r border-b border-border bg-surface px-5 pt-5 pb-4">
+      <Figure
+        familyId={p.familyId}
+        params={p.params}
+        className="flex h-24 w-24 items-center justify-center rounded-sm border border-rule p-1.5 [&_svg]:max-h-[5.25rem]"
+      />
+      <div className="min-w-0">
+        {editing ? (
+          <form
+            className="flex flex-wrap gap-2"
+            onSubmit={(e) => {
+              e.preventDefault();
+              rename(p.id, name);
+              setEditing(false);
+            }}
+          >
+            <label className="sr-only" htmlFor={`name-${p.id}`}>
+              Name
+            </label>
+            <input
+              id={`name-${p.id}`}
+              value={name}
+              maxLength={80}
+              autoFocus
+              onChange={(e) => setName(e.target.value)}
+              className="tap min-w-0 flex-1 rounded-md border border-border bg-surface px-3"
+            />
+            <Button type="submit" variant="secondary">
+              Save
+            </Button>
+          </form>
+        ) : (
+          <h3 className="font-serif text-[1.3rem] leading-tight font-medium break-words">{p.name}</h3>
+        )}
+        <p className="mt-1 text-base text-muted">
+          {fam.name} · {new Date(p.updatedAt).toLocaleDateString()}
+        </p>
+        <p className="mt-1 text-base">
+          You stopped at <span className="font-semibold">{stepLabel(p)}</span>
+        </p>
       </div>
-      <div className="flex gap-3 p-3">
-        <img
-          src={`/renders/${fam.id}.webp`}
-          alt=""
-          width={1024}
-          height={1024}
-          loading="lazy"
-          className="h-24 w-24 shrink-0 border border-border bg-viewer-bg"
-        />
-        <div className="min-w-0 flex-1">
-          {editing ? (
-            <form
-              className="flex flex-wrap gap-2"
-              onSubmit={(e) => {
-                e.preventDefault();
-                rename(p.id, name);
-                setEditing(false);
-              }}
-            >
-              <label className="sr-only" htmlFor={`name-${p.id}`}>
-                Name
-              </label>
-              <input
-                id={`name-${p.id}`}
-                value={name}
-                maxLength={80}
-                autoFocus
-                onChange={(e) => setName(e.target.value)}
-                className="tap min-w-0 flex-1 border border-border bg-bg px-2"
-              />
-              <Button type="submit" variant="secondary">
-                Save
-              </Button>
-            </form>
-          ) : (
-            <h3 className="font-display break-words text-3xl leading-none">{p.name}</h3>
-          )}
-          <p className="mt-2 text-sm">
-            You stopped at <span className="font-display text-xl text-accent">{stepLabel(p)}</span>
-          </p>
-        </div>
-      </div>
-      <div className="mt-auto flex flex-wrap gap-2 border-t border-rule p-2">
+      <div className="col-span-full -ml-2 flex flex-wrap gap-1">
         <Button onClick={() => open(p)}>
           Open<span className="sr-only"> {p.name}</span>
         </Button>
@@ -105,37 +98,40 @@ function ShelfItem({ p }: { p: Project }) {
 export function Shelf() {
   const projects = sortedProjects(useProjects((s) => s.projects));
   return (
-    <section id="shelf" aria-labelledby="shelf-title" className="mx-auto max-w-7xl scroll-mt-16 px-4 py-14">
-      <h2 id="shelf-title" className="text-5xl">
-        Your shelf
-      </h2>
-      <p className="mt-2 max-w-[62ch] text-muted">
-        Designs you save keep their sizes and where you stopped. They stay in this browser, on this device
-        only.
-      </p>
-      {projects.length === 0 ? (
-        <div className="mt-6 border border-dashed border-border p-6">
-          <p className="font-display text-3xl">Nothing on the shelf yet.</p>
-          <p className="mt-2 max-w-[60ch] text-muted">
-            In the designer, choose <span className="text-text">Save to shelf</span> and the design waits here
-            for next time.
-          </p>
-          <p className="mt-4 flex flex-wrap gap-x-6 gap-y-2">
-            <Link to="/find" className="font-semibold text-primary underline">
-              Find a design for a task
+    <section id="shelf" aria-labelledby="shelf-title" className="scroll-mt-16 border-b border-rule">
+      <div className="mx-auto max-w-[90rem] px-4 py-16 sm:px-6 lg:px-24">
+        <h2 id="shelf-title" className="text-[2.1rem] sm:text-[2.5rem]">
+          Your saved designs
+        </h2>
+        {projects.length === 0 ? (
+          <div className="mt-6 flex flex-col gap-4 rounded-md border border-border p-4 sm:flex-row sm:items-center">
+            <p className="flex-1">
+              <span className="block font-serif text-lg font-medium">Nothing saved yet</span>
+              <span className="block text-base text-muted">
+                In the designer, choose “Save to shelf”. Designs keep their sizes and where you stopped, in
+                this browser on this device.
+              </span>
+            </p>
+            <Link
+              to="/find"
+              className="tap inline-flex items-center justify-center rounded-md border border-border px-4 font-semibold hover:border-text"
+            >
+              Find a design
             </Link>
-            <Link to="/design" className="font-semibold text-primary underline">
-              Pick from all nine
-            </Link>
-          </p>
-        </div>
-      ) : (
-        <ul className="mt-6 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-          {projects.map((p) => (
-            <ShelfItem key={p.id} p={p} />
-          ))}
-        </ul>
-      )}
+          </div>
+        ) : (
+          <>
+            <p className="mt-3 max-w-[36em] text-muted">
+              Designs keep their sizes and where you stopped. They stay in this browser, on this device.
+            </p>
+            <ul className="mt-9 grid border-t border-l border-border md:grid-cols-2 xl:grid-cols-3">
+              {projects.map((p) => (
+                <ShelfItem key={p.id} p={p} />
+              ))}
+            </ul>
+          </>
+        )}
+      </div>
     </section>
   );
 }

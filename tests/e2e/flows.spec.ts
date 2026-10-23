@@ -38,7 +38,7 @@ test.describe('finder → design → download package', () => {
     await answer(page, 'Spoon, fork or knife');
     await answer(page, "Can't grip it well");
     await finishFinder(page);
-    await expect(page.getByRole('heading', { name: /A1 Build-up grip/ })).toBeVisible();
+    await expect(page.getByRole('heading', { name: /Build-up grip/ })).toBeVisible();
     await page.getByRole('button', { name: 'Use this design' }).first().click();
     await expect(page).toHaveURL(/\/design\/A1/);
     await downloadPackage(page);
@@ -51,7 +51,7 @@ test.describe('finder → design → download package', () => {
     await answer(page, 'Jar or lid');
     await answer(page, "Can't turn it");
     await finishFinder(page);
-    await expect(page.getByRole('heading', { name: /B1 Lid and jar opener/ })).toBeVisible();
+    await expect(page.getByRole('heading', { name: /Lid and jar opener/ })).toBeVisible();
     await page.getByRole('button', { name: 'Use this design' }).first().click();
     await expect(page).toHaveURL(/\/design\/B1/);
     await downloadPackage(page);
@@ -64,7 +64,7 @@ test.describe('finder → design → download package', () => {
     await answer(page, 'Drawer or cupboard');
     await answer(page, "Can't pull it");
     await finishFinder(page);
-    await expect(page.getByRole('heading', { name: /C1 Pull handles/ })).toBeVisible();
+    await expect(page.getByRole('heading', { name: /Pull handles/ })).toBeVisible();
     await page.getByRole('button', { name: 'Use this design' }).first().click();
     await expect(page).toHaveURL(/\/design\/C1/);
     await downloadPackage(page);
@@ -114,7 +114,7 @@ test('pick a design by number keys, then a preset opens the designer with it app
   await expect(page.getByRole('heading', { name: 'Pick a design' })).toBeVisible();
   await page.keyboard.press('4');
   await expect(page).toHaveURL(/\/pick\/B1$/);
-  await expect(page.getByRole('heading', { name: /B1 Lid and jar opener/ })).toBeVisible();
+  await expect(page.getByRole('heading', { name: /Lid and jar opener/ })).toBeVisible();
   await page.keyboard.press('2');
   await expect(page).toHaveURL(/\/design\/B1$/);
   // Quick mode starts at the first measurement because the task was already chosen.
@@ -147,7 +147,7 @@ test('save to the shelf, then continue where you stopped from Home', async ({ pa
   await page.goto('/home-reset-not-a-route');
   await page.evaluate(() => localStorage.removeItem('el-projects'));
   await page.goto('/');
-  await expect(page.getByText('Nothing on the shelf yet.')).toBeVisible();
+  await expect(page.getByText('Nothing saved yet')).toBeVisible();
   await page.goto('/design/B1');
   await expect(page.getByText(/Built in \d+ ms/)).toBeVisible({ timeout: 60_000 });
   await page.getByRole('button', { name: /Bottle caps/ }).click();
@@ -162,7 +162,7 @@ test('save to the shelf, then continue where you stopped from Home', async ({ pa
   await page.getByRole('button', { name: 'Save', exact: true }).click();
   await expect(page.getByRole('heading', { name: 'Kitchen caps' })).toBeVisible();
   await page.reload();
-  await page.getByRole('button', { name: /Continue where you stopped/ }).click();
+  await page.getByRole('button', { name: /^Continue/ }).click();
   await expect(page).toHaveURL(/\/design\/B1$/);
   await expect(page.getByText(/Step 2/)).toBeVisible();
   await expect(page.getByRole('link', { name: /On your shelf: Kitchen caps/ })).toBeVisible();

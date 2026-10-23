@@ -77,12 +77,12 @@ function LeverExplainer() {
         <div className="grid grid-cols-2 gap-3" aria-live="polite">
           <Card>
             <p className="text-sm text-muted">Gripping the lid</p>
-            <p className="text-3xl font-bold">{fmt(bare, 0)} N</p>
+            <p className="font-serif text-4xl">{fmt(bare, 0)} N</p>
             <p className="text-sm">like lifting {fmt(kg(bare), 1)} kg with a pinch</p>
           </Card>
           <Card>
             <p className="text-sm text-muted">With a {lever} mm lever</p>
-            <p className="text-3xl font-bold text-ok">{fmt(withLever, 0)} N</p>
+            <p className="font-serif text-4xl text-ok">{fmt(withLever, 0)} N</p>
             <p className="text-sm">
               {fmt(kg(withLever), 1)} kg — about {Math.max(1, Math.round(bare / withLever))}× easier
             </p>
@@ -162,7 +162,7 @@ function FailureGuide() {
             type="button"
             aria-pressed={pick === x.id}
             onClick={() => setPick(x.id)}
-            className={`tap rounded-xl border-2 p-3 text-left ${pick === x.id ? 'border-primary bg-surface-2' : 'border-border hover:border-primary'}`}
+            className={`tap rounded-md border p-3 text-left ${pick === x.id ? 'border-primary bg-info-bg shadow-[inset_0_0_0_1px_var(--color-primary)]' : 'border-border hover:border-text'}`}
           >
             {x.where}
           </button>
@@ -171,7 +171,7 @@ function FailureGuide() {
       <div aria-live="polite">
         {f && (
           <Card className="space-y-2">
-            <h3 className="text-xl font-bold">{f.where}</h3>
+            <h3 className="font-serif text-2xl">{f.where}</h3>
             <p>
               <strong>Likely cause:</strong> {f.cause}
             </p>

@@ -15,14 +15,14 @@ export default function LimitsPage() {
       />
       <div className="space-y-8">
         <section>
-          <h2 className="mb-3 text-4xl">What it is — and isn't</h2>
+          <h2 className="mb-3 text-[2rem]">What it is — and isn't</h2>
           <div className="overflow-x-auto rounded-2xl border border-border bg-surface">
             <IsIsNotTable />
           </div>
         </section>
 
         <section className="space-y-3">
-          <h2 className="text-4xl">Strength numbers are estimates</h2>
+          <h2 className="text-[2rem]">Strength numbers are estimates</h2>
           <p>
             <StrengthBadge calibration={active} />
           </p>
@@ -44,7 +44,7 @@ export default function LimitsPage() {
         </section>
 
         <section className="space-y-3">
-          <h2 className="text-4xl">Not food-safe</h2>
+          <h2 className="text-[2rem]">Not food-safe</h2>
           <p>
             Printed plastic has tiny gaps between layers that trap food and bacteria and cannot be fully
             cleaned. Keep printed parts from touching food — a jar opener touches the lid, not the food; a
@@ -53,7 +53,7 @@ export default function LimitsPage() {
         </section>
 
         <section className="space-y-3">
-          <h2 className="text-4xl">Heat</h2>
+          <h2 className="text-[2rem]">Heat</h2>
           <ul className="list-disc space-y-1 pl-6">
             {Object.values(MATERIALS).map((m) => (
               <li key={m.id}>
@@ -78,7 +78,7 @@ export default function LimitsPage() {
         </Note>
 
         <section className="space-y-3">
-          <h2 className="text-4xl">Known limits of this version</h2>
+          <h2 className="text-[2rem]">Known limits of this version</h2>
           <ul className="list-disc space-y-1 pl-6">
             <li>
               Strength numbers and the stress map are uncalibrated analytic estimates, not FEA and not
@@ -94,7 +94,7 @@ export default function LimitsPage() {
         </section>
 
         <section className="space-y-3">
-          <h2 className="text-4xl">Sources</h2>
+          <h2 className="text-[2rem]">Sources</h2>
           <Card>
             <ul className="list-disc space-y-2 pl-6 text-sm">
               <li>

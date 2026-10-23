@@ -43,7 +43,7 @@ export function StrengthPanel() {
     <div className="space-y-6">
       <section aria-labelledby="verdict-h" className="space-y-3">
         <div className="flex flex-wrap items-center justify-between gap-2">
-          <h3 id="verdict-h" className="text-lg font-bold">
+          <h3 id="verdict-h" className="font-serif text-xl">
             Will it hold?
           </h3>
           <StrengthBadge calibration={calibration} />
@@ -63,7 +63,7 @@ export function StrengthPanel() {
       </section>
 
       <section className="space-y-4">
-        <h3 className="text-lg font-bold">Load</h3>
+        <h3 className="font-serif text-xl">Load</h3>
         <Choice
           label="How hard is the task?"
           value={use.level}
@@ -126,7 +126,7 @@ export function StrengthPanel() {
       </section>
 
       <section className="space-y-2">
-        <h3 className="text-lg font-bold">Heat and care</h3>
+        <h3 className="font-serif text-xl">Heat and care</h3>
         {warnings.map((w) => (
           <Note key={w.text} tone={w.tone}>
             {w.text}
@@ -159,7 +159,7 @@ export function StrengthPanel() {
             {verdict.sections.map((s) => (
               <div
                 key={s.id}
-                className={`rounded-xl border p-3 ${s.id === verdict.governing.id ? 'border-primary' : 'border-border'}`}
+                className={`rounded-xl border p-3 ${s.id === verdict.governing.id ? 'border-primary shadow-[inset_0_0_0_1px_var(--color-primary)]' : 'border-border'}`}
               >
                 <p className="font-semibold">
                   {s.id === verdict.governing.id ? 'Governing: ' : ''}

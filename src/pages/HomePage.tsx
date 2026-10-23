@@ -1,223 +1,230 @@
-import { lazy, Suspense, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { IsIsNotTable } from '../components/IsIsNot';
 import { showDisclaimers } from '../content/disclaimers';
-import { BlockTitle } from '../components/home/BlockTitle';
-import { Board } from '../components/home/Board';
+import { FigureSheet, showcaseParams } from '../components/home/FigureSheet';
+import { Figure } from '../components/Figure';
+import { StrengthBadge } from '../components/StrengthBadge';
+import { LinkButton } from '../components/Button';
 import { getFamily } from '../families';
-import { useSettings } from '../state/settings';
+import type { Params } from '../families/types';
+import { analyse } from '../app/analysis';
+import { prefersReducedMotion, useSettings } from '../state/settings';
 import { sortedProjects, useProjects } from '../state/projects';
 import { Shelf, stepLabel, useOpenProject } from '../components/home/Shelf';
 import { usePageKeys } from '../app/hotkeys';
-import type { LiveState } from '../components/home/LivePart';
 
-const LivePart = lazy(() => import('../components/home/LivePart'));
-const LIVE_ID = 'A1';
+/** Fig. 1 is redrawn live through these largest-lid sizes, straight from the drawing code. */
+const LID_STEPS = [85, 100, 70];
+const STEP_MS = 3200;
 
-const STEPS = [
-  { t: 'Brief', d: 'Say what is hard: a jar, a key, a spoon. Or pick a design yourself.' },
-  { t: 'Measure', d: 'A few numbers from a ruler or the printable gauges, with a guide for each.' },
-  {
-    t: 'Check',
-    d: 'See it in 3D around the real object, print a 1:1 paper template, read the strength verdict.',
-  },
-  { t: 'Print', d: 'Download the files, or a one-page sheet for a library, school or print service.' },
-];
-
-/** The live part's picture window: a still render first, then the real part turning in place. */
-function LiveWindow() {
-  const [state, setState] = useState<LiveState | null>(null);
-  const [ready, setReady] = useState(false);
-  const fam = getFamily(LIVE_ID)!;
+/** The hero figure: the jar opener's true-scale top view, redrawn as the lid size changes. */
+function LiveFigure() {
+  const fam = getFamily('B1')!;
+  const base = useMemo(() => showcaseParams(fam), [fam]);
+  const [i, setI] = useState(0);
+  const still = prefersReducedMotion();
+  useEffect(() => {
+    if (still) return;
+    const t = setInterval(() => !document.hidden && setI((n) => (n + 1) % LID_STEPS.length), STEP_MS);
+    return () => clearInterval(t);
+  }, [still]);
+  const params = useMemo(() => fam.repair({ ...base, lidMax: LID_STEPS[i] } as Params), [fam, base, i]);
+  const verdict = useMemo(
+    () =>
+      analyse({
+        family: fam,
+        params,
+        use: { level: 'moderate', location: 'kitchen' },
+        print: null,
+        safetyFactor: 2,
+        orientationId: 'auto',
+        calibrationFor: () => null,
+        geometry: null,
+      }).verdict,
+    [fam, params],
+  );
+  const lidMin = params.lidMin as number;
+  const lidMax = params.lidMax as number;
   return (
-    <figure className="border-[3px] border-double border-border bg-surface shadow-[0_24px_60px_-20px_rgb(0_0_0/0.9)]">
-      <div className="font-display flex items-center justify-between gap-3 bg-primary px-3 text-2xl text-on-primary">
-        <span>
-          {fam.id} {fam.name}
-        </span>
-        <span className="live-badge blink px-2 text-xl">LIVE</span>
-      </div>
-      <div className="relative aspect-square bg-viewer-bg">
-        <img
-          src={`/renders/${LIVE_ID}.webp`}
-          alt=""
-          width={1024}
-          height={1024}
-          className={`absolute inset-0 h-full w-full transition-opacity duration-500 ${ready ? 'opacity-0' : 'opacity-100'}`}
+    <figure className="flex flex-col justify-center">
+      <div className="figure-sheet relative px-6 pt-10 pb-8 sm:px-8">
+        <Figure
+          familyId="B1"
+          params={params}
+          label={`Top view of the lid and jar opener: a stepped cup for lids ${lidMin} to ${lidMax} mm and a ${params.lever} mm lever.`}
         />
-        <Suspense fallback={null}>
-          <LivePart onState={setState} onReady={() => setReady(true)} />
-        </Suspense>
-      </div>
-      <figcaption className="grid gap-1 border-t border-border px-3 py-2 text-sm sm:grid-cols-[auto_1fr] sm:gap-4">
-        <span className="font-display text-xl text-primary tabular-nums">
-          Grip {state?.grip ?? 32} mm{' '}
-          <span className="text-muted">
-            {state ? `· built in ${Math.max(1, Math.round(state.ms))} ms` : '· loading'}
-          </span>
+        <span
+          aria-hidden="true"
+          className="figcaption absolute top-3 left-6 text-base text-primary sm:left-8"
+        >
+          cup, {params.steps as number} lid steps
         </span>
-        <span className="text-muted sm:text-right">
-          Built from parameters as you watch. The hand re-wraps as the grip grows.
+        <span
+          aria-hidden="true"
+          className="figcaption absolute top-3 right-6 text-base text-primary sm:right-8"
+        >
+          {params.lever as number} mm lever
+        </span>
+        <span
+          aria-hidden="true"
+          className="figcaption absolute bottom-2 left-6 text-base text-primary sm:left-8"
+        >
+          fits lids {lidMin}–{lidMax} mm
+        </span>
+      </div>
+      <figcaption className="mt-4 flex items-start justify-between gap-6">
+        <span className="text-base text-muted">
+          <span className="figcaption text-lg text-text">Fig. 1 — Lid and jar opener, top view.</span> Drawn
+          from its measurements at true scale, and redrawn as the lid size changes. Uses about{' '}
+          {Math.round(verdict.utilization * 100)}% of its strength budget.{' '}
+          <StrengthBadge calibration={null} />
+        </span>
+        <span className="hidden w-40 shrink-0 rounded-md border border-border bg-surface p-2 shadow-[0_12px_30px_-18px_rgb(22_24_29/0.35)] sm:block">
+          <img src="/renders/B1.webp" alt="" width={1024} height={1024} className="block w-full" />
+          <span className="mt-1 block text-sm text-muted">As printed, in PETG</span>
         </span>
       </figcaption>
     </figure>
   );
 }
 
-function Choice({
-  to,
-  k,
-  title,
-  d,
-  primary,
-}: {
-  to: string;
-  k: string;
-  title: string;
-  d: string;
-  primary?: boolean;
-}) {
-  const hotkeys = useSettings((s) => s.hotkeys);
-  return (
-    <Link
-      to={to}
-      aria-keyshortcuts={hotkeys ? k.toLowerCase() : undefined}
-      className={`group grid min-h-20 grid-cols-[auto_1fr] items-center gap-x-4 border-[3px] border-double px-4 py-3 ${
-        primary
-          ? 'border-primary bg-primary text-on-primary hover:border-primary-strong hover:bg-primary-strong'
-          : 'border-primary text-text hover:bg-surface-2'
-      }`}
-    >
-      <span aria-hidden="true" className="font-display row-span-2 text-5xl leading-none">
-        <span className={primary ? '' : 'text-accent'}>[</span>
-        <span className={primary ? '' : 'text-primary'}>{k}</span>
-        <span className={primary ? '' : 'text-accent'}>]</span>
-      </span>
-      <span className="font-display text-[2rem] leading-none">{title}</span>
-      <span className={`text-sm ${primary ? '' : 'text-muted'}`}>{d}</span>
-    </Link>
-  );
-}
-
 /** Shown when the shelf has something on it: reopens the most recent design where it stopped. */
-function ContinueChoice() {
+function ContinueCard() {
   const latest = sortedProjects(useProjects((s) => s.projects))[0];
   const open = useOpenProject();
   const hotkeys = useSettings((s) => s.hotkeys);
   usePageKeys((k) => {
     if (latest && (k === 'c' || k === 'C')) return (open(latest), true);
   });
-  if (!latest) return null;
+  if (!latest) {
+    return (
+      <p className="mt-6 text-base text-faint">
+        No account needed. Works offline. Nothing you measure leaves this device.
+      </p>
+    );
+  }
   return (
-    <button
-      type="button"
-      onClick={() => open(latest)}
-      aria-keyshortcuts={hotkeys ? 'c' : undefined}
-      className="group grid min-h-20 grid-cols-[auto_1fr] items-center gap-x-4 border-[3px] border-double border-accent px-4 py-3 text-left text-text hover:bg-surface-2"
-    >
-      <span aria-hidden="true" className="font-display row-span-2 text-5xl leading-none">
-        <span className="text-accent">[</span>
-        <span className="text-primary">C</span>
-        <span className="text-accent">]</span>
+    <div className="mt-6 flex max-w-[31em] flex-wrap items-center gap-4 rounded-md border border-border p-3.5">
+      <Figure familyId={latest.familyId} params={latest.params} className="h-14 w-16 [&_svg]:h-14" />
+      <span className="min-w-0 flex-1">
+        <span className="block font-serif text-lg font-medium">Continue where you stopped</span>
+        <span className="block text-base text-muted">
+          {latest.name} · at {stepLabel(latest)}
+        </span>
       </span>
-      <span className="font-display text-[2rem] leading-none">Continue where you stopped</span>
-      <span className="text-sm text-muted">
-        {latest.name}: stopped at {stepLabel(latest)}.
-      </span>
-    </button>
+      <button
+        type="button"
+        onClick={() => open(latest)}
+        aria-keyshortcuts={hotkeys ? 'c' : undefined}
+        className="tap rounded-md border border-border px-4 font-semibold hover:border-text"
+      >
+        Continue<span className="sr-only">: {latest.name}</span>
+      </button>
+    </div>
   );
 }
+
+const WORKED = [
+  { t: 'Brief', d: 'Opening jam and pickle jars', s: 'Chosen from “Turn and open”.' },
+  { t: 'Measure', d: 'Lids 45 to 85 mm', s: 'Three cup steps, 150 mm lever.' },
+  {
+    t: 'Check',
+    d: 'Comfortable, about 20% of its budget',
+    s: 'Busiest spot: where the lever meets the cup.',
+  },
+  { t: 'Print', d: 'STL, 3MF and a paper template', s: 'Plus a one-page sheet for a library or school.' },
+];
 
 export function HomePage() {
   return (
     <>
-      <section className="border-b-[3px] border-double border-rule">
-        <div className="mx-auto grid max-w-7xl items-center gap-10 px-4 py-10 lg:grid-cols-[1.1fr_1fr] lg:gap-14 lg:py-14">
-          <div>
-            <h1 className="max-w-[40rem]">
-              <span className="sr-only">Everyday Leverage</span>
-              <BlockTitle className="block w-full" />
+      <section className="border-b border-rule">
+        <div className="mx-auto grid max-w-[90rem] lg:grid-cols-[minmax(0,5fr)_minmax(0,6fr)]">
+          <div className="px-4 pt-12 pb-10 sm:px-6 lg:border-r lg:border-rule lg:pt-20 lg:pr-14 lg:pb-16 lg:pl-24">
+            <h1 className="max-w-[11em] text-[2.6rem] leading-[1.08] sm:text-[3.4rem]">
+              A printable aid for the task your hands find hard.{' '}
+              <span className="text-faint">Sized to you, checked for strength.</span>
             </h1>
-            <p
-              className="pour mt-8 max-w-[36ch] text-xl leading-snug sm:text-2xl"
-              style={{ animationDelay: '900ms' }}
-            >
-              Describe a task that’s hard. Get a printable aid sized to your hand, checked for strength before
-              you print it.
-              <span aria-hidden="true" className="blink-cursor" />
+            <p className="mt-7 max-w-[31em] text-[1.1875rem] text-muted">
+              Describe the task and take a few measurements. You get a 3D model, a 1:1 paper template to check
+              the fit, and a sheet to hand to any printer.
             </p>
-            <div className="pour mt-8 grid max-w-xl gap-3" style={{ animationDelay: '1050ms' }}>
-              <Choice
-                to="/find"
-                k="F"
-                title="Help me find a design"
-                d="Answer a few questions about the task."
-                primary
-              />
-              <Choice to="/design" k="P" title="Pick a design" d="Browse all nine and their presets." />
-              <ContinueChoice />
+            <div className="mt-9 flex flex-col gap-3 sm:flex-row">
+              <LinkButton to="/find" className="min-h-14 px-6 text-[1.0625rem]">
+                Find a design for a task
+              </LinkButton>
+              <LinkButton to="/design" variant="secondary" className="min-h-14 px-6 text-[1.0625rem]">
+                Browse all nine
+              </LinkButton>
             </div>
-            <p className="pour mt-5 text-sm text-muted" style={{ animationDelay: '1150ms' }}>
-              No account. Works offline. Nothing you enter leaves this device.
-            </p>
+            <ContinueCard />
           </div>
-          <LiveWindow />
-        </div>
-      </section>
-
-      <section aria-labelledby="board-title" className="mx-auto max-w-5xl px-4 py-14">
-        <h2 id="board-title" className="text-5xl text-text sm:text-6xl">
-          Nine designs. <span className="text-primary">One idea: leverage.</span>
-        </h2>
-        <p className="mt-3 max-w-[60ch] text-lg text-muted">
-          A longer lever, a thicker grip or a better angle. Each one lowers the force a task needs.
-        </p>
-        <div className="mt-10">
-          <Board />
+          <div className="graph-paper flex px-4 py-10 sm:px-8 lg:px-14 lg:py-16">
+            <LiveFigure />
+          </div>
         </div>
       </section>
 
       <Shelf />
 
-      <section aria-labelledby="how" className="border-y-[3px] border-double border-rule bg-surface">
-        <div className="mx-auto max-w-7xl px-4 py-12">
-          <h2 id="how" className="text-5xl">
-            How it works
+      <section aria-labelledby="designs" className="border-b border-rule">
+        <div className="mx-auto max-w-[90rem] px-4 py-16 sm:px-6 lg:px-24 lg:py-22">
+          <h2 id="designs" className="text-[2.1rem] sm:text-[2.5rem]">
+            Nine designs, one idea: more leverage.
           </h2>
-          <ol className="mt-8 grid gap-px bg-rule sm:grid-cols-2 lg:grid-cols-4">
-            {STEPS.map((s, i) => (
-              <li key={s.t} className="bg-surface p-5 pr-6">
-                <p className="font-display flex items-baseline gap-2 text-4xl">
-                  <span aria-hidden="true">
-                    <span className="text-accent">[</span>
-                    <span className="text-primary">{i + 1}</span>
-                    <span className="text-accent">]</span>
-                  </span>
-                  <span>{s.t}</span>
-                </p>
-                <p className="mt-2 text-muted">{s.d}</p>
-              </li>
+          <p className="mt-3 max-w-[36em] text-muted">
+            A longer lever, a thicker grip or a better angle. Each design lowers the force or the pinch a task
+            needs, and every size comes from your measurements.
+          </p>
+          <div className="mt-11">
+            <FigureSheet />
+          </div>
+        </div>
+      </section>
+
+      <section aria-labelledby="example" className="border-b border-rule">
+        <div className="mx-auto max-w-[90rem] px-4 py-16 sm:px-6 lg:px-24 lg:py-22">
+          <h2 id="example" className="text-[2.1rem] sm:text-[2.5rem]">
+            What a design looks like, start to finish
+          </h2>
+          <p className="mt-3 text-muted">The jam-jar opener above, as a real example.</p>
+          <dl className="mt-11 grid gap-x-6 gap-y-8 border-t border-text sm:grid-cols-2 lg:grid-cols-4">
+            {WORKED.map((w, i) => (
+              <div key={w.t} className="pt-5">
+                <dt className="flex items-center gap-2 text-base font-semibold text-muted">
+                  <span
+                    aria-hidden="true"
+                    className={`h-2.5 w-2.5 rounded-full border-[1.5px] border-text ${i === 0 ? 'bg-text' : ''}`}
+                  />
+                  {w.t}
+                </dt>
+                <dd className="mt-3 font-serif text-[1.375rem] leading-snug">{w.d}</dd>
+                <dd className="mt-1.5 text-base text-muted">{w.s}</dd>
+              </div>
             ))}
-          </ol>
+          </dl>
         </div>
       </section>
 
       {showDisclaimers() && (
-        <section aria-labelledby="isnot" className="mx-auto max-w-7xl px-4 py-14">
-          <h2 id="isnot" className="text-5xl">
-            What it is, and isn’t
-          </h2>
-          <div className="mt-6 overflow-x-auto border border-border bg-surface">
-            <IsIsNotTable />
+        <section aria-labelledby="isnot">
+          <div className="mx-auto max-w-[90rem] px-4 py-16 sm:px-6 lg:px-24 lg:py-22">
+            <h2 id="isnot" className="text-[2.1rem] sm:text-[2.5rem]">
+              What it is, and isn’t
+            </h2>
+            <div className="mt-8 overflow-x-auto">
+              <IsIsNotTable />
+            </div>
+            <p className="mt-6 flex flex-wrap gap-x-6 gap-y-2">
+              <Link to="/limits" className="font-semibold text-primary underline">
+                Read the limits and safety notes
+              </Link>
+              <Link to="/print-help" className="font-semibold text-primary underline">
+                No printer? Here’s how to get it printed
+              </Link>
+            </p>
           </div>
-          <p className="mt-4 flex flex-wrap gap-x-6 gap-y-2">
-            <Link to="/limits" className="font-semibold text-primary underline">
-              Read the limits and safety notes
-            </Link>
-            <Link to="/print-help" className="font-semibold text-primary underline">
-              No printer? Here’s how to get it printed
-            </Link>
-          </p>
         </section>
       )}
     </>

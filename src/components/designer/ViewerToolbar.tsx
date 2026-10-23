@@ -21,40 +21,37 @@ function ToggleButton({
       aria-pressed={pressed}
       title={label}
       onClick={onClick}
-      className={`tap font-display shrink-0 whitespace-nowrap border-2 px-3 text-xl ${pressed ? 'border-primary bg-primary text-on-primary' : 'border-border bg-surface text-text hover:border-primary'}`}
+      className={`tap shrink-0 rounded-md border px-3 text-base font-medium whitespace-nowrap ${pressed ? 'border-primary bg-info-bg text-primary shadow-[inset_0_0_0_1px_var(--color-primary)]' : 'border-border bg-surface text-text hover:border-text'}`}
     >
       {children}
     </button>
   );
 }
 
-// 7×7 pixel glyphs drawn on the same grid as the logo and menu bars.
-const LEFT = ['...#...', '..##...', '.######', '#######', '.######', '..##...', '...#...'];
-const UP = ['...#...', '..###..', '.#####.', '#######', '..###..', '..###..', '..###..'];
-const PIXELS: Record<CameraCommand, string[]> = {
-  left: LEFT,
-  right: LEFT.map((row) => [...row].reverse().join('')),
-  up: UP,
-  down: [...UP].reverse(),
-  in: ['..###..', '..###..', '#######', '#######', '#######', '..###..', '..###..'],
-  out: ['.......', '.......', '#######', '#######', '#######', '.......', '.......'],
+// Plain stroke glyphs on a 20-unit grid, drawn in the text colour.
+const GLYPH: Record<CameraCommand, string> = {
+  left: 'M12.5 4.5 7 10l5.5 5.5',
+  right: 'M7.5 4.5 13 10l-5.5 5.5',
+  up: 'M4.5 12.5 10 7l5.5 5.5',
+  down: 'M4.5 7.5 10 13l5.5-5.5',
+  in: 'M10 4v12M4 10h12',
+  out: 'M4 10h12',
 };
 
-function PixelIcon({ rows }: { rows: string[] }) {
+function CamIcon({ c }: { c: CameraCommand }) {
   return (
     <svg
-      viewBox="0 0 7 7"
-      width="18"
-      height="18"
+      viewBox="0 0 20 20"
+      width="20"
+      height="20"
       aria-hidden="true"
-      shapeRendering="crispEdges"
-      fill="currentColor"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.75"
+      strokeLinecap="round"
+      strokeLinejoin="round"
     >
-      {rows.flatMap((row, y) =>
-        [...row].map((c, x) =>
-          c === '#' ? <rect key={`${x}-${y}`} x={x} y={y} width={1} height={1} /> : null,
-        ),
-      )}
+      <path d={GLYPH[c]} />
     </svg>
   );
 }
@@ -85,7 +82,7 @@ export function ViewerToolbar({
   const setView = useDesign((s) => s.setView);
   return (
     <div
-      className="flex flex-wrap items-center gap-1.5 border-b border-border bg-surface p-2"
+      className="flex items-center gap-1.5 overflow-x-auto border-b border-rule bg-surface px-4 py-2 sm:flex-wrap sm:px-6"
       role="toolbar"
       aria-label="3D view controls"
     >
@@ -124,7 +121,7 @@ export function ViewerToolbar({
       >
         {reduced ? 'How to use: next step' : playing ? 'Stop' : 'How to use'}
       </ToggleButton>
-      <span className="ml-auto flex flex-wrap items-center gap-1" role="group" aria-label="Move the view">
+      <span className="ml-auto flex shrink-0 items-center gap-1" role="group" aria-label="Move the view">
         {CAM.map((b) => (
           <button
             key={b.c}
@@ -132,9 +129,9 @@ export function ViewerToolbar({
             aria-label={b.label}
             title={b.label}
             onClick={() => onCamera(b.c)}
-            className="tap inline-flex items-center justify-center border border-border bg-surface px-2 text-text hover:border-primary hover:text-primary"
+            className="tap hidden items-center justify-center rounded-md text-muted hover:bg-surface-2 hover:text-text sm:inline-flex"
           >
-            <PixelIcon rows={PIXELS[b.c]} />
+            <CamIcon c={b.c} />
           </button>
         ))}
         <Button variant="ghost" onClick={onReset}>
@@ -150,8 +147,8 @@ export function SectionSlider() {
   const setView = useDesign((s) => s.setView);
   if (!view.section) return null;
   return (
-    <div className="flex items-center gap-3 border-b border-border bg-surface px-3">
-      <label htmlFor="section-pos" className="text-sm font-semibold">
+    <div className="flex flex-wrap items-center gap-x-4 border-b border-rule bg-surface px-4 sm:px-6">
+      <label htmlFor="section-pos" className="text-base font-semibold">
         Cut position
       </label>
       <input
@@ -164,7 +161,7 @@ export function SectionSlider() {
         onChange={(e) => setView({ sectionPos: Number(e.target.value) })}
         className="flex-1"
       />
-      <span className="text-sm text-muted">Blue = solid walls, striped = infill</span>
+      <span className="text-sm text-muted">Blue: solid walls. Striped: infill.</span>
     </div>
   );
 }
@@ -174,10 +171,10 @@ export function HeatLegend() {
   const view = useDesign((s) => s.view);
   if (!view.heat) return null;
   return (
-    <div className="pointer-events-none absolute bottom-3 left-3 border border-border bg-surface/95 p-3 text-sm">
-      <div className="mb-1 font-semibold">Stress map</div>
+    <div className="pointer-events-none absolute right-4 bottom-4 rounded-md border border-border bg-surface/95 p-3 text-sm lg:right-6 lg:bottom-6">
+      <div className="mb-1.5 font-serif text-base">Stress map</div>
       <div
-        className="h-3 w-48"
+        className="h-2.5 w-48 rounded-full"
         style={{ background: 'linear-gradient(90deg, #2659d9 0%, #1ab373 30%, #f2bf1a 60%, #d91a1a 100%)' }}
         aria-hidden="true"
       />

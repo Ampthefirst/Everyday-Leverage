@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { familyList } from '../families';
-import { Board } from '../components/home/Board';
+import { FigureSheet } from '../components/home/FigureSheet';
 import { usePageKeys } from '../app/hotkeys';
 
 export default function PickPage() {
@@ -14,14 +14,14 @@ export default function PickPage() {
     }
   });
   return (
-    <div className="mx-auto max-w-5xl px-4 py-10">
-      <h1 className="text-5xl sm:text-6xl">Pick a design</h1>
-      <p className="mt-3 max-w-[62ch] text-lg text-muted">
+    <div className="mx-auto max-w-[90rem] px-4 py-12 sm:px-6 lg:px-24 lg:py-16">
+      <h1 className="text-[2.6rem] sm:text-[3.2rem]">Pick a design</h1>
+      <p className="mt-4 max-w-[36em] text-muted">
         Nine designs in three groups. Each one adds leverage: a longer lever, a thicker grip or a better
-        angle. Choose one, or press its number.
+        angle. Every drawing here is made from the design’s own measurements.
       </p>
       <div className="mt-10">
-        <Board numbered />
+        <FigureSheet numbered />
       </div>
     </div>
   );

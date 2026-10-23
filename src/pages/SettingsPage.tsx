@@ -80,7 +80,7 @@ function ProfilesCard() {
           {profiles.map((p) => (
             <li
               key={p.id}
-              className={`flex flex-wrap items-center gap-2 rounded-xl border-2 p-3 ${p.id === currentId ? 'border-primary' : 'border-border'}`}
+              className={`flex flex-wrap items-center gap-2 rounded-md border p-3 ${p.id === currentId ? 'border-primary shadow-[inset_0_0_0_1px_var(--color-primary)]' : 'border-border'}`}
             >
               <span className="font-semibold">{p.name}</span>
               <span className="text-sm text-muted">

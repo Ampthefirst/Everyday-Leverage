@@ -16,10 +16,10 @@ export function IsIsNotTable() {
       <caption className="sr-only">What Everyday Leverage is and is not</caption>
       <thead>
         <tr>
-          <th scope="col" className="font-display border-b-2 border-border p-3 text-2xl font-normal">
+          <th scope="col" className="border-b border-text p-3 text-base font-semibold text-muted">
             The app is
           </th>
-          <th scope="col" className="font-display border-b-2 border-border p-3 text-2xl font-normal">
+          <th scope="col" className="border-b border-text p-3 text-base font-semibold text-muted">
             The app is not
           </th>
         </tr>
@@ -28,13 +28,13 @@ export function IsIsNotTable() {
         {IS_ROWS.map(([a, b]) => (
           <tr key={a} className="border-b border-border align-top">
             <td className="p-3">
-              <span aria-hidden="true" className="font-display mr-2 text-xl text-ok">
+              <span aria-hidden="true" className="mr-2 font-semibold text-ok">
                 +
               </span>
               {a}
             </td>
             <td className="p-3">
-              <span aria-hidden="true" className="font-display mr-2 text-xl text-bad">
+              <span aria-hidden="true" className="mr-2 font-semibold text-bad">
                 −
               </span>
               {b}

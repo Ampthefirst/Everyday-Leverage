@@ -2,13 +2,14 @@ import { Link, NavLink, Outlet, useLocation, useNavigate } from 'react-router-do
 import { useEffect, useRef, useState } from 'react';
 import { useSettings } from '../state/settings';
 import { DISCLAIMERS, showDisclaimers } from '../content/disclaimers';
+import { AccountEntry } from '../accounts/AccountEntry';
 import { isTyping } from './hotkeys';
 
-/** The top bar keeps only the three ways in; everything else lives in the side menu. */
+/** The header keeps the ways in; everything else lives in the side menu. The wordmark goes home. */
 const TOP = [
-  { to: '/', key: 'H', label: 'Home', short: 'Home' },
-  { to: '/find', key: 'F', label: 'Find a design', short: 'Find' },
-  { to: '/design', key: 'P', label: 'Pick a design', short: 'Pick' },
+  { to: '/find', key: 'F', label: 'Find a design' },
+  { to: '/design', key: 'P', label: 'Pick a design' },
+  { to: '/learn', key: '', label: 'Learn' },
 ];
 
 const MENU = [
@@ -16,34 +17,22 @@ const MENU = [
   { to: '/calibrate', label: 'Calibrate', d: 'Tune the strength numbers to your printer.' },
   { to: '/print-help', label: 'Get it printed', d: 'No printer? Where to take your files.' },
   { to: '/limits', label: 'Limits & safety', d: 'What these aids can and can’t do.' },
-  { to: '/settings', label: 'Settings', d: 'Text size, contrast, motion, Gemini, profiles.' },
+  { to: '/settings', label: 'Settings', d: 'Text size, contrast, motion, Gemini, profile.' },
 ];
 
-/** A hotkey hint in the bulletin-board style: magenta brackets, cyan letter. Part of the visible label. */
-export function Key({ k, className = '' }: { k: string; className?: string }) {
-  return (
-    <span className={`font-display ${className}`}>
-      <span className="text-accent">[</span>
-      <span className="text-primary">{k}</span>
-      <span className="text-accent">]</span>
-    </span>
-  );
-}
+const FOOTER_LINKS = [
+  { to: '/learn', label: 'Learn' },
+  { to: '/limits', label: 'Limits & safety' },
+  { to: '/print-help', label: 'Get it printed' },
+  { to: '/settings', label: 'Settings' },
+];
 
-/** Three stacked pixel bars, drawn on the same grid as the logo. */
-function MenuGlyph() {
+/** The lever-on-a-fulcrum mark, in ink with an ink-blue fulcrum. */
+export function LeverMark({ className = 'h-7 w-7' }: { className?: string }) {
   return (
-    <svg
-      viewBox="0 0 8 7"
-      width="20"
-      height="18"
-      aria-hidden="true"
-      shapeRendering="crispEdges"
-      fill="currentColor"
-    >
-      <rect y="0" width="8" height="1.4" />
-      <rect y="2.8" width="8" height="1.4" />
-      <rect y="5.6" width="8" height="1.4" />
+    <svg viewBox="0 0 32 32" className={className} aria-hidden="true">
+      <path d="M3 22 L29 12" stroke="currentColor" strokeWidth="3" strokeLinecap="round" />
+      <path d="M12 28 L16 19.5 L20 28 Z" fill="var(--color-primary)" />
     </svg>
   );
 }
@@ -53,6 +42,7 @@ function SideMenu({ open, onClose }: { open: boolean; onClose: () => void }) {
   // The presentation build keeps the Limits page reachable by link but does not promote it.
   const menu = showDisclaimers() ? MENU : MENU.filter((m) => m.to !== '/limits');
   const navigate = useNavigate();
+  const hotkeys = useSettings((s) => s.hotkeys);
   useEffect(() => {
     const d = ref.current;
     if (!d) return;
@@ -64,9 +54,9 @@ function SideMenu({ open, onClose }: { open: boolean; onClose: () => void }) {
       ref={ref}
       onClose={onClose}
       aria-labelledby="menu-title"
-      className="side-menu fixed inset-y-0 right-0 left-auto m-0 h-full max-h-none w-[min(27rem,100vw)] max-w-none border-0 border-l-[3px] border-double border-rule bg-surface p-0 text-text backdrop:bg-black/70"
+      className="side-menu fixed inset-y-0 right-0 left-auto m-0 h-full max-h-none w-[min(26rem,100vw)] max-w-none border-0 border-l border-border bg-surface p-0 text-text"
       onKeyDown={(e) => {
-        if (e.ctrlKey || e.metaKey || e.altKey) return;
+        if (e.ctrlKey || e.metaKey || e.altKey || !hotkeys) return;
         const n = Number(e.key);
         if (n >= 1 && n <= menu.length) {
           e.preventDefault();
@@ -80,54 +70,57 @@ function SideMenu({ open, onClose }: { open: boolean; onClose: () => void }) {
       }}
     >
       <div className="flex h-full flex-col">
-        <div className="flex items-center justify-between border-b-[3px] border-double border-rule px-5 py-3">
-          <h2 id="menu-title" className="text-3xl text-primary">
+        <div className="flex h-16 items-center justify-between border-b border-rule px-6">
+          <h2 id="menu-title" className="text-2xl">
             Menu
           </h2>
           <button
             type="button"
             onClick={onClose}
-            className="tap font-display px-3 text-2xl text-muted hover:bg-surface-2 hover:text-text"
+            className="tap rounded-md border border-border px-4 font-semibold hover:border-text"
           >
-            Close <span className="text-accent">[</span>
-            <span className="text-primary">Esc</span>
-            <span className="text-accent">]</span>
+            Close
           </button>
         </div>
-        <p className="px-5 pt-4 text-sm text-muted">Press a number, or choose:</p>
-        <nav aria-label="More" className="flex-1 overflow-y-auto px-2 py-2">
+        <nav aria-label="More" className="flex-1 overflow-y-auto">
+          {/* On phones the header has no room for the main links, so they lead the menu. */}
+          <ul className="md:hidden">
+            {[{ to: '/', label: 'Home' }, ...TOP.slice(0, 2)].map((m) => (
+              <li key={m.to}>
+                <NavLink
+                  to={m.to}
+                  end={m.to === '/'}
+                  onClick={onClose}
+                  className="block border-b border-rule px-6 py-4 font-semibold hover:bg-surface-2"
+                >
+                  {m.label}
+                </NavLink>
+              </li>
+            ))}
+          </ul>
           <ol>
             {menu.map((m, i) => (
               <li key={m.to}>
                 <NavLink
                   to={m.to}
                   onClick={onClose}
-                  aria-keyshortcuts={String(i + 1)}
+                  aria-keyshortcuts={hotkeys ? String(i + 1) : undefined}
                   className={({ isActive }) =>
-                    `group grid min-h-16 grid-cols-[3.5rem_1fr] items-center gap-x-2 px-3 py-2 ${isActive ? 'bg-surface-2' : ''} hover:bg-primary hover:text-on-primary focus-visible:bg-primary focus-visible:text-on-primary`
+                    `block border-b border-rule px-6 py-4 hover:bg-surface-2 ${isActive ? 'bg-surface-2 shadow-[inset_3px_0_0_var(--color-text)]' : ''}`
                   }
                 >
-                  <span aria-hidden="true" className="font-display row-span-2 text-4xl">
-                    <span className="text-accent group-hover:text-on-primary group-focus-visible:text-on-primary">
-                      [
-                    </span>
-                    {i + 1}
-                    <span className="text-accent group-hover:text-on-primary group-focus-visible:text-on-primary">
-                      ]
-                    </span>
-                  </span>
-                  <span className="font-display text-3xl leading-none">{m.label}</span>
-                  <span className="text-sm text-muted group-hover:text-on-primary group-focus-visible:text-on-primary">
-                    {m.d}
-                  </span>
+                  <span className="block font-semibold">{m.label}</span>
+                  <span className="block text-base text-muted">{m.d}</span>
                 </NavLink>
               </li>
             ))}
           </ol>
         </nav>
-        <p className="border-t border-rule px-5 py-3 text-sm text-muted">
-          Shortcuts: H home · F find · P pick · M menu. Turn them off in Settings.
-        </p>
+        {hotkeys && (
+          <p className="px-6 py-4 text-sm text-faint">
+            Shortcuts: F find · P pick · M menu · 1–5 in this menu. Turn them off in Settings.
+          </p>
+        )}
       </div>
     </dialog>
   );
@@ -173,83 +166,73 @@ export function Layout() {
   }, [hotkeys, navigate]);
 
   const isDesigner = location.pathname.startsWith('/design/');
-  const onPick = location.pathname.startsWith('/pick/');
-  const inMenu = MENU.some((m) => location.pathname.startsWith(m.to));
+  const onPick = location.pathname.startsWith('/pick/') || isDesigner;
 
   return (
     <div className="flex min-h-full flex-col">
       <a href="#main" className="sr-only-focusable z-50 bg-primary p-3 text-on-primary">
         Skip to content
       </a>
-      <header className="sticky top-0 z-30 border-b-[3px] border-double border-rule bg-surface">
-        <div className="mx-auto flex max-w-7xl items-stretch gap-1 px-2 sm:px-4">
+      <header className="sticky top-0 z-30 h-16 border-b border-rule bg-surface/95 backdrop-blur-[2px]">
+        <div className="mx-auto flex h-full max-w-[90rem] items-center gap-2 px-4 sm:px-6 lg:px-24">
           <Link
             to="/"
-            aria-label="Everyday Leverage, home"
-            className="tap flex shrink-0 items-center gap-2 pr-2"
+            aria-keyshortcuts={hotkeys ? 'h' : undefined}
+            className="tap -ml-1 flex shrink-0 items-center gap-2.5 rounded-md px-1 text-text"
           >
-            <img src="/favicon.svg" alt="" width={32} height={32} className="[image-rendering:pixelated]" />
-            <span aria-hidden="true" className="font-display hidden text-[1.7rem] text-text lg:inline">
+            <LeverMark />
+            <span className="font-serif text-lg font-medium tracking-tight whitespace-nowrap sm:text-[1.4rem]">
               Everyday Leverage
             </span>
           </Link>
-          <nav aria-label="Main" className="flex min-w-0 items-stretch">
+          <nav aria-label="Main" className="ml-6 hidden items-stretch md:flex">
             {TOP.map((n) => (
               <NavLink
                 key={n.to}
                 to={n.to}
-                end={n.to === '/'}
-                aria-keyshortcuts={hotkeys ? n.key.toLowerCase() : undefined}
+                aria-keyshortcuts={hotkeys && n.key ? n.key.toLowerCase() : undefined}
                 className={({ isActive }) =>
-                  `tap font-display flex items-center gap-1.5 px-2 text-2xl sm:px-3 ${isActive || (n.to === '/design' && onPick) ? 'bg-primary text-on-primary' : 'text-text hover:bg-surface-2 hover:text-primary'}`
+                  `tap flex items-center px-3.5 text-base font-medium ${isActive || (n.to === '/design' && onPick) ? 'text-text shadow-[inset_0_-2px_0_var(--color-text)]' : 'text-muted hover:text-text'}`
                 }
               >
-                {({ isActive: own }) => {
-                  const isActive = own || (n.to === '/design' && onPick);
-                  return (
-                    <>
-                      {hotkeys && (
-                        <Key
-                          k={n.key}
-                          className={`hidden md:inline ${isActive ? '[&_span]:!text-on-primary' : ''}`}
-                        />
-                      )}
-                      <span className="sm:hidden">{n.short}</span>
-                      <span className="hidden sm:inline">{n.label}</span>
-                    </>
-                  );
-                }}
+                {n.label}
               </NavLink>
             ))}
           </nav>
-          <button
-            type="button"
-            className={`tap font-display ml-auto flex items-center gap-2 px-2 text-2xl sm:px-3 ${inMenu ? 'bg-surface-2 text-primary' : 'text-text hover:bg-surface-2 hover:text-primary'}`}
-            aria-haspopup="dialog"
-            aria-expanded={menuOpen}
-            aria-keyshortcuts={hotkeys ? 'm' : undefined}
-            onClick={() => setMenuOpen(true)}
-          >
-            <MenuGlyph />
-            Menu
-          </button>
+          <div className="ml-auto flex items-center gap-1">
+            <button
+              type="button"
+              className="tap rounded-md px-3 text-base font-medium text-muted hover:bg-surface-2 hover:text-text"
+              aria-haspopup="dialog"
+              aria-expanded={menuOpen}
+              aria-keyshortcuts={hotkeys ? 'm' : undefined}
+              onClick={() => setMenuOpen(true)}
+            >
+              Menu
+            </button>
+            <AccountEntry />
+          </div>
         </div>
       </header>
       <SideMenu open={menuOpen} onClose={() => setMenuOpen(false)} />
       <main id="main" ref={mainRef} tabIndex={-1} className="flex-1 outline-none">
         <Outlet />
       </main>
-      {!isDesigner && showDisclaimers() && (
-        <footer className="border-t-[3px] border-double border-rule bg-surface px-4 py-6 text-sm text-muted">
-          <div className="mx-auto max-w-7xl space-y-1">
-            <p>{DISCLAIMERS.footer.slice(0, 2).join(' ')}</p>
-            <p>
-              {DISCLAIMERS.footer[2]}{' '}
-              <NavLink className="text-primary underline" to="/limits">
-                Read the limits
-              </NavLink>
-              .
-            </p>
+      {!isDesigner && (
+        <footer className="border-t border-rule">
+          <div className="mx-auto flex max-w-[90rem] flex-col gap-3 px-4 py-6 text-sm text-faint sm:px-6 lg:flex-row lg:items-center lg:justify-between lg:px-24">
+            {showDisclaimers() && <p>{DISCLAIMERS.footer.join(' ')}</p>}
+            <nav aria-label="Footer" className="-mx-2 flex shrink-0 flex-wrap lg:flex-nowrap">
+              {FOOTER_LINKS.map((l) => (
+                <Link
+                  key={l.to}
+                  to={l.to}
+                  className="tap inline-flex items-center px-2 text-muted hover:text-text"
+                >
+                  {l.label}
+                </Link>
+              ))}
+            </nav>
           </div>
         </footer>
       )}

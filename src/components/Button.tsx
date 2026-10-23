@@ -3,14 +3,14 @@ import { Link, type LinkProps } from 'react-router-dom';
 
 type Variant = 'primary' | 'secondary' | 'ghost' | 'danger';
 
-// Bulletin-board controls: square, terminal-face labels; primary is an inverse-video block.
+// Paper-and-ink controls: one ink-blue primary, outlined secondary, quiet ghost. 48 px minimum.
 const base =
-  'tap font-display inline-flex items-center justify-center gap-2 border-2 px-4 py-1 text-[1.35rem] leading-none disabled:cursor-not-allowed disabled:opacity-50';
+  'tap inline-flex items-center justify-center gap-2 rounded-md border px-5 text-base font-semibold leading-none whitespace-nowrap transition-colors disabled:cursor-not-allowed disabled:opacity-45';
 const variants: Record<Variant, string> = {
   primary: 'border-primary bg-primary text-on-primary hover:border-primary-strong hover:bg-primary-strong',
-  secondary: 'border-primary text-primary bg-surface hover:bg-primary hover:text-on-primary',
-  ghost: 'border-transparent text-text hover:bg-surface-2 hover:text-primary',
-  danger: 'border-bad text-bad bg-surface hover:bg-bad hover:text-bg',
+  secondary: 'border-border bg-surface text-text hover:border-text',
+  ghost: 'border-transparent text-muted hover:bg-surface-2 hover:text-text',
+  danger: 'border-bad bg-surface text-bad hover:bg-bad-bg',
 };
 
 export function buttonClass(variant: Variant = 'primary', extra = '') {

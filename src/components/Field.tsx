@@ -85,7 +85,7 @@ export function NumberSlider({
             onKeyDown={(e) => {
               if (e.key === 'Enter') commit((e.target as HTMLInputElement).value);
             }}
-            className="tap font-display w-24 border border-border bg-bg px-2 text-right text-2xl text-primary tabular-nums"
+            className="tap w-24 rounded-md border border-border bg-surface px-3 text-right text-lg font-medium tabular-nums"
           />
           {unit && <span className="w-10 text-sm text-muted">{unit}</span>}
         </div>
@@ -117,7 +117,7 @@ export function Choice<T extends string>({ label, value, options, onChange, help
         {options.map((o) => (
           <label
             key={o.value}
-            className={`tap flex cursor-pointer items-center border-2 px-3 py-1 has-[:focus-visible]:outline-3 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-[var(--color-focus)] ${value === o.value ? 'border-primary bg-primary font-semibold text-on-primary' : 'border-border bg-surface hover:border-primary'}`}
+            className={`tap flex cursor-pointer items-center rounded-md border px-4 py-1 has-[:focus-visible]:outline-3 has-[:focus-visible]:outline-offset-3 has-[:focus-visible]:outline-[var(--color-focus)] ${value === o.value ? 'border-text font-semibold shadow-[inset_0_0_0_1px_var(--color-text)]' : 'border-border bg-surface hover:border-text'}`}
             title={o.hint}
           >
             <input
@@ -161,8 +161,8 @@ export function Toggle({
             onChange={(e) => onChange(e.target.checked)}
             className="peer sr-only"
           />
-          <span className="block h-7 w-12 border-2 border-border bg-surface-2 peer-checked:border-primary peer-checked:bg-primary peer-focus-visible:outline peer-focus-visible:outline-3 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-[var(--color-focus)]" />
-          <span className="absolute left-1 top-1 h-5 w-5 bg-text transition-transform peer-checked:translate-x-5 peer-checked:bg-on-primary" />
+          <span className="block h-7 w-12 rounded-full border-2 border-border bg-surface-2 peer-checked:border-primary peer-checked:bg-primary peer-focus-visible:outline peer-focus-visible:outline-3 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-[var(--color-focus)]" />
+          <span className="absolute left-1 top-1 h-5 w-5 rounded-full bg-text transition-transform peer-checked:translate-x-5 peer-checked:bg-on-primary" />
         </span>
         <span className="font-semibold">{label}</span>
       </label>
@@ -192,7 +192,7 @@ export function Select<T extends string>({
         id={id}
         value={value}
         onChange={(e) => onChange(e.target.value as T)}
-        className="tap block w-full border border-border bg-bg px-3"
+        className="tap block w-full rounded-md border border-border bg-surface px-3"
       >
         {options.map((o) => (
           <option key={o.value} value={o.value}>

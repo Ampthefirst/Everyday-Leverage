@@ -29,6 +29,7 @@ import { Illustration } from '../components/Illustration';
 import { Page, PageHeader } from '../components/Card';
 import { Button, LinkButton } from '../components/Button';
 import { Meter } from '../components/Meter';
+import { Kbd } from '../components/Kbd';
 import { StrengthBadge } from '../components/StrengthBadge';
 import { shellThickness } from '../strength/types';
 import { splitPlanFor } from '../geometry/splitPlan';
@@ -281,33 +282,35 @@ function Designer({ familyId }: { familyId: FamilyId }) {
 
   return (
     <DesignerCtx.Provider value={ctx}>
-      <div className="flex flex-col lg:h-[calc(100vh-51px)] lg:flex-row">
+      <div className="flex flex-col lg:h-[calc(100vh-65px)] lg:flex-row">
         <section
           aria-label="3D preview"
-          className="sticky top-[51px] z-20 flex min-h-0 flex-col bg-surface shadow-sm lg:static lg:flex-1 lg:shadow-none [@media(max-height:699px)]:static"
+          className="sticky top-16 z-20 flex min-h-0 flex-col bg-surface shadow-[0_8px_16px_-12px_rgb(22_24_29/0.3)] lg:static lg:flex-1 lg:shadow-none [@media(max-height:699px)]:static"
         >
-          <div className="flex flex-wrap items-center gap-x-4 gap-y-1 border-b border-border bg-surface px-3 py-2">
-            <h1 className="text-3xl">
-              <span className="text-accent">{family.id}</span> {family.name}
-            </h1>
-            <Link to="/design" className="text-sm text-primary underline">
+          <div className="flex flex-wrap items-center gap-x-5 gap-y-1 border-b border-rule bg-surface px-4 py-2 sm:px-6 lg:py-3">
+            <h1 className="text-[1.6rem] sm:text-[1.875rem]">{family.name}</h1>
+            <Link to="/design" className="text-base text-muted underline hover:text-text">
               Change design
             </Link>
             {active ? (
-              <Link to="/#shelf" className="text-sm text-muted underline">
-                On your shelf: {active.name}
+              <Link
+                to="/#shelf"
+                className="inline-flex items-center gap-1.5 rounded-full border border-border px-2.5 py-1 text-sm font-medium text-muted hover:border-text"
+              >
+                <span aria-hidden="true" className="h-1.5 w-1.5 rounded-full bg-ok" />
+                Saved<span className="sr-only">. On your shelf: {active.name}</span>
               </Link>
             ) : (
               <Button
                 variant="secondary"
-
+                className="min-h-10"
                 onClick={() => saveProject({ familyId, params, presetId: presetIdNow, step })}
               >
                 Save to shelf
               </Button>
             )}
-            <StepStrip current={step} compact className="hidden lg:flex" />
-            <span className="ml-auto text-sm text-muted" role="status" aria-live="polite">
+            <StepStrip current={step} className="ml-auto hidden xl:flex" />
+            <span className="sr-only" role="status" aria-live="polite">
               {building
                 ? 'Updating…'
                 : buildError
@@ -347,23 +350,28 @@ function Designer({ familyId }: { familyId: FamilyId }) {
               className={`pointer-events-none absolute inset-0 flex items-start justify-center p-3 transition-opacity ${building ? 'opacity-100' : 'opacity-0'}`}
               aria-hidden="true"
             >
-              <span className="live-badge font-display px-3 py-0.5 text-xl">Updating…</span>
+              <span className="rounded-md border border-border bg-surface px-3 py-1 text-sm font-medium text-muted">
+                Updating…
+              </span>
             </div>
             {caption && (
               <div
-                className="absolute inset-x-3 top-3 border border-primary bg-surface/95 p-3 text-lg font-semibold"
+                className="absolute inset-x-3 top-3 rounded-md border border-border bg-surface/95 p-3 font-semibold"
                 aria-live="polite"
               >
                 Step {animStep + 1} of {animation.steps.length}: {caption}
               </div>
             )}
             {buildError && (
-              <div className="absolute inset-x-3 bottom-3 border border-bad bg-bad-bg p-3" role="alert">
+              <div
+                className="absolute inset-x-3 bottom-3 rounded-md border border-bad bg-bad-bg p-3"
+                role="alert"
+              >
                 {buildError}
               </div>
             )}
             <HeatLegend />
-            <div className="meter-overlay absolute right-3 top-3 hidden w-72 border border-border bg-surface/95 p-3 sm:block">
+            <div className="meter-overlay absolute bottom-4 left-4 hidden w-[19rem] rounded-md border border-border bg-surface/95 p-4 sm:block lg:bottom-6 lg:left-6">
               <Meter u={v.utilization} level={v.level} />
               <div className="mt-2 flex items-center justify-between gap-2">
                 <StrengthBadge calibration={analysis.calibration} />
@@ -380,7 +388,7 @@ function Designer({ familyId }: { familyId: FamilyId }) {
         </section>
         <aside
           aria-label="Design settings"
-          className="flex min-h-0 flex-col border-border bg-surface lg:w-[30rem] lg:border-l-[3px] lg:border-double"
+          className="flex min-h-0 flex-col border-rule bg-surface lg:w-[29rem] lg:border-l"
         >
           {mode === 'quick' ? (
             <QuickPanel
@@ -392,14 +400,14 @@ function Designer({ familyId }: { familyId: FamilyId }) {
             />
           ) : (
             <>
-              <div className="flex items-center justify-between gap-2 border-b border-rule px-4 py-1">
-                <p className="font-display text-2xl text-muted">All settings</p>
+              <div className="flex items-center justify-between gap-2 border-b border-rule px-4 py-1.5 sm:px-6">
+                <p className="text-base font-semibold">All settings</p>
                 <Button
                   variant="ghost"
                   onClick={() => setMode('quick')}
                   aria-keyshortcuts={hotkeys ? 'q' : undefined}
                 >
-                  {hotkeys && <KeyHint k="Q" />} Quick mode
+                  {hotkeys && <Kbd k="Q" />} Quick mode
                 </Button>
               </div>
               <ErrorBanner onShow={() => setTab('print')} />
@@ -423,9 +431,9 @@ function Designer({ familyId }: { familyId: FamilyId }) {
           {family.measureGuide.map((s, i) => (
             <li
               key={s.id}
-              className={`border-2 p-4 ${s.id === measure ? 'border-primary' : 'border-border'}`}
+              className={`rounded-md border p-4 ${s.id === measure ? 'border-primary shadow-[inset_0_0_0_1px_var(--color-primary)]' : 'border-border'}`}
             >
-              <h3 className="text-lg font-bold">
+              <h3 className="font-serif text-xl">
                 {i + 1}. {s.title}
               </h3>
               <Illustration id={s.illustration} />
@@ -439,16 +447,6 @@ function Designer({ familyId }: { familyId: FamilyId }) {
   );
 }
 
-function KeyHint({ k }: { k: string }) {
-  return (
-    <span aria-hidden="true" className="font-display hidden md:inline">
-      <span className="text-accent">[</span>
-      <span className="text-primary">{k}</span>
-      <span className="text-accent">]</span>
-    </span>
-  );
-}
-
 /** Shown above the tabs whenever the design has a blocking problem. */
 function ErrorBanner({ onShow }: { onShow: () => void }) {
   const { analysis, family, params } = useContext(DesignerCtx)!;
@@ -456,7 +454,7 @@ function ErrorBanner({ onShow }: { onShow: () => void }) {
   const errors = analysis.issues.filter((i) => i.severity === 'error');
   if (!errors.length) return null;
   return (
-    <div role="alert" className="m-3 border border-bad bg-bad-bg p-3">
+    <div role="alert" className="m-4 rounded-md border border-bad bg-bad-bg p-4">
       <p className="font-semibold">{errors[0].message}</p>
       {errors[0].fix && <p>{errors[0].fix}</p>}
       <div className="mt-2 flex flex-wrap gap-2">

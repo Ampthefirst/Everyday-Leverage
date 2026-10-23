@@ -308,6 +308,62 @@ function CameraFit({
   return null;
 }
 
+const corner = new THREE.Vector3();
+
+/**
+ * Tells the stage where the part sits on screen, so the graph paper behind it can fade there
+ * (`.stage-grid` reads --fx/--fy/--frx/--fry). Projects the part's box corners every frame and only
+ * writes when the result moves by more than half a percent.
+ */
+function GridFade({
+  mesh,
+  part,
+  stage,
+}: {
+  mesh: MeshData | null;
+  part: React.RefObject<THREE.Group | null>;
+  stage: React.RefObject<HTMLDivElement | null>;
+}) {
+  const { camera } = useThree();
+  const last = useRef([0, 0, 0, 0]);
+  useFrame(() => {
+    const el = stage.current;
+    const g = part.current;
+    if (!el || !g || !mesh) return;
+    g.updateWorldMatrix(true, false);
+    let x0 = 1,
+      y0 = 1,
+      x1 = -1,
+      y1 = -1;
+    const { min, max } = mesh.bbox;
+    for (let i = 0; i < 8; i++) {
+      corner
+        .set(i & 1 ? max[0] : min[0], i & 2 ? max[1] : min[1], i & 4 ? max[2] : min[2])
+        .applyMatrix4(g.matrixWorld)
+        .project(camera);
+      x0 = Math.min(x0, corner.x);
+      x1 = Math.max(x1, corner.x);
+      y0 = Math.min(y0, corner.y);
+      y1 = Math.max(y1, corner.y);
+    }
+    // Normalised device coordinates to percent of the stage; the ellipse reaches about 1.5× the part.
+    const clamp = (v: number, lo: number, hi: number) => Math.min(hi, Math.max(lo, v));
+    const next = [
+      clamp(((x0 + x1) / 2 + 1) * 50, 0, 100),
+      clamp((1 - (y0 + y1) / 2) * 50, 0, 100),
+      clamp((x1 - x0) * 25 * 1.5, 14, 70),
+      clamp((y1 - y0) * 25 * 1.5, 14, 70),
+    ];
+    if (next.every((v, i) => Math.abs(v - last.current[i]) < 0.5)) return;
+    last.current = next;
+    el.style.setProperty('--fx', `${next[0].toFixed(1)}%`);
+    el.style.setProperty('--fy', `${next[1].toFixed(1)}%`);
+    el.style.setProperty('--frx', `${next[2].toFixed(1)}%`);
+    el.style.setProperty('--fry', `${next[3].toFixed(1)}%`);
+  });
+  return null;
+}
+
 /** Reflections for the context objects (glass, metal) from a procedural studio room; no network needed. */
 function StudioEnvironment() {
   const { gl, scene } = useThree();
@@ -324,7 +380,7 @@ function StudioEnvironment() {
   return null;
 }
 
-function Scene(props: ViewerProps & { color: string }) {
+function Scene(props: ViewerProps & { color: string; stage: React.RefObject<HTMLDivElement | null> }) {
   const {
     mesh,
     pieces,
@@ -427,6 +483,7 @@ function Scene(props: ViewerProps & { color: string }) {
       </group>
       <OrbitControls ref={controls} makeDefault enableDamping dampingFactor={0.12} />
       <CameraFit mesh={mesh} resetKey={props.resetKey} controls={controls} />
+      <GridFade mesh={mesh} part={partRef} stage={props.stage} />
       <CameraCommands cmd={props.camera} controls={controls} />
     </>
   );
@@ -434,13 +491,12 @@ function Scene(props: ViewerProps & { color: string }) {
 
 export function Viewer(props: ViewerProps) {
   const [color, setColor] = useState('#33e0e0');
-  const [bg, setBg] = useState('#0b0c14');
+  const stage = useRef<HTMLDivElement>(null);
   const { partColor } = props;
   useEffect(() => {
     const update = () => {
       const hc = document.documentElement.dataset.contrast === 'high';
       setColor(partColor && !hc ? partColor : readCssVar('--color-part', '#33e0e0'));
-      setBg(readCssVar('--color-viewer-bg', '#0b0c14'));
     };
     update();
     const mo = new MutationObserver(update);
@@ -448,7 +504,8 @@ export function Viewer(props: ViewerProps) {
     return () => mo.disconnect();
   }, [partColor]);
   return (
-    <div className="relative h-full w-full" style={{ background: bg }}>
+    // The canvas is transparent: the stage's graph paper shows through, faded where the part is.
+    <div ref={stage} className="stage-grid relative h-full w-full bg-viewer-bg">
       <Canvas
         role="img"
         aria-label={props.label}
@@ -458,7 +515,7 @@ export function Viewer(props: ViewerProps) {
         frameloop="always"
       >
         <Suspense fallback={null}>
-          <Scene {...props} color={color} />
+          <Scene {...props} color={color} stage={stage} />
         </Suspense>
       </Canvas>
     </div>

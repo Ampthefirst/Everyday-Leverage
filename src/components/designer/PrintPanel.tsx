@@ -54,12 +54,12 @@ export function PrintPanel() {
   return (
     <div className="space-y-6">
       <section className="space-y-2">
-        <h3 className="text-lg font-bold">Ready to print?</h3>
+        <h3 className="font-serif text-xl">Ready to print?</h3>
         <IssueList />
       </section>
 
       <section className="space-y-2">
-        <h3 className="text-lg font-bold">Placement on the bed</h3>
+        <h3 className="font-serif text-xl">Placement on the bed</h3>
         {bed && (
           <p>
             <Badge tone={bed.fits ? 'ok' : analysis.split ? 'info' : 'bad'}>
@@ -75,7 +75,7 @@ export function PrintPanel() {
             return (
               <label
                 key={o.candidate.id}
-                className={`tap flex cursor-pointer gap-3 rounded-xl border-2 p-3 ${active ? 'border-primary bg-surface-2' : 'border-border'}`}
+                className={`tap flex cursor-pointer gap-3 rounded-md border p-3 ${active ? 'border-primary bg-info-bg shadow-[inset_0_0_0_1px_var(--color-primary)]' : 'border-border'}`}
               >
                 <input
                   type="radio"
@@ -107,7 +107,7 @@ export function PrintPanel() {
 
       <section className="space-y-4">
         <div className="flex items-center justify-between">
-          <h3 className="text-lg font-bold">Slicer settings</h3>
+          <h3 className="font-serif text-xl">Slicer settings</h3>
           {custom && (
             <Button variant="ghost" onClick={() => setPrint(null)}>
               Use recommended
@@ -166,7 +166,7 @@ export function PrintPanel() {
       </section>
 
       <section className="space-y-1">
-        <h3 className="text-lg font-bold">Estimates (rough)</h3>
+        <h3 className="font-serif text-xl">Estimates (rough)</h3>
         {estimate && build ? (
           <dl className="grid grid-cols-2 gap-x-4 gap-y-1">
             <dt>Filament</dt>

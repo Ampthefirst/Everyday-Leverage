@@ -12,7 +12,7 @@ export function PresetCards() {
   const setParams = useDesign((s) => s.setParams);
   return (
     <fieldset>
-      <legend className="mb-2 text-lg font-bold">Start from a task</legend>
+      <legend className="mb-2 font-serif text-xl">Start from a task</legend>
       <div className="grid gap-2 sm:grid-cols-2">
         {family.presets.map((p) => {
           const active = presetId === p.id;
@@ -24,7 +24,7 @@ export function PresetCards() {
               onClick={() =>
                 setParams(family.id, { ...family.defaults, ...p.params } as Params, { preset: p.id })
               }
-              className={`tap rounded-xl border-2 p-3 text-left ${active ? 'border-primary bg-surface-2' : 'border-border bg-surface hover:border-primary'}`}
+              className={`tap rounded-md border p-3 text-left ${active ? 'border-primary bg-info-bg shadow-[inset_0_0_0_1px_var(--color-primary)]' : 'border-border bg-surface hover:border-text'}`}
             >
               <span className="block font-semibold">{p.label}</span>
               <span className="block text-sm text-muted">{p.description}</span>
@@ -47,7 +47,7 @@ export function FitPanel() {
       <PresetCards />
       <section className="space-y-4">
         <div className="flex items-center justify-between">
-          <h3 className="text-lg font-bold">Your measurements</h3>
+          <h3 className="font-serif text-xl">Your measurements</h3>
           {family.measureGuide.length > 0 && (
             <Button variant="ghost" onClick={() => openMeasure(family.measureGuide[0].id)}>
               Measuring guide
@@ -98,7 +98,7 @@ export function StylePanel() {
   return (
     <div className="space-y-6">
       <fieldset>
-        <legend className="mb-2 text-lg font-bold">Style</legend>
+        <legend className="mb-2 font-serif text-xl">Style</legend>
         <div className="grid gap-2 sm:grid-cols-2">
           {family.variants.map((v) => (
             <button
@@ -106,7 +106,7 @@ export function StylePanel() {
               type="button"
               aria-pressed={variantId === v.id}
               onClick={() => setParams(family.id, { ...params, ...v.patch } as Params, { variant: v.id })}
-              className={`tap rounded-xl border-2 p-3 text-left ${variantId === v.id ? 'border-primary bg-surface-2' : 'border-border bg-surface hover:border-primary'}`}
+              className={`tap rounded-md border p-3 text-left ${variantId === v.id ? 'border-primary bg-info-bg shadow-[inset_0_0_0_1px_var(--color-primary)]' : 'border-border bg-surface hover:border-text'}`}
             >
               <span className="block font-semibold">{v.label}</span>
               <span className="block text-sm text-muted">{v.description}</span>
@@ -115,7 +115,7 @@ export function StylePanel() {
         </div>
       </fieldset>
       <section className="space-y-4">
-        <h3 className="text-lg font-bold">Details</h3>
+        <h3 className="font-serif text-xl">Details</h3>
         {style.map((f) => (
           <ParamControl key={f.key} field={f} params={params} onChange={setParam} />
         ))}

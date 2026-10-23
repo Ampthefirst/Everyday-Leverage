@@ -63,3 +63,9 @@ One line each: decision — reason.
 - Not taken from the review: an ANSI status line, and type-on text animation. The world already has one signature pour-in, and more motion would fight the plan's "instant screen swaps".
 - Finish review round 2 (verdict pass): fixes 1–4, 6, 7 resolved; 5 partial (camera row clipped at 390 px) and a regression (512 px turn frames soft on DPR-2). Both addressed (camera row wraps; turn frames re-rendered at 1024 px, ~1.3 MB total), not re-scored: the unattended two-round budget is spent.
 - v3 (owner, 2026-10-23): direction A 'Patent figure' replaces the v2 bulletin-board look after a five-gate process; built on the branch only, no push to main until the owner approves. Accounts get a DB-ready architecture, hidden until the owner's database is connected.
+- v3 build: family IDs (A1…C3) dropped from headings and cards; names alone read better in the serif and the IDs meant nothing to users. Tests match names.
+- v3 build: key hints are a small bordered `Kbd` chip (hidden on phones) instead of v2's [bracket] glyphs.
+- v3 build: Designer canvas is transparent over a `.stage-grid`; the viewer projects the part's box each frame and moves the 18% fade ellipse to follow it.
+- v3 build: part keeps its PETG filament colour (matches the renders and mockups); the meter overlay drops the reason line so it covers less of the part.
+- v3 build: phones get no camera-step buttons (touch orbits); the viewer toolbar is one scrolling row.
+- v3 build: every page shares the header's left edge (`Page` uses the 90rem container, narrow pages cap width from that edge).
