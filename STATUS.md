@@ -23,7 +23,7 @@
 - **Results:** `npm run check` passes 182 unit tests. `npm run e2e` passes 27 tests.
 - **Finish review:** one round returned "fix" with eight findings. Seven are applied and one was declined; reasons are in `DECISIONS.md`. The fixes were not re-scored.
 - **Docs:** `DESIGN.md` and `.impeccable/design.json` now document direction A.
-- **Still open:** a first real sign-up and sync test on the live site.
+- **Accounts verified live by the owner:** sign-up, saving, renaming, and the same designs showing in a second browser.
 
 ---
 
