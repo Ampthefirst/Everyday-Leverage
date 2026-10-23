@@ -1,8 +1,8 @@
 # Status — Everyday Leverage
 
-## v3 (branch `claude/jolly-davinci-6wipnd`, 2026-10-23) — built, awaiting the owner's review
+## v3 (2026-10-23) — live, merged to `main`
 
-`V3PLAN.md` is the spec. Nothing from v3 is on `main` or the live site; the owner approves before any merge.
+`V3PLAN.md` is the spec. The owner approved the merge to `main` after reviewing the live deployment. Accounts are switched on: Supabase is connected through Vercel's environment.
 
 - **Gates 1–4 done:**
   - references (`docs/v3/gate1-references.md`);
@@ -23,9 +23,7 @@
 - **Results:** `npm run check` passes 182 unit tests. `npm run e2e` passes 27 tests.
 - **Finish review:** one round returned "fix" with eight findings. Seven are applied and one was declined; reasons are in `DECISIONS.md`. The fixes were not re-scored.
 - **Docs:** `DESIGN.md` and `.impeccable/design.json` now document direction A.
-- **Still open:**
-  - the owner's review of the branch;
-  - the owner's database (`docs/accounts-setup.md`).
+- **Still open:** a first real sign-up and sync test on the live site.
 
 ---
 
