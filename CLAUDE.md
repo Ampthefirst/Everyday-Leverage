@@ -1,6 +1,6 @@
 # Everyday Leverage — conventions for Claude Code
 
-`V2PLAN.md` is authoritative for v2 (`PLAN.md` for v1); `docs/everyday-leverage-guide.md` is the product spec.
+`V3PLAN.md` is authoritative for v3 (`V2PLAN.md` for v2, `PLAN.md` for v1); `docs/everyday-leverage-guide.md` is the product spec.
 Log every judgment call in `DECISIONS.md` (one line: decision + reason). Keep `STATUS.md` current.
 
 ## Commands
