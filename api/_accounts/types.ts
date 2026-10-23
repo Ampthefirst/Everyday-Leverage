@@ -31,7 +31,20 @@ export type AuthResult =
   | { ok: true; session: Session }
   /** The account exists but the email address must be confirmed before signing in. */
   | { ok: true; session: null; confirmEmail: true }
-  | { ok: false; error: 'invalid' | 'taken' | 'weak' | 'unavailable' };
+  | { ok: false; error: AuthError; detail?: string };
+
+export type AuthError =
+  | 'invalid'
+  | 'taken'
+  | 'weak'
+  | 'badEmail'
+  /** The database's mailer is over its hourly limit. */
+  | 'emailLimit'
+  /** The account was made but the confirmation email could not be sent. */
+  | 'emailSend'
+  /** Sign-ups are switched off in the database's settings. */
+  | 'signupOff'
+  | 'unavailable';
 
 /** What a database must provide. One adapter per provider (Supabase now; Postgres later). */
 export interface AccountsBackend {

@@ -218,3 +218,40 @@ describe('accounts: project validation', () => {
     expect(cleanProject(project({ updatedAt: 'yesterday' }))).toBeNull();
   });
 });
+
+describe('accounts: Supabase sign-up errors are named, not lumped together', () => {
+  async function signUpWith(status: number, reply: Record<string, unknown>) {
+    const { supabaseBackend } = await import('../../api/_accounts/supabase');
+    const real = globalThis.fetch;
+    globalThis.fetch = (async () => new Response(JSON.stringify(reply), { status })) as typeof fetch;
+    try {
+      return await supabaseBackend('https://x.supabase.co', 'k').signUp('jo@example.com', 'correct horse');
+    } finally {
+      globalThis.fetch = real;
+    }
+  }
+  it('maps the common cases', async () => {
+    expect(
+      await signUpWith(429, { error_code: 'over_email_send_rate_limit', msg: 'email rate limit exceeded' }),
+    ).toMatchObject({ error: 'emailLimit' });
+    expect(
+      await signUpWith(500, {
+        code: 500,
+        error_code: 'unexpected_failure',
+        msg: 'Error sending confirmation email',
+      }),
+    ).toMatchObject({ error: 'emailSend' });
+    expect(await signUpWith(422, { error_code: 'signup_disabled' })).toMatchObject({ error: 'signupOff' });
+    expect(await signUpWith(400, { error_code: 'email_address_invalid' })).toMatchObject({
+      error: 'badEmail',
+    });
+    expect(await signUpWith(422, { error_code: 'weak_password' })).toMatchObject({ error: 'weak' });
+  });
+  it('passes an unknown code through as a short detail', async () => {
+    expect(await signUpWith(418, { error_code: 'teapot' })).toEqual({
+      ok: false,
+      error: 'unavailable',
+      detail: '418 teapot',
+    });
+  });
+});

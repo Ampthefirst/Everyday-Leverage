@@ -37,7 +37,17 @@ const MAX_PROJECT_BODY = 64 * 1024;
 const ERRORS = {
   invalid: [401, 'That email and password don’t match an account.'],
   taken: [409, 'There is already an account with that email. Try signing in.'],
-  weak: [400, 'Choose a longer password: at least 8 characters.'],
+  weak: [400, 'Choose a stronger password: at least 8 characters, and not a common one.'],
+  badEmail: [400, 'That email address can’t be used for an account. Try another one.'],
+  emailLimit: [
+    429,
+    'Too many sign-up emails were sent in the last hour. Try again in an hour, or ask the site owner to switch off email confirmation.',
+  ],
+  emailSend: [
+    502,
+    'Your account was made, but the confirmation email could not be sent. Ask the site owner to check the email settings.',
+  ],
+  signupOff: [403, 'New accounts are switched off for this site.'],
   unavailable: [503, 'Accounts are not available right now. Your designs are still saved on this device.'],
 } as const;
 
@@ -95,12 +105,16 @@ export async function handleAuth(req: Request, deps: Deps): Promise<Response> {
         : await backend.signIn(email, body.password as string);
     if (!r.ok) {
       const [status, message] = ERRORS[r.error];
-      return json(status, { error: message });
+      if (r.error !== 'invalid')
+        console.error(`accounts ${body.action}: ${r.error}${r.detail ? ` (${r.detail})` : ''}`);
+      return json(status, { error: r.detail ? `${message} (Code: ${r.detail}.)` : message });
     }
     if (!r.session) return json(200, { user: null, confirmEmail: true });
     return json(200, { user: { email: r.session.user.email } }, sessionCookies(r.session));
-  } catch {
-    return json(503, { error: ERRORS.unavailable[1] });
+  } catch (e) {
+    const detail = e instanceof Error ? e.name : 'error';
+    console.error(`accounts ${body.action}: unreachable (${detail})`);
+    return json(503, { error: `${ERRORS.unavailable[1]} (Code: ${detail}.)` });
   }
 }
 

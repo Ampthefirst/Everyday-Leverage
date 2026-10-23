@@ -88,9 +88,19 @@ export function supabaseBackend(baseUrl: string, anonKey: string): AccountsBacke
         return s ? { ok: true, session: s } : { ok: true, session: null, confirmEmail: true };
       }
       const c = code(t);
+      const msg = String(t.msg ?? t.error ?? '').toLowerCase();
       if (c === 'user_already_exists' || c === 'email_exists') return { ok: false, error: 'taken' };
       if (c === 'weak_password') return { ok: false, error: 'weak' };
-      return { ok: false, error: 'unavailable' };
+      if (c === 'email_address_invalid' || c === 'email_address_not_authorized')
+        return { ok: false, error: 'badEmail' };
+      if (c === 'over_email_send_rate_limit' || (status === 429 && msg.includes('email')))
+        return { ok: false, error: 'emailLimit' };
+      if (msg.includes('sending confirmation') || msg.includes('error sending'))
+        return { ok: false, error: 'emailSend' };
+      if (c === 'signup_disabled' || c === 'email_provider_disabled')
+        return { ok: false, error: 'signupOff' };
+      // Status and Supabase's error code only: never the email or password.
+      return { ok: false, error: 'unavailable', detail: `${status} ${c || 'no code'}`.slice(0, 80) };
     },
     async signIn(email, password): Promise<AuthResult> {
       const { status, t } = await auth('/auth/v1/token?grant_type=password', { email, password });
