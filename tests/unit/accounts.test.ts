@@ -255,3 +255,48 @@ describe('accounts: Supabase sign-up errors are named, not lumped together', () 
     });
   });
 });
+
+describe('accounts: the Supabase project address', () => {
+  it('keeps only the origin, whichever dashboard form is pasted', async () => {
+    const { projectOrigin } = await import('../../api/_accounts/supabase');
+    for (const v of [
+      'https://abcd.supabase.co',
+      'https://abcd.supabase.co/',
+      'https://abcd.supabase.co/rest/v1/',
+      ' "https://abcd.supabase.co/rest/v1" ',
+      'abcd.supabase.co',
+    ])
+      expect(projectOrigin(v)).toBe('https://abcd.supabase.co');
+  });
+  it('sends auth calls to /auth/v1 even when the URL was pasted with /rest/v1/', async () => {
+    const { supabaseBackend } = await import('../../api/_accounts/supabase');
+    const real = globalThis.fetch;
+    const seen: string[] = [];
+    globalThis.fetch = (async (u: string) => {
+      seen.push(String(u));
+      return new Response(JSON.stringify({ error_code: 'invalid_credentials' }), { status: 400 });
+    }) as typeof fetch;
+    try {
+      const r = await supabaseBackend('https://abcd.supabase.co/rest/v1/', 'k').signIn('a@b.co', 'xxxxxxxx');
+      expect(r).toMatchObject({ error: 'invalid' });
+    } finally {
+      globalThis.fetch = real;
+    }
+    expect(seen[0]).toBe('https://abcd.supabase.co/auth/v1/token?grant_type=password');
+  });
+  it('reports a setup error on sign-in instead of "wrong password"', async () => {
+    const { supabaseBackend } = await import('../../api/_accounts/supabase');
+    const real = globalThis.fetch;
+    globalThis.fetch = (async () =>
+      new Response(JSON.stringify({ code: 'PGRST125' }), { status: 404 })) as typeof fetch;
+    try {
+      expect(await supabaseBackend('https://abcd.supabase.co', 'k').signIn('a@b.co', 'xxxxxxxx')).toEqual({
+        ok: false,
+        error: 'unavailable',
+        detail: '404 PGRST125',
+      });
+    } finally {
+      globalThis.fetch = real;
+    }
+  });
+});

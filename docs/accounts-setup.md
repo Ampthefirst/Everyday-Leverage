@@ -46,7 +46,7 @@ create policy "own rows: remove" on public.projects for delete using (user_id = 
 
 In Supabase, copy two values:
 
-- the **Project URL**, which looks like `https://abcd1234.supabase.co`. Find it in any of these places:
+- the **Project URL**, which looks like `https://abcd1234.supabase.co` (if you copy one ending in `/rest/v1/`, that works too: the app uses only the address part). Find it in any of these places:
   - **Project Settings → Data API**;
   - the **Connect** button at the top of the project page;
   - or build it yourself: the dashboard address is `supabase.com/dashboard/project/<ref>`, and the URL is

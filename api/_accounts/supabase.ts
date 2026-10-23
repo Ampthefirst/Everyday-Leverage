@@ -50,7 +50,7 @@ const fromRow = (r: Row): StoredProject => ({
 });
 
 export function supabaseBackend(baseUrl: string, anonKey: string): AccountsBackend {
-  const base = baseUrl.replace(/\/+$/, '');
+  const base = projectOrigin(baseUrl);
   const call = (path: string, init: RequestInit & { token?: string } = {}) =>
     fetch(`${base}${path}`, {
       ...init,
@@ -106,8 +106,12 @@ export function supabaseBackend(baseUrl: string, anonKey: string): AccountsBacke
       const { status, t } = await auth('/auth/v1/token?grant_type=password', { email, password });
       const s = status === 200 ? session(t) : null;
       if (s) return { ok: true, session: s };
-      if (code(t) === 'email_not_confirmed') return { ok: true, session: null, confirmEmail: true };
-      return { ok: false, error: status >= 500 || status === 429 ? 'unavailable' : 'invalid' };
+      const c = code(t);
+      if (c === 'email_not_confirmed') return { ok: true, session: null, confirmEmail: true };
+      // Only Supabase's own "wrong email or password" answer means that; anything else is a setup problem.
+      if (status === 400 && (c === 'invalid_credentials' || c === 'invalid_grant' || c === ''))
+        return { ok: false, error: 'invalid' };
+      return { ok: false, error: 'unavailable', detail: `${status} ${c || 'no code'}`.slice(0, 80) };
     },
     async refresh(refreshToken) {
       const { status, t } = await auth('/auth/v1/token?grant_type=refresh_token', {
@@ -152,6 +156,19 @@ export function supabaseBackend(baseUrl: string, anonKey: string): AccountsBacke
       if (!r.ok) throw new Error(`delete ${r.status}`);
     },
   };
+}
+
+/**
+ * Supabase's dashboard shows the project address with different paths (the Data API page adds /rest/v1/).
+ * Only the origin is wanted: https://<ref>.supabase.co.
+ */
+export function projectOrigin(raw: string): string {
+  const v = raw.trim().replace(/^['"]|['"]$/g, '');
+  try {
+    return new URL(/^https?:\/\//i.test(v) ? v : `https://${v}`).origin;
+  } catch {
+    return v.replace(/\/+$/, '');
+  }
 }
 
 /** The configured backend, or null when the owner has not connected a database yet. */
