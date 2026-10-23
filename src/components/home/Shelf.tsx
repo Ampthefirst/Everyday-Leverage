@@ -5,6 +5,7 @@ import { useDesign } from '../../state/design';
 import { sortedProjects, STEPS, useProjects, type Project } from '../../state/projects';
 import { Button } from '../Button';
 import { Figure } from '../Figure';
+import { useAccount } from '../../accounts/sync';
 
 /** Opens a saved project in the designer where it stopped. */
 export function useOpenProject() {
@@ -97,6 +98,8 @@ function ShelfItem({ p }: { p: Project }) {
 /** Saved designs on this device, newest first, with an empty state that points to Find and Pick. */
 export function Shelf() {
   const projects = sortedProjects(useProjects((s) => s.projects));
+  const user = useAccount((s) => s.user);
+  const syncError = useAccount((s) => s.syncError);
   return (
     <section id="shelf" aria-labelledby="shelf-title" className="scroll-mt-16 border-b border-rule">
       <div className="mx-auto max-w-[90rem] px-4 py-16 sm:px-6 lg:px-24">
@@ -122,8 +125,15 @@ export function Shelf() {
         ) : (
           <>
             <p className="mt-3 max-w-[36em] text-muted">
-              Designs keep their sizes and where you stopped. They stay in this browser, on this device.
+              {user
+                ? `Signed in as ${user.email}. Designs keep their sizes and where you stopped, on this device and in your account.`
+                : 'Designs keep their sizes and where you stopped. They stay in this browser, on this device.'}
             </p>
+            {syncError && (
+              <p role="status" className="mt-3 text-base text-warn">
+                Some changes haven’t reached your account yet. They are safe on this device.
+              </p>
+            )}
             <ul className="mt-9 grid border-t border-l border-border md:grid-cols-2 xl:grid-cols-3">
               {projects.map((p) => (
                 <ShelfItem key={p.id} p={p} />

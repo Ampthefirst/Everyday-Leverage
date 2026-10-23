@@ -1,5 +1,33 @@
 # Status — Everyday Leverage
 
+## v3 (branch `claude/jolly-davinci-6wipnd`, 2026-10-23) — built, awaiting the owner's review
+
+`V3PLAN.md` is the spec. Nothing from v3 is on `main` or the live site; the owner approves before any merge.
+
+- **Gates 1–4 done:**
+  - references (`docs/v3/gate1-references.md`);
+  - UI/UX checklist (`docs/v3/gate2-checklist.md`);
+  - direction A, "Patent figure" (`docs/v3/gate3/`);
+  - detailed mockups (`docs/v3-mockups/`).
+- **Gate 5 built:**
+  - white paper, ink and one ink-blue accent, Spectral headings with Public Sans;
+  - a figure sheet drawn from each design's own drawing code, and a live Fig. 1 on Home;
+  - the shelf, Pick and design screens restyled;
+  - Designer graph paper that fades to about 18% wherever the part sits on screen, following it as the view turns;
+  - every panel and page restyled.
+- **Accounts (DB-ready, hidden):**
+  - `/api/auth` and `/api/projects` sit over a database adapter (Supabase, plus in-memory for tests);
+  - sessions use HttpOnly cookies;
+  - client sync merges by id, and the newer copy wins;
+  - the Sign in button appears only once `SUPABASE_URL` and `SUPABASE_ANON_KEY` are set in Vercel. Owner steps are in `docs/accounts-setup.md`.
+- **Results:** `npm run check` passes 182 unit tests. `npm run e2e` passes 27 tests.
+- **Still open:**
+  - Impeccable finish review of the build;
+  - `DESIGN.md` and `.impeccable/design.json` rewrite for direction A;
+  - the owner's database.
+
+---
+
 ## v2 (overnight build, 2026-10-22) — complete
 
 `V2PLAN.md` is the spec; every judgment call is in `DECISIONS.md`. All seven milestones are pushed to `main`:

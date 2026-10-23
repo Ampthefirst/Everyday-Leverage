@@ -61,3 +61,17 @@ describe('saved projects (shelf)', () => {
     expect(sortedProjects([a, b]).map((p) => p.id)).toEqual(['b', 'a']);
   });
 });
+
+describe('account sync merge', () => {
+  const base = { familyId: 'B1' as const, params: {}, step: 'measure' as const };
+  const p = (id: string, updatedAt: string, name = id) => ({ ...base, id, name, updatedAt });
+  it('keeps every design and the newer copy of each', async () => {
+    const { mergeProjects, toUpload } = await import('../../src/accounts/sync');
+    const local = [p('a', '2026-10-02', 'a-local'), p('b', '2026-10-01')];
+    const remote = [p('a', '2026-10-01', 'a-remote'), p('c', '2026-10-03')];
+    const m = mergeProjects(local, remote);
+    expect(m.map((x) => x.id)).toEqual(['c', 'a', 'b']);
+    expect(m.find((x) => x.id === 'a')!.name).toBe('a-local');
+    expect(toUpload(local, remote).map((x) => x.id)).toEqual(['a', 'b']);
+  });
+});

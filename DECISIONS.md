@@ -69,3 +69,9 @@ One line each: decision — reason.
 - v3 build: part keeps its PETG filament colour (matches the renders and mockups); the meter overlay drops the reason line so it covers less of the part.
 - v3 build: phones get no camera-step buttons (touch orbits); the viewer toolbar is one scrolling row.
 - v3 build: every page shares the header's left edge (`Page` uses the 90rem container, narrow pages cap width from that edge).
+- v3 accounts: Supabase over its REST APIs with plain fetch, not supabase-js: no new dependency, and the adapter interface stays provider-neutral.
+- v3 accounts: tokens live only in HttpOnly cookies scoped to /api; the browser never holds them (no XSS token theft).
+- v3 accounts: newer-wins is enforced on the server too (read updated_at before upsert), so an old device can't overwrite newer sizes.
+- v3 accounts: rate limits are per warm function instance (in memory); good enough for fewer than 10 accounts, and Supabase's own auth limits sit behind them. Noted in docs.
+- v3 accounts: the projects interface is "shelf in localStorage + account mirror" (sync.ts) rather than a swappable store, so offline and signed-out use are unchanged.
+- v3 accounts: api modules import with .js extensions, because package.json is "type": "module" and Vercel's Node runtime needs explicit extensions.
