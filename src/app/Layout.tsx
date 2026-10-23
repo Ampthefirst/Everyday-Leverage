@@ -118,7 +118,8 @@ function SideMenu({ open, onClose }: { open: boolean; onClose: () => void }) {
         </nav>
         {hotkeys && (
           <p className="px-6 py-4 text-sm text-faint">
-            Shortcuts: F find · P pick · M menu · 1–5 in this menu. Turn them off in Settings.
+            Shortcuts: H home · F find · P pick · M menu · 1–5 in this menu. In the designer: ← → steps, A all
+            settings, Q quick mode. Turn them off in Settings.
           </p>
         )}
       </div>
@@ -173,7 +174,7 @@ export function Layout() {
       <a href="#main" className="sr-only-focusable z-50 bg-primary p-3 text-on-primary">
         Skip to content
       </a>
-      <header className="sticky top-0 z-30 h-16 border-b border-rule bg-surface/95 backdrop-blur-[2px]">
+      <header className="sticky top-0 z-30 h-16 border-b border-rule bg-surface">
         <div className="mx-auto flex h-full max-w-[90rem] items-center gap-2 px-4 sm:px-6 lg:px-24">
           <Link
             to="/"

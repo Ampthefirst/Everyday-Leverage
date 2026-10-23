@@ -21,10 +21,11 @@
   - client sync merges by id, and the newer copy wins;
   - the Sign in button appears only once `SUPABASE_URL` and `SUPABASE_ANON_KEY` are set in Vercel. Owner steps are in `docs/accounts-setup.md`.
 - **Results:** `npm run check` passes 182 unit tests. `npm run e2e` passes 27 tests.
+- **Finish review:** one round returned "fix" with eight findings. Seven are applied and one was declined; reasons are in `DECISIONS.md`. The fixes were not re-scored.
+- **Docs:** `DESIGN.md` and `.impeccable/design.json` now document direction A.
 - **Still open:**
-  - Impeccable finish review of the build;
-  - `DESIGN.md` and `.impeccable/design.json` rewrite for direction A;
-  - the owner's database.
+  - the owner's review of the branch;
+  - the owner's database (`docs/accounts-setup.md`).
 
 ---
 

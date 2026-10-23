@@ -346,13 +346,13 @@ function GridFade({
       y0 = Math.min(y0, corner.y);
       y1 = Math.max(y1, corner.y);
     }
-    // Normalised device coordinates to percent of the stage; the ellipse reaches about 1.5× the part.
+    // Normalised device coordinates to percent of the stage; the ellipse reaches about 1.9× the part.
     const clamp = (v: number, lo: number, hi: number) => Math.min(hi, Math.max(lo, v));
     const next = [
       clamp(((x0 + x1) / 2 + 1) * 50, 0, 100),
       clamp((1 - (y0 + y1) / 2) * 50, 0, 100),
-      clamp((x1 - x0) * 25 * 1.5, 14, 70),
-      clamp((y1 - y0) * 25 * 1.5, 14, 70),
+      clamp((x1 - x0) * 25 * 1.9, 14, 70),
+      clamp((y1 - y0) * 25 * 1.9, 14, 70),
     ];
     if (next.every((v, i) => Math.abs(v - last.current[i]) < 0.5)) return;
     last.current = next;
@@ -490,13 +490,13 @@ function Scene(props: ViewerProps & { color: string; stage: React.RefObject<HTML
 }
 
 export function Viewer(props: ViewerProps) {
-  const [color, setColor] = useState('#33e0e0');
+  const [color, setColor] = useState('#1d3fa6');
   const stage = useRef<HTMLDivElement>(null);
   const { partColor } = props;
   useEffect(() => {
     const update = () => {
       const hc = document.documentElement.dataset.contrast === 'high';
-      setColor(partColor && !hc ? partColor : readCssVar('--color-part', '#33e0e0'));
+      setColor(partColor && !hc ? partColor : readCssVar('--color-part', '#1d3fa6'));
     };
     update();
     const mo = new MutationObserver(update);

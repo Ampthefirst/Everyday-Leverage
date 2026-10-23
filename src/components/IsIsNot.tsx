@@ -27,18 +27,8 @@ export function IsIsNotTable() {
       <tbody>
         {IS_ROWS.map(([a, b]) => (
           <tr key={a} className="border-b border-border align-top">
-            <td className="p-3">
-              <span aria-hidden="true" className="mr-2 font-semibold text-ok">
-                +
-              </span>
-              {a}
-            </td>
-            <td className="p-3">
-              <span aria-hidden="true" className="mr-2 font-semibold text-bad">
-                −
-              </span>
-              {b}
-            </td>
+            <td className="p-3">{a}</td>
+            <td className="p-3">{b}</td>
           </tr>
         ))}
       </tbody>

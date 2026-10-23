@@ -53,7 +53,11 @@ export default function FinderPage() {
     return (
       <Page narrow>
         <StepStrip current="brief" className="mb-6" />
-        <h1 ref={headingRef} tabIndex={-1} className="text-[2.6rem] outline-none focus-visible:outline-none sm:text-[3.2rem]">
+        <h1
+          ref={headingRef}
+          tabIndex={-1}
+          className="text-[2.6rem] outline-none focus-visible:outline-none sm:text-[3.2rem]"
+        >
           Help me find a design
         </h1>
         <p className="mt-3 text-lg">
@@ -100,7 +104,11 @@ export default function FinderPage() {
             ))}
           </div>
         </div>
-        <h1 ref={headingRef} tabIndex={-1} className="mt-6 text-[2.2rem] outline-none focus-visible:outline-none sm:text-[2.75rem]">
+        <h1
+          ref={headingRef}
+          tabIndex={-1}
+          className="mt-6 text-[2.2rem] outline-none focus-visible:outline-none sm:text-[2.75rem]"
+        >
           {other ? q.textOther : q.text}
         </h1>
         {hotkeys && opts.length <= 9 && (
@@ -142,7 +150,11 @@ export default function FinderPage() {
 
   return (
     <Page narrow>
-      <h1 ref={headingRef} tabIndex={-1} className="text-[2.6rem] outline-none focus-visible:outline-none sm:text-[3.2rem]">
+      <h1
+        ref={headingRef}
+        tabIndex={-1}
+        className="text-[2.6rem] outline-none focus-visible:outline-none sm:text-[3.2rem]"
+      >
         {result?.kind === 'out-of-scope'
           ? 'Thank you'
           : result?.kind === 'none'

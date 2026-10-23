@@ -9,7 +9,6 @@ import { Button } from '../Button';
 import { Illustration } from '../Illustration';
 import { Meter } from '../Meter';
 import { StrengthBadge } from '../StrengthBadge';
-import { Kbd } from '../Kbd';
 
 const FilesPanel = lazy(() => import('./FilesPanel'));
 
@@ -100,7 +99,7 @@ export function QuickPanel({
           ))}
         </div>
         <Button variant="ghost" onClick={onAllSettings} aria-keyshortcuts={hotkeys ? 'a' : undefined}>
-          {hotkeys && <Kbd k="A" />} All settings
+          All settings
         </Button>
       </div>
       {banner}
@@ -176,12 +175,12 @@ export function QuickPanel({
         )}
       </div>
       <div className="flex gap-2 border-t border-rule px-4 py-3 sm:px-6">
-        <Button variant="secondary" onClick={() => go(i - 1)} disabled={i === 0}>
-          {hotkeys && <Kbd k="←" />} Back
+        <Button variant="secondary" className="min-h-14" onClick={() => go(i - 1)} disabled={i === 0}>
+          Back
         </Button>
         {step.kind !== 'result' && (
-          <Button className="ml-auto" onClick={() => go(i + 1)}>
-            {i === steps.length - 2 ? 'See the result' : 'Next'} {hotkeys && <Kbd k="→" inverse />}
+          <Button className="ml-auto min-h-14 px-6" onClick={() => go(i + 1)}>
+            {i === steps.length - 2 ? 'See the result' : 'Next'}
           </Button>
         )}
       </div>

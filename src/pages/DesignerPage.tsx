@@ -29,7 +29,6 @@ import { Illustration } from '../components/Illustration';
 import { Page, PageHeader } from '../components/Card';
 import { Button, LinkButton } from '../components/Button';
 import { Meter } from '../components/Meter';
-import { Kbd } from '../components/Kbd';
 import { StrengthBadge } from '../components/StrengthBadge';
 import { shellThickness } from '../strength/types';
 import { splitPlanFor } from '../geometry/splitPlan';
@@ -303,7 +302,6 @@ function Designer({ familyId }: { familyId: FamilyId }) {
             ) : (
               <Button
                 variant="secondary"
-                className="min-h-10"
                 onClick={() => saveProject({ familyId, params, presetId: presetIdNow, step })}
               >
                 Save to shelf
@@ -390,6 +388,22 @@ function Designer({ familyId }: { familyId: FamilyId }) {
           aria-label="Design settings"
           className="flex min-h-0 flex-col border-rule bg-surface lg:w-[29rem] lg:border-l"
         >
+          {/* Phones: the overlay meter has no room on the stage, so the verdict sits right under it. */}
+          <div className="flex items-center gap-3 border-b border-rule px-4 py-3 sm:hidden">
+            <div className="flex-1">
+              <Meter u={v.utilization} level={v.level} />
+            </div>
+          </div>
+          <div className="flex items-center justify-between gap-2 border-b border-rule px-4 pb-2 sm:hidden">
+            <StrengthBadge calibration={analysis.calibration} />
+            <button
+              type="button"
+              onClick={() => showFull('strength')}
+              className="tap text-sm font-semibold text-primary underline"
+            >
+              Details
+            </button>
+          </div>
           {mode === 'quick' ? (
             <QuickPanel
               startAt={startAt}
@@ -407,7 +421,7 @@ function Designer({ familyId }: { familyId: FamilyId }) {
                   onClick={() => setMode('quick')}
                   aria-keyshortcuts={hotkeys ? 'q' : undefined}
                 >
-                  {hotkeys && <Kbd k="Q" />} Quick mode
+                  Quick mode
                 </Button>
               </div>
               <ErrorBanner onShow={() => setTab('print')} />

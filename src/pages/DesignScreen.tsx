@@ -5,7 +5,25 @@ import type { Params } from '../families/types';
 import { useDesign } from '../state/design';
 import { usePageKeys } from '../app/hotkeys';
 import { useSettings } from '../state/settings';
-import { Kbd } from '../components/Kbd';
+
+/** A drawn arrow in the text colour, matching the viewer toolbar's stroke icons. */
+function Arrow({ dir }: { dir: 'left' | 'right' }) {
+  return (
+    <svg
+      viewBox="0 0 20 20"
+      width="18"
+      height="18"
+      aria-hidden="true"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.75"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d={dir === 'left' ? 'M16 10H4m5-5-5 5 5 5' : 'M4 10h12m-5-5 5 5-5 5'} />
+    </svg>
+  );
+}
 import { Figure } from '../components/Figure';
 import { showcaseParams } from '../components/home/FigureSheet';
 
@@ -63,33 +81,30 @@ export default function DesignScreen() {
     <>
       <nav aria-label="Designs" className="border-b border-rule">
         <div className="mx-auto flex max-w-[90rem] flex-wrap items-center gap-x-6 px-4 sm:px-6 lg:px-24">
-          <Link to="/design" className={crumb}>
-            {hotkeys && <Kbd k="Esc" />}
-            <span aria-hidden="true" className={hotkeys ? 'md:hidden' : ''}>
-              ←
-            </span>{' '}
-            All designs
+          <Link to="/design" className={crumb} aria-keyshortcuts={hotkeys ? 'Escape' : undefined}>
+            <Arrow dir="left" /> All designs
           </Link>
           <span className="hidden text-base text-faint sm:inline">
             {group.title} · Fig. {i + 1}
           </span>
           <span className="flex flex-wrap gap-x-5 sm:ml-auto">
             {prev && (
-              <Link to={`/pick/${prev}`} className={crumb}>
-                {hotkeys && <Kbd k="←" />}
-                <span aria-hidden="true" className={hotkeys ? 'md:hidden' : ''}>
-                  ←
-                </span>{' '}
-                {prevName}
+              <Link
+                to={`/pick/${prev}`}
+                className={crumb}
+                aria-keyshortcuts={hotkeys ? 'ArrowLeft' : undefined}
+              >
+                <Arrow dir="left" /> {prevName}
                 <span className="sr-only">, previous design</span>
               </Link>
             )}
             {next && (
-              <Link to={`/pick/${next}`} className={crumb}>
-                {nextName} {hotkeys && <Kbd k="→" />}
-                <span aria-hidden="true" className={hotkeys ? 'md:hidden' : ''}>
-                  →
-                </span>
+              <Link
+                to={`/pick/${next}`}
+                className={crumb}
+                aria-keyshortcuts={hotkeys ? 'ArrowRight' : undefined}
+              >
+                {nextName} <Arrow dir="right" />
                 <span className="sr-only">, next design</span>
               </Link>
             )}
@@ -98,12 +113,12 @@ export default function DesignScreen() {
       </nav>
 
       <div className="mx-auto grid max-w-[90rem] border-b border-rule lg:grid-cols-[minmax(0,1.05fr)_minmax(0,1fr)]">
-        <figure className="graph-paper flex flex-col justify-center px-4 py-10 sm:px-8 lg:border-r lg:border-rule lg:px-14 lg:py-14">
-          <div className="figure-sheet px-6 py-8 sm:px-10">
+        <figure className="graph-paper flex flex-col justify-start px-4 py-10 sm:px-8 lg:border-r lg:border-rule lg:px-14 lg:py-14">
+          <div className="figure-sheet px-6 py-10 sm:px-10 lg:py-14">
             <Figure
               familyId={family.id}
               params={showcaseParams(family)}
-              className="mx-auto max-w-[34rem] [&_svg]:max-h-[24rem]"
+              className="mx-auto w-full [&_svg]:max-h-[30rem]"
             />
           </div>
           <figcaption className="mt-4 flex items-start justify-between gap-6 text-base text-muted">
@@ -169,7 +184,6 @@ export default function DesignScreen() {
             to={`/design/${family.id}`}
             className="mt-8 inline-flex min-h-14 w-full items-center justify-center gap-3 rounded-md bg-primary px-6 text-[1.0625rem] font-semibold text-on-primary hover:bg-primary-strong sm:w-auto"
           >
-            {hotkeys && <Kbd k="Enter" inverse />}
             {hasStored ? 'Open the designer with my last sizes' : 'Open the designer'}
           </Link>
         </div>

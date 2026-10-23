@@ -98,6 +98,8 @@ a {
   display: none;
 }
 
+/* Headings and regions focused by script (tabindex -1) announce themselves without a ring. */
+[tabindex='-1']:focus,
 #main:focus,
 #main:focus-visible {
   outline: none;
@@ -177,7 +179,7 @@ input[type='range'] {
   --fade: radial-gradient(
     ellipse var(--frx, 34%) var(--fry, 38%) at var(--fx, 50%) var(--fy, 52%),
     rgb(0 0 0 / 0.18) 0,
-    rgb(0 0 0 / 0.18) 55%,
+    rgb(0 0 0 / 0.18) 70%,
     #000 100%
   );
   -webkit-mask-image: var(--fade);
