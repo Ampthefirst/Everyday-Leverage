@@ -44,10 +44,15 @@ create policy "own rows: remove" on public.projects for delete using (user_id = 
 
 ## 2. Give Vercel the two values
 
-In Supabase, open **Project Settings → API** (or **API Keys**) and copy:
+In Supabase, copy two values:
 
-- the **Project URL** (looks like `https://abcd1234.supabase.co`);
-- the **anon / publishable** key (not the `service_role` / secret key: the app never needs that one).
+- the **Project URL**, which looks like `https://abcd1234.supabase.co`. Find it in any of these places:
+  - **Project Settings → Data API**;
+  - the **Connect** button at the top of the project page;
+  - or build it yourself: the dashboard address is `supabase.com/dashboard/project/<ref>`, and the URL is
+    `https://<ref>.supabase.co`.
+- the **publishable** key (`sb_publishable_…`) from **Project Settings → API Keys**. The older **anon** key
+  works too. Never use the **secret** / `service_role` key: the app does not need it.
 
 In Vercel, open the project → **Settings → Environment Variables** and add, for Production (and Preview if
 you want to test there):
