@@ -287,7 +287,7 @@ function Designer({ familyId }: { familyId: FamilyId }) {
       <div className="flex flex-col lg:h-[calc(100vh-65px)] lg:flex-row">
         <section
           aria-label="3D preview"
-          className="sticky top-16 z-20 flex min-h-0 flex-col bg-surface shadow-[0_8px_16px_-12px_rgb(22_24_29/0.3)] lg:static lg:flex-1 lg:shadow-none [@media(max-height:699px)]:static"
+          className="sticky top-16 z-20 flex min-h-0 min-w-0 flex-col bg-surface shadow-[0_8px_16px_-12px_rgb(22_24_29/0.3)] lg:static lg:flex-1 lg:shadow-none [@media(max-height:699px)]:static"
         >
           <div className="flex flex-wrap items-center gap-x-5 gap-y-1 border-b border-rule bg-surface px-4 py-2 sm:px-6 lg:py-3">
             <h1 className="text-[1.6rem] sm:text-[1.875rem]">{family.name}</h1>

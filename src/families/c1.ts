@@ -1,6 +1,6 @@
 import type { Family, FieldDef, ValidationIssue } from './types';
 import { buildSchema, defaultsOf } from './schema';
-import { MEASURE, err, info, mm, warn, FLAT } from './common';
+import { MEASURE, err, info, mm, warn, FLAT, barGripD } from './common';
 import { circle, dim, rect, roundRect, text, type Shape } from '../outputs/svg/ir';
 import { c1LoadCases, c1Sections } from '../strength/families/c1';
 
@@ -341,29 +341,47 @@ export const C1: Family<C1P> = {
   },
   ghost(p) {
     const { W } = c1Opening(p);
+    const b = p.band;
+    // The handle lies in XY with the pull along +Y; the attachment is at −Y.
     const target =
       p.attach === 'screw'
-        ? { kind: 'drawer' as const, size: {}, position: [0, 0, 0] as [number, number, number] }
+        ? {
+            // The drawer front is a wall behind the screw feet, facing the pull (+Y); its thickness runs
+            // toward −Y. (The drawer ghost is drawn face-up, so tip it onto that wall.)
+            kind: 'drawer' as const,
+            size: {},
+            position: [0, -W / 2 - b - 2, p.thick / 2] as [number, number, number],
+            rotation: [-90, 0, 0] as [number, number, number],
+          }
         : p.attach === 'hook'
           ? {
               kind: 'canTab' as const,
               size: {},
-              position: [0, -W / 2 - p.band - 14, 0] as [number, number, number],
+              position: [0, -W / 2 - b - 14, 0] as [number, number, number],
             }
           : {
               kind: 'zipper' as const,
               size: { w: 8, l: 20, t: 2 },
-              position: [0, -W / 2 - p.band - 16, p.thick / 2] as [number, number, number],
+              position: [0, -W / 2 - b - 16, p.thick / 2] as [number, number, number],
             };
+    // Where the fingers close: the far bar of the loop (or the D-handle's grip bar, or the T-bar itself),
+    // and how thick that bar is across the fingers.
+    const bar =
+      p.style === 'tbar'
+        ? { y: 0, gripD: barGripD(b * 1.6, p.thick, b * 0.6), pose: 'grip' as const }
+        : p.attach === 'screw'
+          ? { y: W / 2 + (b * 3) / 4, gripD: barGripD(b / 2, p.thick, 1), pose: 'hook' as const }
+          : { y: W / 2 + b / 2, gripD: barGripD(b, p.thick, 0.4), pose: 'hook' as const };
     return {
       objects: [
         target,
         {
           kind: 'hand',
-          size: { breadth: 0, grip: p.band },
-          position: [0, W / 2, p.thick / 2],
+          size: { breadth: 0, grip: bar.gripD },
+          // Palm down over the loop, fingers through the opening and round the bar, wrist toward the pull.
+          position: [0, bar.y, p.thick / 2],
           hand: 'right',
-          pose: 'hook',
+          pose: bar.pose,
           rotation: [0, 90, 0],
         },
       ],
@@ -383,7 +401,8 @@ export const C1: Family<C1P> = {
           part: { translate: [0, 0, 30] },
         },
         { caption: 'Hook your fingers through the loop.', part: {} },
-        { caption: 'Pull with your arm — no pinching.', part: { translate: [0, 25, 0] }, ghosts: [0] },
+        // The pulled object and the pulling hand both move with the loop.
+        { caption: 'Pull with your arm — no pinching.', part: { translate: [0, 25, 0] }, ghosts: [0, 1] },
       ],
     };
   },

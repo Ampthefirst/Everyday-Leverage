@@ -372,17 +372,59 @@ export const A3: Family<A3P> = {
     };
   },
   ghost(p) {
+    const H = a3BossH(p);
+    // The handle bar is g × g (rounded); the hand wraps its corners, not just its width.
+    const g = p.gripD * 0.8;
+    const tool = {
+      kind: 'tool' as const,
+      size: { af: p.shankShape === 'hex' ? p.shankSize : p.shankSize * 0.87, length: 50 + p.depth },
+      position: [0, 0, -50] as [number, number, number],
+    };
+    if (p.style === 'mushroom') {
+      // Palm cupped over the dome, fingers draping down its sides. The palm pose puts the palmar
+      // surface 23 mm (scaled) below its origin, at the knuckle line, so centre the palm over the dome.
+      const top = H - 2 + p.gripD * 0.3;
+      return {
+        objects: [
+          tool,
+          {
+            kind: 'hand',
+            size: { breadth: 0 },
+            position: [0, 40, top + 23],
+            hand: 'right',
+            pose: 'palm',
+            rotation: [0, 0, 0],
+          },
+        ],
+      };
+    }
+    if (p.style === 'pistol') {
+      // Around the angled grip, part-way along it.
+      const th = 90 - p.angle;
+      const along = p.length * 0.55;
+      const r = (th * Math.PI) / 180;
+      return {
+        objects: [
+          tool,
+          {
+            kind: 'hand',
+            size: { breadth: 0, grip: g * 1.12 },
+            position: [along * Math.cos(r), 0, H - 4 + along * Math.sin(r)],
+            hand: 'right',
+            pose: 'grip',
+            rotation: [0, 90 - th, 0],
+          },
+        ],
+      };
+    }
     return {
       objects: [
-        {
-          kind: 'tool',
-          size: { af: p.shankShape === 'hex' ? p.shankSize : p.shankSize * 0.87, length: 50 + p.depth },
-          position: [0, 0, -50],
-        },
+        tool,
         {
           kind: 'hand',
-          size: { breadth: 0, grip: p.gripD * 0.8 },
-          position: [0, 0, a3BossH(p) + p.gripD * 0.4],
+          // The stem rises under the middle of the bar, so the fingers close round its sides, not under it.
+          size: { breadth: 0, grip: g * 1.12, wrapMax: 150 },
+          position: [0, 0, H + g / 2 - 2],
           hand: 'right',
           pose: 'grip',
           rotation: [0, 90, 0],

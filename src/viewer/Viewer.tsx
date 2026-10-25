@@ -12,6 +12,7 @@ import { applyHeat, toGeometry } from './meshGeometry';
 import { Ghost, GhostStudio } from './Ghosts';
 import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
 import { HandClosure } from './Hand';
+import { debugOn } from '../app/debug';
 
 const deg = (d: number) => (d * Math.PI) / 180;
 const VIEW_DIR = new THREE.Vector3(0.65, 0.55, 0.75).normalize();
@@ -94,7 +95,7 @@ function poseMatrix(p: Pose | undefined, t: number): THREE.Matrix4 {
 }
 
 /** Animated part pose: eases from the previous step to the current one. */
-function useAnimatedPose(animation: ViewerProps['animation']) {
+function useAnimatedPose(animation: ViewerProps['animation'], hands: number[]) {
   const partRef = useRef<THREE.Group>(null);
   const ghostRefs = useRef<(THREE.Group | null)[]>([]);
   const state = useRef({ from: 0, to: 0, start: 0 });
@@ -139,7 +140,8 @@ function useAnimatedPose(animation: ViewerProps['animation']) {
       const cd = cur?.part.rotate ? cur.part.rotate.deg : 0;
       lerpPose.rotate = { ...rot, deg: pd + (cd - pd) * e };
     }
-    apply(poseMatrix(lerpPose, 1), new Set(cur?.ghosts ?? []));
+    // Unless a step says otherwise, the hand holding the part moves with it; other objects stay put.
+    apply(poseMatrix(lerpPose, 1), new Set(cur?.ghosts ?? hands));
   });
   return { partRef, ghostRefs };
 }
@@ -165,7 +167,7 @@ function Part({
   useEffect(() => () => geom.dispose(), [geom]);
   return (
     <group>
-      <mesh geometry={geom} castShadow receiveShadow>
+      <mesh name="part" geometry={geom} castShadow receiveShadow>
         <meshStandardMaterial
           key={heat ? 'heat' : 'plain'}
           color={heat ? '#ffffff' : color}
@@ -364,6 +366,18 @@ function GridFade({
   return null;
 }
 
+/** With ?debug in the URL, exposes the scene and the collision measure for diagnostics and tests. */
+function DebugHook() {
+  const { scene } = useThree();
+  useEffect(() => {
+    if (!debugOn()) return;
+    void import('./debugCollide').then(({ measure }) => {
+      (window as unknown as { __elDebug: unknown }).__elDebug = { measure: () => measure(scene) };
+    });
+  }, [scene]);
+  return null;
+}
+
 /** Reflections for the context objects (glass, metal) from a procedural studio room; no network needed. */
 function StudioEnvironment() {
   const { gl, scene } = useThree();
@@ -396,7 +410,11 @@ function Scene(props: ViewerProps & { color: string; stage: React.RefObject<HTML
     color,
   } = props;
   const controls = useRef<OrbitControlsImpl>(null);
-  const { partRef, ghostRefs } = useAnimatedPose(animation);
+  const hands = useMemo(
+    () => (ghost?.objects ?? []).flatMap((o, i) => (o.kind === 'hand' ? [i] : [])),
+    [ghost],
+  );
+  const { partRef, ghostRefs } = useAnimatedPose(animation, hands);
   // The hand opens for steps where it is not holding the part yet, and closes when it is.
   const handClosure = useMemo(
     () => ({
@@ -468,6 +486,7 @@ function Scene(props: ViewerProps & { color: string; stage: React.RefObject<HTML
                   ghost?.objects.map((o, i) => (
                     <group
                       key={i}
+                      name={`ghost-${o.kind}${o.kind === 'hand' ? '' : `-${i}`}`}
                       ref={(g) => {
                         ghostRefs.current[i] = g;
                       }}
@@ -484,6 +503,7 @@ function Scene(props: ViewerProps & { color: string; stage: React.RefObject<HTML
       <OrbitControls ref={controls} makeDefault enableDamping dampingFactor={0.12} />
       <CameraFit mesh={mesh} resetKey={props.resetKey} controls={controls} />
       <GridFade mesh={mesh} part={partRef} stage={props.stage} />
+      <DebugHook />
       <CameraCommands cmd={props.camera} controls={controls} />
     </>
   );
@@ -505,7 +525,7 @@ export function Viewer(props: ViewerProps) {
   }, [partColor]);
   return (
     // The canvas is transparent: the stage's graph paper shows through, faded where the part is.
-    <div ref={stage} className="stage-grid relative h-full w-full bg-viewer-bg">
+    <div ref={stage} className="stage-grid relative h-full w-full overflow-hidden bg-viewer-bg">
       <Canvas
         role="img"
         aria-label={props.label}

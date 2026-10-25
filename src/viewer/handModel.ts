@@ -83,19 +83,101 @@ export interface PoseAngles {
 }
 
 const clamp = (v: number, lo: number, hi: number) => Math.min(hi, Math.max(lo, v));
-const deg = (r: number) => (r * 180) / Math.PI;
+
+/** Clearance kept between a wrapped finger or thumb and the handle, mm. */
+const WRAP_GAP = 0.8;
+
+/** Shortest distance from point c to segment ab, in the (y, z) plane. */
+function segDist(c: [number, number], a: [number, number], b: [number, number]): number {
+  const [dy, dz] = [b[0] - a[0], b[1] - a[1]];
+  const len2 = dy * dy + dz * dz || 1;
+  const t = clamp(((c[0] - a[0]) * dy + (c[1] - a[1]) * dz) / len2, 0, 1);
+  return Math.hypot(a[0] + dy * t - c[0], a[1] + dz * t - c[1]);
+}
 
 /**
- * Flexion that wraps a 3-segment finger around a cylinder of radius R (finger mid-line radius):
- * each joint turns by the arc angle of the half-segments on either side of it.
+ * Flexion that wraps a finger round a handle (the grip cylinder, axis along canonical X) as closely as
+ * it can without passing into it: each phalanx, from the knuckle out, bends as far as it can while its
+ * inner surface stays just outside the handle. `mcpMax` caps the knuckle (a hook grip keeps it low).
  */
-export function wrapAngles(lengths: [number, number, number], R: number): [number, number, number] {
-  const arc = (a: number, b: number) => deg(2 * Math.asin(clamp((a + b) / 4 / R, 0, 1)));
-  return [
-    clamp(arc(0, lengths[0]) + 18, 10, 95),
-    clamp(arc(lengths[0], lengths[1]), 0, 110),
-    clamp(arc(lengths[1], lengths[2]), 0, 85),
-  ];
+export function wrapFinger(
+  f: FingerSpec,
+  cyl: { y: number; z: number; r: number },
+  mcpMax = 95,
+  wrapMax = 360,
+): [number, number, number] {
+  const limits = [mcpMax, 110, 85];
+  // Half-thickness of each phalanx in its bending plane (segments taper and are flattened to 0.86).
+  const half = [1, 0.9, 0.82].map((k) => (f.width * k * 0.86) / 2);
+  const c: [number, number] = [cyl.y, cyl.z];
+  let p: [number, number] = [f.base[1], f.base[2]];
+  let th = 0;
+  const out: number[] = [];
+  f.lengths.forEach((l, k) => {
+    const clear = cyl.r + half[k] + WRAP_GAP;
+    let bend = 0;
+    for (let b = 1; b <= limits[k] && th + b <= wrapMax; b++) {
+      const t = rd(th + b);
+      const q: [number, number] = [p[0] + l * Math.cos(t), p[1] - l * Math.sin(t)];
+      if (segDist(c, p, q) < clear) break;
+      bend = b;
+    }
+    th += bend;
+    p = [p[0] + l * Math.cos(rd(th)), p[1] - l * Math.sin(rd(th))];
+    out.push(bend);
+  });
+  return out as [number, number, number];
+}
+
+/** Joint centres along the thumb (base, and the end of each phalanx), canonical frame. */
+function thumbJoints(spec: HandSpec, t: ThumbAngles): V3[] {
+  const pts: V3[] = [spec.thumb.base];
+  let th = 0;
+  let y = 0;
+  let z = 0;
+  spec.thumb.lengths.forEach((l, k) => {
+    th += rd(t.flex[k]);
+    y += l * Math.cos(th);
+    z -= l * Math.sin(th);
+    const q = thumbRotate(t, [0, y, z]);
+    pts.push([q[0] + spec.thumb.base[0], q[1] + spec.thumb.base[1], q[2] + spec.thumb.base[2]]);
+  });
+  return pts;
+}
+
+const thumbCache = new Map<string, ThumbAngles>();
+/**
+ * The thumb for a power grip: it closes over the handle from the side opposite the fingers and rests on
+ * it, never passing into it. Searched once per hand size and handle size.
+ */
+export function wrapThumb(spec: HandSpec, cyl: { y: number; z: number; r: number }): ThumbAngles {
+  const key = `${spec.scale.toFixed(3)}:${cyl.r.toFixed(2)}`;
+  const hit = thumbCache.get(key);
+  if (hit) return hit;
+  const c: [number, number] = [cyl.y, cyl.z];
+  const half = [1, 0.9, 0.82].map((k) => (spec.thumb.width * k * 0.86) / 2);
+  let best: { cost: number; t: ThumbAngles } = { cost: Infinity, t: OPEN_ANGLES.thumb };
+  for (let oppose = 30; oppose <= 100; oppose += 5)
+    for (let abduct = -60; abduct <= 10; abduct += 5)
+      for (const roll of [-170, -150, -130, -110])
+        for (let f = 0; f <= 50; f += 5) {
+          const t: ThumbAngles = { oppose, abduct, roll, flex: [f * 0.6, f, f * 0.9] };
+          const j = thumbJoints(spec, t);
+          let ok = true;
+          for (let k = 0; k < 3 && ok; k++) {
+            // Each phalanx stays outside the handle, including its rounded ends.
+            if (segDist(c, [j[k][1], j[k][2]], [j[k + 1][1], j[k + 1][2]]) < cyl.r + half[k] + WRAP_GAP)
+              ok = false;
+          }
+          if (!ok) continue;
+          // Rest the thumb tip on the handle, ahead of the palm (toward the fingers' side), with little flex.
+          const tip = j[3];
+          const gap = Math.hypot(tip[1] - c[0], tip[2] - c[1]) - (cyl.r + half[2] + WRAP_GAP);
+          const cost = gap + Math.max(0, tip[2] - cyl.z) * 0.5 + f * 0.01;
+          if (cost < best.cost) best = { cost, t };
+        }
+  thumbCache.set(key, best.t);
+  return best.t;
 }
 
 /** Grip cylinder for a handle of diameter d: axis along canonical X, under the proximal phalanges. */
@@ -232,20 +314,15 @@ export function blendAngles(open: PoseAngles, pose: PoseAngles, t: number): Pose
   };
 }
 
-export function poseAngles(pose: HandPose, spec: HandSpec, gripD = 32): PoseAngles {
+export function poseAngles(pose: HandPose, spec: HandSpec, gripD = 32, wrapMax = 360): PoseAngles {
   if (pose === 'grip' || pose === 'hook') {
-    const { wrapR } = gripCylinder(spec, gripD);
-    const fingers = spec.fingers.map((f) => {
-      const a = wrapAngles(f.lengths, wrapR);
-      // A hook grip keeps the knuckles straighter and curls only the finger ends.
-      return {
-        flex: (pose === 'hook' ? [a[0] * 0.25, a[1] * 1.1, a[2]] : a) as [number, number, number],
-        splay: -f.splay * 0.8,
-      };
-    });
-    // The thumb crosses in front of the handle toward the little-finger side and rests on the index finger.
-    const t = clamp(48 - gripD * 0.4, 18, 40);
-    return { fingers, thumb: { oppose: 70, abduct: -30, roll: -160, flex: [t * 0.6, t, t * 0.9] } };
+    const cyl = gripCylinder(spec, gripD);
+    const fingers = spec.fingers.map((f) => ({
+      // A hook grip keeps the knuckles nearly straight and curls only the finger ends.
+      flex: wrapFinger(f, cyl, pose === 'hook' ? 25 : 95, wrapMax),
+      splay: -f.splay * 0.8,
+    }));
+    return { fingers, thumb: wrapThumb(spec, cyl) };
   }
   if (pose === 'palm') {
     return {

@@ -1,6 +1,6 @@
 import type { Family, FieldDef, ValidationIssue } from './types';
 import { buildSchema, defaultsOf } from './schema';
-import { MEASURE, err, info, mm, warn, FLAT } from './common';
+import { MEASURE, err, info, mm, warn, FLAT, barGripD, leverHandX } from './common';
 import { circle, dia, dim, rect, roundRect, starPts, text, type Shape } from '../outputs/svg/ir';
 import { b3LoadCases, b3Sections } from '../strength/families/b3';
 import type { Profile2D } from '../geometry/primitives/profiles';
@@ -418,8 +418,9 @@ export const B3: Family<B3P> = {
         { kind, size, position: [0, 0, z], rotation: [180, 0, 0] },
         {
           kind: 'hand',
-          size: { breadth: 0, grip: p.leverW },
-          position: [B / 2 + p.lever * 0.6, 0, p.leverH / 2],
+          // Closes round the lever's corners, clear of the round pad at its tip.
+          size: { breadth: 0, grip: barGripD(p.leverW, p.leverH, Math.min(4, p.leverH / 3)) },
+          position: [B / 2 + leverHandX(p.lever, p.leverW * 1.15), 0, p.leverH / 2],
           hand: 'right',
           pose: 'grip',
           rotation: [0, 90, 180],

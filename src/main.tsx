@@ -8,6 +8,7 @@ import '@fontsource/spectral/400-italic.css';
 import '@fontsource/spectral/500.css';
 import './styles/index.css';
 import { App } from './app/App';
+import './app/debug';
 
 // Offline support (production only; dev uses Vite's live server).
 if (import.meta.env.PROD && 'serviceWorker' in navigator) {

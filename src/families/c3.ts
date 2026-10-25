@@ -332,7 +332,8 @@ export const C3: Family<C3P> = {
         {
           caption: 'Push the end down to open the door.',
           part: { rotate: { axis: [0, 1, 0], pivot: [-120, 0, 0], deg: 25 } },
-          ghosts: [0],
+          // The door lever turns with the bar, pushed down by the hand.
+          ghosts: [0, 1],
         },
       ],
     };

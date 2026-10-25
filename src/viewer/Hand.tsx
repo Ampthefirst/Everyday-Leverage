@@ -83,22 +83,25 @@ function CanonicalHand({
   spec,
   pose,
   gripD,
+  wrapMax,
   closure,
   mat,
 }: {
   spec: HandSpec;
   pose: HandPose;
   gripD: number;
+  wrapMax?: number;
   closure: number;
   mat: THREE.Material;
 }) {
-  const target = poseAngles(pose, spec, gripD);
+  const target = poseAngles(pose, spec, gripD, wrapMax);
   const a = closure >= 1 ? target : blendAngles(OPEN_ANGLES, target, closure);
   const { palm, wrist, thumb } = spec;
   return (
     <group>
       {/* Palm: rounded slab, slightly wider at the knuckles. */}
       <RoundedBox
+        name="palm"
         args={[palm.width, palm.length - 8, palm.thickness]}
         radius={palm.thickness * 0.42}
         smoothness={5}
@@ -106,6 +109,7 @@ function CanonicalHand({
         material={mat}
       />
       <RoundedBox
+        name="palm"
         args={[palm.width * 1.04, palm.length * 0.32, palm.thickness * 0.96]}
         radius={palm.thickness * 0.4}
         smoothness={5}
@@ -113,19 +117,25 @@ function CanonicalHand({
         material={mat}
       />
       {/* Wrist: a capped cylinder like a mannequin's wrist joint. */}
-      <mesh position={[0, -wrist.length / 2 + 6, 0]} scale={[1.18, 1, 0.82]} material={mat}>
+      <mesh name="wrist" position={[0, -wrist.length / 2 + 6, 0]} scale={[1.18, 1, 0.82]} material={mat}>
         <cylinderGeometry args={[wrist.radius, wrist.radius * 0.94, wrist.length, 36]} />
       </mesh>
       <mesh position={[0, -wrist.length + 6, 0]} scale={[1.18, 0.6, 0.82]} material={mat}>
         <sphereGeometry args={[wrist.radius * 0.94, 32, 16]} />
       </mesh>
       {spec.fingers.map((f, i) => (
-        <group key={f.name} position={f.base} rotation={[0, 0, -rad(f.splay + a.fingers[i].splay)]}>
+        <group
+          key={f.name}
+          name={f.name}
+          position={f.base}
+          rotation={[0, 0, -rad(f.splay + a.fingers[i].splay)]}
+        >
           <Chain lengths={f.lengths} width={f.width} flex={a.fingers[i].flex} mat={mat} />
         </group>
       ))}
       {/* Thumb: swings toward −X (abduction), across the palm (opposition), with an axial roll. */}
       <group
+        name="thumb"
         position={thumb.base}
         rotation={new THREE.Euler(-rad(a.thumb.oppose), rad(a.thumb.roll), rad(a.thumb.abduct), 'ZXY')}
       >
@@ -146,6 +156,7 @@ export function ArticulatedHand({
   breadth = 85,
   pose = 'grip',
   gripD = 32,
+  wrapMax,
   side = 'right',
   closure = 1,
   mat,
@@ -153,6 +164,8 @@ export function ArticulatedHand({
   breadth?: number;
   pose?: HandPose;
   gripD?: number;
+  /** Stop the fingers curling past this angle (deg), e.g. above a stem under the handle. */
+  wrapMax?: number;
   side?: 'left' | 'right';
   /** 0 = open and relaxed, 1 = fully in the pose (see the "how to use" animation). */
   closure?: number;
@@ -186,17 +199,33 @@ export function ArticulatedHand({
     [],
   );
   const seeThrough = mat.transparent && mat.opacity < 1;
+  const grasp = pose === 'grip' || pose === 'hook';
   return (
     <group scale={[side === 'left' ? -1 : 1, 1, 1]}>
       <group matrix={outer} matrixAutoUpdate={false}>
-        <group position={inner}>
+        {/* An open hand waits a little off the handle and closes in onto it (grip and hook only). */}
+        <group position={[inner.x, inner.y, inner.z + (grasp ? (1 - closure) * 12 * spec.scale : 0)]}>
           {seeThrough && (
             <group renderOrder={1}>
-              <CanonicalHand spec={spec} pose={pose} gripD={gripD} closure={closure} mat={depthMat} />
+              <CanonicalHand
+                spec={spec}
+                pose={pose}
+                gripD={gripD}
+                wrapMax={wrapMax}
+                closure={closure}
+                mat={depthMat}
+              />
             </group>
           )}
           <group renderOrder={2}>
-            <CanonicalHand spec={spec} pose={pose} gripD={gripD} closure={closure} mat={mat} />
+            <CanonicalHand
+              spec={spec}
+              pose={pose}
+              gripD={gripD}
+              wrapMax={wrapMax}
+              closure={closure}
+              mat={mat}
+            />
           </group>
         </group>
       </group>

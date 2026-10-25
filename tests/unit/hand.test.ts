@@ -9,7 +9,8 @@ import {
   pinchSolution,
   poseAngles,
   thumbTip,
-  wrapAngles,
+  wrapFinger,
+  wrapThumb,
 } from '../../src/viewer/handModel';
 
 describe('articulated hand', () => {
@@ -22,13 +23,47 @@ describe('articulated hand', () => {
 
   it('wraps fingers more tightly around thinner handles, within joint limits', () => {
     const spec = handSpec();
-    const thin = wrapAngles(spec.fingers[1].lengths, gripCylinder(spec, 20).wrapR);
-    const thick = wrapAngles(spec.fingers[1].lengths, gripCylinder(spec, 50).wrapR);
-    for (let k = 0; k < 3; k++) expect(thin[k]).toBeGreaterThan(thick[k]);
+    const thin = wrapFinger(spec.fingers[1], gripCylinder(spec, 20));
+    const thick = wrapFinger(spec.fingers[1], gripCylinder(spec, 50));
+    expect(thin.reduce((a, b) => a + b)).toBeGreaterThan(thick.reduce((a, b) => a + b));
     expect(thin[0]).toBeLessThanOrEqual(95);
     expect(thin[1]).toBeLessThanOrEqual(110);
     expect(thin[2]).toBeLessThanOrEqual(85);
   });
+
+  it.each([15, 22, 32, 45, 55])(
+    'a %d mm handle: no finger or thumb passes into it, and the grip closes round it',
+    (d) => {
+      for (const breadth of [70, 85, 100]) {
+        const spec = handSpec(breadth);
+        const cyl = gripCylinder(spec, d);
+        for (const f of spec.fingers) {
+          const flex = wrapFinger(f, cyl);
+          // Walk the chain and check each phalanx's inner surface clears the handle.
+          let th = 0;
+          let [y, z] = [f.base[1], f.base[2]];
+          let wrapped = 0;
+          f.lengths.forEach((l, k) => {
+            th += flex[k];
+            const y2 = y + l * Math.cos((th * Math.PI) / 180);
+            const z2 = z - l * Math.sin((th * Math.PI) / 180);
+            for (let s = 0; s <= 10; s++) {
+              const py = y + ((y2 - y) * s) / 10;
+              const pz = z + ((z2 - z) * s) / 10;
+              const half = (f.width * [1, 0.9, 0.82][k] * 0.86) / 2;
+              expect(Math.hypot(py - cyl.y, pz - cyl.z) - half).toBeGreaterThan(cyl.r + 0.5);
+            }
+            [y, z] = [y2, z2];
+            wrapped = th;
+          });
+          // The middle finger curls well round the handle (a grip, not a flat hand); thick handles less so.
+          if (f.name === 'middle') expect(wrapped).toBeGreaterThan(d <= 22 ? 160 : d <= 32 ? 135 : 100);
+        }
+        const t = wrapThumb(spec, cyl);
+        expect(t).not.toBe(OPEN_ANGLES.thumb);
+      }
+    },
+  );
 
   it('closes the pinch: the thumb tip meets the index tip across a key-sized gap', () => {
     for (const breadth of [70, 85, 100]) {

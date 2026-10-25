@@ -404,7 +404,8 @@ export const B2: Family<B2P> = {
         {
           caption: 'Push the wing to turn.',
           part: { rotate: { axis: [0, 0, 1], pivot: [0, 0, 0], deg: 60 } },
-          ghosts: [0],
+          // The key turns with the wing, and so does the hand pushing it.
+          ghosts: [0, 1],
         },
       ],
     };

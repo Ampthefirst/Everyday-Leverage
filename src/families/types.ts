@@ -162,7 +162,7 @@ export interface Pose {
 export interface AnimationStep {
   caption: string;
   part: Pose;
-  /** Ghost indices that move with the part in this step. */
+  /** Ghost indices that move with the part in this step. Default: the hand(s), which hold the part. */
   ghosts?: number[];
   /** How closed the hand is in this step: 0 = open and relaxed, 1 = fully in its pose (default). */
   hand?: number;

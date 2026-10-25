@@ -27,6 +27,19 @@ export const info = (message: string, fix?: string, param?: string): ValidationI
   param,
 });
 
+/**
+ * Grip diameter for a hand closing round a rounded-rectangle bar (w × h, corner radius `round`): the
+ * circle through its corners, so the wrapped fingers clear them.
+ */
+export const barGripD = (w: number, h: number, round: number) =>
+  2 * (Math.hypot(Math.max(0, w / 2 - round), Math.max(0, h / 2 - round)) + round);
+
+/**
+ * Where to centre a gripping hand along a lever of length `L` (from the hub edge), clear of the tip
+ * pad (diameter `padD`, 0 for none) and the root fillet. The hand is about 90 mm across.
+ */
+export const leverHandX = (L: number, padD: number) => Math.max(42, Math.min(L * 0.62, L - padD * 0.75 - 46));
+
 export const ceilTo = (v: number, step = 0.5) => Math.ceil(v / step - 1e-9) * step;
 export const mm = (v: number, d = 1) => `${fmt(v, d)} mm`;
 

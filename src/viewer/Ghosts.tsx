@@ -2,9 +2,19 @@ import { createContext, useContext, useMemo, useRef, useState } from 'react';
 import { useFrame } from '@react-three/fiber';
 import { ArticulatedHand, useHandClosure } from './Hand';
 import * as THREE from 'three';
+import { debugOn } from '../app/debug';
 import type { GhostObject } from '../families/types';
 
 const deg = (d: number) => (d * Math.PI) / 180;
+
+/** Diagnostics only (?debug&handColor=…&handOpacity=…): try other hand colours on the real stage. */
+function handOverride(): { color?: THREE.Color; opacity?: number } {
+  if (!debugOn()) return {};
+  const q = new URLSearchParams(window.location.search);
+  const c = q.get('handColor');
+  const o = Number(q.get('handOpacity'));
+  return { ...(c ? { color: new THREE.Color(c) } : {}), ...(o > 0 && o <= 1 ? { opacity: o } : {}) };
+}
 
 /** Studio mode renders context objects as real materials (for product renders), not translucent ghosts. */
 export const GhostStudio = createContext<boolean | 'viewer'>(false);
@@ -56,7 +66,12 @@ function useGhostMaterial(color: string, opacity = 0.32, finish: Finish = 'plast
     () =>
       studio === 'viewer' && finish === 'mannequin'
         ? // In the designer the hand keeps the studio look but stays see-through, so the part shows inside it.
-          Object.assign(studioMaterial(finish), { transparent: true, opacity: 0.55, depthWrite: false })
+          Object.assign(studioMaterial(finish), {
+            transparent: true,
+            opacity: 0.55,
+            depthWrite: false,
+            ...handOverride(),
+          })
         : studio
           ? studioMaterial(finish)
           : new THREE.MeshStandardMaterial({
@@ -136,6 +151,7 @@ function Hand({ o, breadth }: { o: GhostObject; breadth: number }) {
       breadth={breadth}
       pose={o.pose ?? 'grip'}
       gripD={o.size.grip ?? 32}
+      wrapMax={o.size.wrapMax}
       side={o.hand ?? 'right'}
       closure={closure}
       mat={mat}

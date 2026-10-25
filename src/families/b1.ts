@@ -1,6 +1,6 @@
 import type { Family, FieldDef, ValidationIssue } from './types';
 import { buildSchema, defaultsOf } from './schema';
-import { MEASURE, boxNet, cylinderNet, err, info, mm, warn, FLAT } from './common';
+import { MEASURE, boxNet, cylinderNet, err, info, mm, warn, FLAT, barGripD, leverHandX } from './common';
 import { circle, dia, dim, line, rect, text, translateShapes, type Shape } from '../outputs/svg/ir';
 import { b1LoadCases, b1Sections } from '../strength/families/b1';
 import { maxPartLength } from '../print/bedfit';
@@ -551,8 +551,9 @@ export const B1: Family<B1P> = {
         },
         {
           kind: 'hand',
-          size: { breadth: 0, grip: p.leverW },
-          position: [B / 2 + p.lever * 0.7, 0, p.leverH / 2],
+          // Closes round the lever's corners, clear of the round pad at its tip.
+          size: { breadth: 0, grip: barGripD(p.leverW, p.leverH, Math.min(4, p.leverH / 3)) },
+          position: [B / 2 + leverHandX(p.lever, p.leverW * 1.15), 0, p.leverH / 2],
           hand: 'right',
           pose: 'grip',
           // Overhand: the palm rests on the lever's top face (−Z here; the part is shown flipped), wrist toward −Y.
