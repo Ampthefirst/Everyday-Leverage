@@ -212,3 +212,16 @@ The steps are independent, so they can ship separately if you'd rather see the h
        use SVG.
 
      Shipped in step 1.
+7. **Presentation mode across the new surfaces** (owner, 2026-10-25). Every new disclaimer goes through
+   `src/content/disclaimers.ts`, as before:
+   - the dashboard row badges (`StrengthBadge`);
+   - the strength summary's "estimates, uncalibrated" note;
+   - the "Download all designs" README lines;
+   - the hero caption badge.
+
+   `tests/unit/presentation.test.ts` covers the dashboard in both builds.
+8. **"Your printer" panel on the dashboard** sits behind its own build flag, `VITE_DASHBOARD_PRINTER`
+   (owner, 2026-10-25):
+   - shown by default; `0` hides it;
+   - read through `showPrinterPanel()` in `src/content/features.ts`;
+   - set per Vercel project, like `VITE_PRESENTATION_MODE`, and independent of it.

@@ -2,8 +2,9 @@
    - Pages: network first, falling back to the cached app shell.
    - Hashed build assets (/assets/*), fonts, the WASM kernel and the design renders: cache first.
    - /api is never cached. */
-const CACHE = 'el-v3';
-const SHELL = ['/', '/index.html', '/favicon.svg'];
+// Bump on any change to an unhashed file (icons, renders, sw logic): the old cache is then deleted.
+const CACHE = 'el-v4';
+const SHELL = ['/', '/index.html', '/favicon.svg?v=3', '/favicon-32.png?v=3', '/apple-touch-icon.png?v=3'];
 
 self.addEventListener('install', (e) => {
   e.waitUntil(

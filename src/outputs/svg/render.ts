@@ -149,10 +149,17 @@ export const HATCH_DEF = (id = 'hatch') =>
 /** A standalone SVG at true scale (1 user unit = 1 mm), with optional title and 25 mm check square. */
 export function toSvgDocument(
   shapes: Shape[],
-  opts: { title?: string; note?: string; scaleSquare?: boolean; margin?: number } = {},
+  opts: {
+    title?: string;
+    note?: string;
+    scaleSquare?: boolean;
+    margin?: number;
+    /** A fixed frame, so a drawing redrawn at other sizes keeps one scale (the animated hero figure). */
+    bounds?: Bounds;
+  } = {},
 ): string {
   const m = opts.margin ?? 10;
-  const b: Bounds = shapeBounds(flatten(shapes));
+  const b: Bounds = opts.bounds ?? shapeBounds(flatten(shapes));
   const head = opts.title ? 10 : 0;
   const sq = opts.scaleSquare ? 35 : 0;
   const w = b.maxX - b.minX + 2 * m;

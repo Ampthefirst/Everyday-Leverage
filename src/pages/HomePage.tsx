@@ -2,39 +2,68 @@ import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { IsIsNotTable } from '../components/IsIsNot';
 import { showDisclaimers } from '../content/disclaimers';
-import { FigureSheet, showcaseParams } from '../components/home/FigureSheet';
-import { Figure } from '../components/Figure';
+import { FigureSheet } from '../components/home/FigureSheet';
+import { Figure, shapesSvg } from '../components/Figure';
+import { blendParams, easeInOut, heroBounds, heroStops } from '../app/morph';
 import { StrengthBadge } from '../components/StrengthBadge';
 import { LinkButton } from '../components/Button';
 import { getFamily } from '../families';
-import type { Params } from '../families/types';
 import { analyse } from '../app/analysis';
 import { prefersReducedMotion, useSettings } from '../state/settings';
 import { sortedProjects, useProjects } from '../state/projects';
 import { Shelf, stepLabel, useOpenProject } from '../components/home/Shelf';
 import { usePageKeys } from '../app/hotkeys';
 
-/** Fig. 1 is redrawn live through these largest-lid sizes, straight from the drawing code. */
-const LID_STEPS = [85, 100, 70];
-const STEP_MS = 3200;
+const HOLD_MS = 2600;
+const MORPH_MS = 900;
 
-/** The hero figure: the jar opener's true-scale top view, redrawn as the lid size changes. */
+/**
+ * Fig. 1: the jar opener's true-scale top view, morphing between its real handheld presets. Every frame is
+ * the family's own drawing code at blended sizes, so the cup, rings and lever grow and shrink and the
+ * dimensions count with them. Reduced motion holds still and offers a "Next size" button instead.
+ */
 function LiveFigure() {
   const fam = getFamily('B1')!;
-  const base = useMemo(() => showcaseParams(fam), [fam]);
-  const [i, setI] = useState(0);
-  const still = prefersReducedMotion();
+  const stops = useMemo(() => heroStops(fam), [fam]);
+  const bounds = useMemo(() => heroBounds(fam, stops), [fam, stops]);
+  const still = useSettings((s) => s.reduceMotion) || prefersReducedMotion();
+  // `at` is the stop shown at rest; `t` is the progress (0–1) of the morph towards the next stop.
+  const [at, setAt] = useState(0);
+  const [t, setT] = useState(0);
+  const next = (at + 1) % stops.length;
+
   useEffect(() => {
     if (still) return;
-    const t = setInterval(() => !document.hidden && setI((n) => (n + 1) % LID_STEPS.length), STEP_MS);
-    return () => clearInterval(t);
-  }, [still]);
-  const params = useMemo(() => fam.repair({ ...base, lidMax: LID_STEPS[i] } as Params), [fam, base, i]);
+    let raf = 0;
+    let start = performance.now();
+    const tick = (now: number) => {
+      if (document.hidden) start = now; // paused while the tab is hidden
+      const el = now - start;
+      if (el < HOLD_MS) setT(0);
+      else if (el < HOLD_MS + MORPH_MS) setT(easeInOut((el - HOLD_MS) / MORPH_MS));
+      else {
+        setT(0);
+        setAt((a) => (a + 1) % stops.length);
+        return;
+      }
+      raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, [still, at, stops.length]);
+
+  const resting = t === 0;
+  const shown = resting ? stops[at] : t < 0.5 ? stops[at] : stops[next];
+  const frame = useMemo(
+    () => (resting ? stops[at].params : blendParams(stops[at].blendable, stops[next].blendable, t)),
+    [resting, stops, at, next, t],
+  );
+  const svg = useMemo(() => shapesSvg(fam.drawing(frame).views[0].shapes, bounds), [fam, frame, bounds]);
   const verdict = useMemo(
     () =>
       analyse({
         family: fam,
-        params,
+        params: shown.params,
         use: { level: 'moderate', location: 'kitchen' },
         print: null,
         safetyFactor: 2,
@@ -42,43 +71,57 @@ function LiveFigure() {
         calibrationFor: () => null,
         geometry: null,
       }).verdict,
-    [fam, params],
+    [fam, shown],
   );
-  const lidMin = params.lidMin as number;
-  const lidMax = params.lidMax as number;
+  const p = shown.params;
+  const steps = p.steps as number;
+  // The callouts count with the drawing while it morphs.
+  const lo = Math.round(frame.lidMin as number);
+  const hi = Math.round(frame.lidMax as number);
+  const lids = steps > 1 && hi - lo >= 1 ? `${lo}–${hi} mm` : `${hi} mm`;
   return (
     <figure className="flex flex-col justify-center">
       <div className="figure-sheet relative px-6 pt-10 pb-8 sm:px-8">
-        <Figure
-          familyId="B1"
-          params={params}
-          label={`Top view of the lid and jar opener: a stepped cup for lids ${lidMin} to ${lidMax} mm and a ${params.lever} mm lever.`}
+        <div
+          className="figure-svg"
+          role="img"
+          aria-label={`Top view of the lid and jar opener at the “${shown.label}” sizes: ${steps > 1 ? `${steps} lid steps for lids ${lids}` : `one cup for a ${lids} lid`} and a ${p.lever} mm lever.`}
+          dangerouslySetInnerHTML={{ __html: svg }}
         />
         <span
           aria-hidden="true"
           className="figcaption absolute top-3 left-6 text-base text-primary sm:left-8"
         >
-          cup, {params.steps as number} lid steps
+          {steps > 1 ? `cup, ${steps} lid steps` : 'cup, one lid size'}
         </span>
         <span
           aria-hidden="true"
           className="figcaption absolute top-3 right-6 text-base text-primary sm:right-8"
         >
-          {params.lever as number} mm lever
+          {Math.round(frame.lever as number)} mm lever
         </span>
         <span
           aria-hidden="true"
           className="figcaption absolute bottom-2 left-6 text-base text-primary sm:left-8"
         >
-          fits lids {lidMin}–{lidMax} mm
+          fits lids {lids}
         </span>
       </div>
       <figcaption className="mt-4 flex items-start justify-between gap-6">
         <span className="text-base text-muted">
-          <span className="figcaption text-lg text-text">Fig. 1 — Lid and jar opener, top view.</span> Drawn
-          from its measurements at true scale, and redrawn as the lid size changes. Uses about{' '}
+          <span className="figcaption text-lg text-text">Fig. 1 — Lid and jar opener, top view.</span> At the
+          “{shown.label}” sizes, drawn at true scale from its measurements. Uses about{' '}
           {Math.round(verdict.utilization * 100)}% of its strength budget.{' '}
           <StrengthBadge calibration={null} />
+          {still && (
+            <button
+              type="button"
+              onClick={() => setAt(next)}
+              className="tap mt-2 flex items-center rounded-md border border-border px-3 font-semibold text-text hover:border-text"
+            >
+              Next size<span className="sr-only">: {stops[next].label}</span>
+            </button>
+          )}
         </span>
         <span className="hidden w-40 shrink-0 rounded-md border border-border bg-surface p-2 shadow-[0_12px_30px_-18px_rgb(22_24_29/0.35)] sm:block">
           <img src="/renders/B1.webp" alt="" width={1024} height={1024} className="block w-full" />

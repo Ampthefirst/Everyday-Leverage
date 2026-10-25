@@ -49,6 +49,9 @@ for a live presentation. The normal site is never affected.
 3. Redeploy it. The flag is read at build time, so changing it always needs a redeploy.
 4. When the presentation is over, delete that project.
 
+To hide the dashboard's "Your printer" panel (calibration status), set `VITE_DASHBOARD_PRINTER` = `0` on
+that project and redeploy. It is independent of presentation mode: either can be on without the other.
+
 All disclaimers live in `src/content/disclaimers.ts`; `tests/unit/presentation.test.ts` checks the site
 chrome, the badge, the PDFs and the zip with the flag on and off.
 

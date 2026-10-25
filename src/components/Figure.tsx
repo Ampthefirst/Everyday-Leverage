@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 import { getFamily } from '../families';
 import type { FamilyId, Params } from '../families/types';
 import { flatten, toSvgDocument } from '../outputs/svg/render';
+import type { Bounds, Shape } from '../outputs/svg/ir';
 
 /**
  * A design's measured drawing as an inline figure: the same true-scale views the "Get files" drawings
@@ -10,8 +11,12 @@ import { flatten, toSvgDocument } from '../outputs/svg/render';
 export function figureSvg(familyId: FamilyId, params: Params, view = 0): string {
   const fam = getFamily(familyId)!;
   const views = fam.drawing(params).views;
-  const v = views[Math.min(view, views.length - 1)];
-  return toSvgDocument(flatten(v.shapes), { margin: 3 })
+  return shapesSvg(views[Math.min(view, views.length - 1)].shapes);
+}
+
+/** Inline SVG markup for drawing shapes; `bounds` fixes the frame across redraws. */
+export function shapesSvg(shapes: Shape[], bounds?: Bounds): string {
+  return toSvgDocument(flatten(shapes), { margin: 3, bounds })
     .replace(/<\?xml[^>]*>\s*/, '')
     .replace(/ width="[^"]*mm" height="[^"]*mm"/, ' preserveAspectRatio="xMidYMid meet"')
     .replace(/<rect width="100%" height="100%" fill="#ffffff"\/>/, '');
