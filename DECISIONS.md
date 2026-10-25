@@ -88,3 +88,5 @@ One line each: decision — reason.
 - v3.1 Home: signed in, the shelf becomes "Your recent designs" (3) with a link to the dashboard; signed out, the device shelf is unchanged.
 - v3.1 "Get files" from the dashboard opens the designer at the result/files step via router state, not a new URL.
 - v3.1 "Download all designs" zips designs.json, links.txt (share links) and a README, with README disclaimers routed through disclaimers.ts.
+- v3.1 transitions: the app moved from <BrowserRouter> to createBrowserRouter with route `lazy`, because React Router's `viewTransition` only works in data mode, and lazy routes make the router wait for a page instead of snapshotting a "Loading…" frame. Figures share `view-transition-name: fig-<id>` on Home, Pick and the design screen. The figure stops at the design screen: the Designer has no 2D figure to land on.
+- v3.1 transitions: the tab underline and dashboard rows use View Transitions through withTransition() (instant without browser support or with reduced motion). The meter fill slides (200 ms), and quick-mode questions fade in with a 6 px rise (150 ms). Reduced motion turns them all off, including view-transition animations.

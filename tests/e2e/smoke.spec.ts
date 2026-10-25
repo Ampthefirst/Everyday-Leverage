@@ -27,3 +27,21 @@ test('the tab icon is the current mark, served at a versioned address', async ({
   const svg = await (await request.get('/favicon.svg?v=3')).text();
   expect(svg).toContain('#1d3fa6');
 });
+
+test('a figure on Pick glides into the design screen (View Transition)', async ({ page }) => {
+  await page.goto('/design');
+  await page.evaluate(() => {
+    const d = document as Document & { startViewTransition?: (cb: () => void) => unknown; vtCount?: number };
+    const orig = d.startViewTransition?.bind(d);
+    d.vtCount = 0;
+    if (orig)
+      d.startViewTransition = (cb: () => void) => {
+        d.vtCount! += 1;
+        return orig(cb);
+      };
+  });
+  await page.getByRole('link', { name: 'Lid and jar opener' }).click();
+  await expect(page.getByRole('heading', { level: 1, name: 'Lid and jar opener' })).toBeVisible();
+  const n = await page.evaluate(() => (document as Document & { vtCount?: number }).vtCount);
+  expect(n).toBeGreaterThan(0);
+});

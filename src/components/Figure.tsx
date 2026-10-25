@@ -28,6 +28,7 @@ export function Figure({
   view = 0,
   label,
   className = '',
+  transitionName,
 }: {
   familyId: FamilyId;
   params?: Params;
@@ -35,6 +36,8 @@ export function Figure({
   /** Accessible description; omit when the figure is decorative next to its caption. */
   label?: string;
   className?: string;
+  /** Shared across pages so this drawing glides into place during a View Transition. */
+  transitionName?: string;
 }) {
   const fam = getFamily(familyId)!;
   const p = params ?? fam.defaults;
@@ -45,6 +48,7 @@ export function Figure({
       role={label ? 'img' : undefined}
       aria-label={label}
       aria-hidden={label ? undefined : true}
+      style={transitionName ? { viewTransitionName: transitionName } : undefined}
       dangerouslySetInnerHTML={{ __html: svg }}
     />
   );

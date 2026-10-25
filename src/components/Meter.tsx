@@ -37,7 +37,10 @@ export function Meter({ u, level, large = false }: { u: number; level: VerdictLe
         className="relative mt-3 h-2.5 overflow-hidden rounded-full"
         style={{ background: 'linear-gradient(90deg,#d8eadf 0 40%,#f3e3c4 40% 66.6%,#f2d4d1 66.6%)' }}
       >
-        <div className={`absolute inset-y-0 left-0 rounded-full ${fill}`} style={{ width: `${pos}%` }} />
+        <div
+          className={`absolute inset-y-0 left-0 rounded-full transition-[width,background-color] duration-200 ease-out ${fill}`}
+          style={{ width: `${pos}%` }}
+        />
       </div>
       <div className="mt-1.5 grid grid-cols-[40%_26.67%_1fr_auto] text-xs text-faint" aria-hidden="true">
         <span>0%</span>

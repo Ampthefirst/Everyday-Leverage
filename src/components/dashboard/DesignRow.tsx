@@ -7,6 +7,7 @@ import { LEVEL_LABEL } from '../../strength/evaluate';
 import type { VerdictLevel } from '../../strength/types';
 import type { CalibrationProfile } from '../../strength/calibration';
 import { Figure } from '../Figure';
+import { withTransition } from '../../app/transition';
 import { Button } from '../Button';
 import { StepStrip } from '../StepStrip';
 import { StrengthBadge } from '../StrengthBadge';
@@ -53,6 +54,8 @@ export function DesignRow({
   return (
     <li
       aria-labelledby={`row-${p.id}`}
+      // Rows glide when one is added or removed (View Transitions; instant without them).
+      style={{ viewTransitionName: `row-${p.id}` }}
       className="grid grid-cols-[5.5rem_minmax(0,1fr)] gap-x-4 gap-y-4 border-t border-rule py-6 sm:grid-cols-[9rem_minmax(0,1fr)_auto] sm:gap-x-6"
     >
       <Figure
@@ -145,14 +148,14 @@ export function DesignRow({
             Rename<span className="sr-only"> {p.name}</span>
           </Button>
         )}
-        <Button variant="ghost" onClick={() => duplicate(p.id)}>
+        <Button variant="ghost" onClick={() => withTransition(() => duplicate(p.id))}>
           Duplicate<span className="sr-only"> {p.name}</span>
         </Button>
         <Button variant="ghost" onClick={copy}>
           Copy share link<span className="sr-only"> for {p.name}</span>
         </Button>
         {confirm ? (
-          <Button variant="danger" onClick={() => remove(p.id)}>
+          <Button variant="danger" onClick={() => withTransition(() => remove(p.id))}>
             Yes, delete<span className="sr-only"> {p.name}</span>
           </Button>
         ) : (

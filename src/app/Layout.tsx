@@ -1,5 +1,5 @@
 import { Link, NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
-import { useEffect, useRef, useState } from 'react';
+import { Suspense, useEffect, useRef, useState } from 'react';
 import { useSettings } from '../state/settings';
 import { DISCLAIMERS, showDisclaimers } from '../content/disclaimers';
 import { AccountEntry } from '../accounts/AccountEntry';
@@ -225,7 +225,9 @@ export function Layout() {
       </header>
       <SideMenu open={menuOpen} onClose={() => setMenuOpen(false)} />
       <main id="main" ref={mainRef} tabIndex={-1} className="flex-1 outline-none">
-        <Outlet />
+        <Suspense fallback={null}>
+          <Outlet />
+        </Suspense>
       </main>
       {!isDesigner && (
         <footer className="border-t border-rule">

@@ -52,7 +52,7 @@ export default function DesignScreen() {
     if (!family) return;
     const n = Number(k);
     if (n >= 1 && n <= family.presets.length) return (applyPreset(n - 1), true);
-    if (k === 'Escape' || k === 'Backspace') return (navigate('/design'), true);
+    if (k === 'Escape' || k === 'Backspace') return (navigate('/design', { viewTransition: true }), true);
     if (k === 'ArrowLeft' && prev) return (navigate(`/pick/${prev}`), true);
     if (k === 'ArrowRight' && next) return (navigate(`/pick/${next}`), true);
     // Enter opens the designer only when nothing else has focus (a focused control handles its own Enter).
@@ -81,7 +81,12 @@ export default function DesignScreen() {
     <>
       <nav aria-label="Designs" className="border-b border-rule">
         <div className="mx-auto flex max-w-[90rem] flex-wrap items-center gap-x-6 px-4 sm:px-6 lg:px-24">
-          <Link to="/design" className={crumb} aria-keyshortcuts={hotkeys ? 'Escape' : undefined}>
+          <Link
+            to="/design"
+            viewTransition
+            className={crumb}
+            aria-keyshortcuts={hotkeys ? 'Escape' : undefined}
+          >
             <Arrow dir="left" /> All designs
           </Link>
           <span className="hidden text-base text-faint sm:inline">
@@ -118,6 +123,7 @@ export default function DesignScreen() {
             <Figure
               familyId={family.id}
               params={showcaseParams(family)}
+              transitionName={`fig-${family.id}`}
               className="mx-auto w-full [&_svg]:max-h-[30rem]"
             />
           </div>

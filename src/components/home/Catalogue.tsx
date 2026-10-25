@@ -26,6 +26,7 @@ function Entry({ f, n }: { f: Family; n: number }) {
       <div>
         <Link
           to={`/pick/${f.id}`}
+          viewTransition
           tabIndex={-1}
           aria-hidden="true"
           className="figure-sheet block px-5 pt-4 pb-3 hover:border-text"
@@ -41,6 +42,7 @@ function Entry({ f, n }: { f: Family; n: number }) {
           <Figure
             familyId={f.id}
             params={showcaseParams(f)}
+            transitionName={`fig-${f.id}`}
             className="my-3 flex h-40 items-center justify-center [&_svg]:max-h-40"
           />
         </Link>
@@ -60,6 +62,7 @@ function Entry({ f, n }: { f: Family; n: number }) {
         <h3 id={`cat-${f.id}`} className="font-serif text-[1.875rem] leading-tight">
           <Link
             to={`/pick/${f.id}`}
+            viewTransition
             aria-keyshortcuts={hotkeys ? String(n) : undefined}
             className="hover:underline hover:decoration-1 hover:underline-offset-4"
           >

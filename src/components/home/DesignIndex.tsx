@@ -30,10 +30,11 @@ export function DesignIndex() {
                 .filter((f) => f.group === g.id)
                 .map((f) => (
                   <li key={f.id}>
-                    <Link to={`/pick/${f.id}`} className="group block rounded-sm">
+                    <Link to={`/pick/${f.id}`} viewTransition className="group block rounded-sm">
                       <Figure
                         familyId={f.id}
                         params={showcaseParams(f)}
+                        transitionName={`fig-${f.id}`}
                         className="flex h-16 items-center sm:h-24 [&_svg]:max-h-16 sm:[&_svg]:max-h-24"
                       />
                       <span className="mt-2.5 block font-serif text-base leading-snug group-hover:underline group-hover:decoration-1 group-hover:underline-offset-4 sm:text-[1.2rem]">

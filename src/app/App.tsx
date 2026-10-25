@@ -1,22 +1,18 @@
-import { lazy, Suspense } from 'react';
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import type { ComponentType } from 'react';
+import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { Layout } from './Layout';
 import { AppearanceSync } from './AppearanceSync';
 import { HomePage } from '../pages/HomePage';
 import { NotFoundPage } from '../pages/NotFoundPage';
 
-// The designer pulls in three.js and the geometry kernel, so it is code-split.
-const DesignerPage = lazy(() => import('../pages/DesignerPage'));
-const PickPage = lazy(() => import('../pages/PickPage'));
-const DesignScreen = lazy(() => import('../pages/DesignScreen'));
-const FinderPage = lazy(() => import('../pages/FinderPage'));
-const CalibratePage = lazy(() => import('../pages/CalibratePage'));
-const LearnPage = lazy(() => import('../pages/LearnPage'));
-const LimitsPage = lazy(() => import('../pages/LimitsPage'));
-const PrintHelpPage = lazy(() => import('../pages/PrintHelpPage'));
-const SettingsPage = lazy(() => import('../pages/SettingsPage'));
-const AccountPage = lazy(() => import('../pages/AccountPage'));
-const DashboardPage = lazy(() => import('../pages/DashboardPage'));
+/**
+ * Code-split pages load through the route's `lazy`, so the router waits for a page before switching to it.
+ * That keeps View Transitions (figures gliding from Pick to a design's screen) from capturing a
+ * "Loading…" frame. The designer pulls in three.js and the geometry kernel, so splitting matters there most.
+ */
+const page = (load: () => Promise<{ default: ComponentType }>) => async () => ({
+  Component: (await load()).default,
+});
 
 function Loading() {
   return (
@@ -26,29 +22,37 @@ function Loading() {
   );
 }
 
-export function App() {
+function Root() {
   return (
-    <BrowserRouter>
+    <>
       <AppearanceSync />
-      <Suspense fallback={<Loading />}>
-        <Routes>
-          <Route element={<Layout />}>
-            <Route index element={<HomePage />} />
-            <Route path="find" element={<FinderPage />} />
-            <Route path="design" element={<PickPage />} />
-            <Route path="design/:familyId" element={<DesignerPage />} />
-            <Route path="pick/:familyId" element={<DesignScreen />} />
-            <Route path="calibrate" element={<CalibratePage />} />
-            <Route path="learn" element={<LearnPage />} />
-            <Route path="limits" element={<LimitsPage />} />
-            <Route path="print-help" element={<PrintHelpPage />} />
-            <Route path="settings" element={<SettingsPage />} />
-            <Route path="account" element={<AccountPage />} />
-            <Route path="designs" element={<DashboardPage />} />
-            <Route path="*" element={<NotFoundPage />} />
-          </Route>
-        </Routes>
-      </Suspense>
-    </BrowserRouter>
+      <Layout />
+    </>
   );
+}
+
+const router = createBrowserRouter([
+  {
+    element: <Root />,
+    HydrateFallback: Loading,
+    children: [
+      { index: true, element: <HomePage /> },
+      { path: 'find', lazy: page(() => import('../pages/FinderPage')) },
+      { path: 'design', lazy: page(() => import('../pages/PickPage')) },
+      { path: 'design/:familyId', lazy: page(() => import('../pages/DesignerPage')) },
+      { path: 'pick/:familyId', lazy: page(() => import('../pages/DesignScreen')) },
+      { path: 'calibrate', lazy: page(() => import('../pages/CalibratePage')) },
+      { path: 'learn', lazy: page(() => import('../pages/LearnPage')) },
+      { path: 'limits', lazy: page(() => import('../pages/LimitsPage')) },
+      { path: 'print-help', lazy: page(() => import('../pages/PrintHelpPage')) },
+      { path: 'settings', lazy: page(() => import('../pages/SettingsPage')) },
+      { path: 'account', lazy: page(() => import('../pages/AccountPage')) },
+      { path: 'designs', lazy: page(() => import('../pages/DashboardPage')) },
+      { path: '*', element: <NotFoundPage /> },
+    ],
+  },
+]);
+
+export function App() {
+  return <RouterProvider router={router} />;
 }

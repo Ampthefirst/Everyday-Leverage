@@ -9,7 +9,7 @@ export default function PickPage() {
   usePageKeys((k) => {
     const n = Number(k);
     if (n >= 1 && n <= ids.length) {
-      navigate(`/pick/${ids[n - 1]}`);
+      navigate(`/pick/${ids[n - 1]}`, { viewTransition: true });
       return true;
     }
   });

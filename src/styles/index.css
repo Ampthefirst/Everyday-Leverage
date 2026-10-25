@@ -200,6 +200,37 @@ input[type='range'] {
   height: auto;
 }
 
+/* Small transitions (all off under reduced motion: the global rules above cut their duration). */
+.step-in {
+  animation: step-in 150ms ease-out;
+}
+@keyframes step-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+}
+::view-transition-group(*) {
+  animation-duration: 220ms;
+  animation-timing-function: cubic-bezier(0.2, 0, 0, 1);
+}
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 160ms;
+}
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
+  }
+}
+:root[data-motion='reduce']::view-transition-group(*),
+:root[data-motion='reduce']::view-transition-old(*),
+:root[data-motion='reduce']::view-transition-new(*) {
+  animation: none !important;
+}
+
 /* Side menu slides in from the right edge. */
 .side-menu[open] {
   animation: menu-in 180ms cubic-bezier(0.16, 1, 0.3, 1);
