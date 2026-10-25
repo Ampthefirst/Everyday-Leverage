@@ -29,6 +29,7 @@ export const DISCLAIMERS = {
   pdfFooter: 'Everyday Leverage — convenience aid, not a medical device. Not food-safe.',
   readme: 'Convenience aid — not a medical device. Not food-safe.',
   readmeUncalibrated: 'Strength: uncalibrated estimate from published material data.',
+  dashboardEstimates: 'Strength numbers are estimates until calibrated to your printer.',
 } as const;
 
 export type DisclaimerKey = Exclude<keyof typeof DISCLAIMERS, 'footer'>;

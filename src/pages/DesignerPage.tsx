@@ -75,7 +75,7 @@ function Designer({ familyId }: { familyId: FamilyId }) {
   const handBreadth = useProfiles((s) => s.current().handBreadth);
 
   const location = useLocation();
-  const nav = (location.state ?? {}) as { fromPreset?: boolean; project?: string };
+  const nav = (location.state ?? {}) as { fromPreset?: boolean; project?: string; files?: boolean };
   const projects = useProjects((s) => s.projects);
   const activeId = useProjects((s) => s.activeId);
   const saveProject = useProjects((s) => s.save);
@@ -86,7 +86,7 @@ function Designer({ familyId }: { familyId: FamilyId }) {
     ? projects.find((x) => x.id === nav.project && x.familyId === familyId)
     : undefined;
   const [tab, setTab] = useState<TabId>(() =>
-    opened?.step === 'check' ? 'strength' : opened?.step === 'print' ? 'files' : 'fit',
+    nav.files || opened?.step === 'print' ? 'files' : opened?.step === 'check' ? 'strength' : 'fit',
   );
   const mode = useSettings((s) => s.designerMode);
   const hotkeys = useSettings((s) => s.hotkeys);
@@ -96,15 +96,18 @@ function Designer({ familyId }: { familyId: FamilyId }) {
     if (t) setTab(t);
     setMode('full');
   };
-  const startAt: 'task' | 'measure' | 'result' = opened
-    ? opened.step === 'brief'
-      ? 'task'
-      : opened.step === 'measure'
+  // "Get files" from the dashboard opens at the result, where the files are.
+  const startAt: 'task' | 'measure' | 'result' = nav.files
+    ? 'result'
+    : opened
+      ? opened.step === 'brief'
+        ? 'task'
+        : opened.step === 'measure'
+          ? 'measure'
+          : 'result'
+      : nav.fromPreset
         ? 'measure'
-        : 'result'
-    : nav.fromPreset
-      ? 'measure'
-      : 'task';
+        : 'task';
   useEffect(() => {
     if (opened) setActive(opened.id);
     else if (nav.fromPreset) setActive(null);

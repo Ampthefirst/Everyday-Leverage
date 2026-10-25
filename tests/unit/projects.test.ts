@@ -75,3 +75,13 @@ describe('account sync merge', () => {
     expect(toUpload(local, remote).map((x) => x.id)).toEqual(['a', 'b']);
   });
 });
+
+describe('saved sizes', () => {
+  it('fills sizes a saved copy lacks from the design defaults', async () => {
+    const { savedParams } = await import('../../src/state/projects');
+    const p = savedParams({ familyId: 'B1', params: { lidMin: 26, lidMax: 40, lever: 110 } });
+    expect(p.lidMax).toBe(40);
+    expect(typeof p.wall).toBe('number');
+    expect(Object.values(p).every((v) => v !== undefined && !Number.isNaN(v))).toBe(true);
+  });
+});

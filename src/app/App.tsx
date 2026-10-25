@@ -16,6 +16,7 @@ const LimitsPage = lazy(() => import('../pages/LimitsPage'));
 const PrintHelpPage = lazy(() => import('../pages/PrintHelpPage'));
 const SettingsPage = lazy(() => import('../pages/SettingsPage'));
 const AccountPage = lazy(() => import('../pages/AccountPage'));
+const DashboardPage = lazy(() => import('../pages/DashboardPage'));
 
 function Loading() {
   return (
@@ -43,6 +44,7 @@ export function App() {
             <Route path="print-help" element={<PrintHelpPage />} />
             <Route path="settings" element={<SettingsPage />} />
             <Route path="account" element={<AccountPage />} />
+            <Route path="designs" element={<DashboardPage />} />
             <Route path="*" element={<NotFoundPage />} />
           </Route>
         </Routes>

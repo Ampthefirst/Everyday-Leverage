@@ -102,6 +102,15 @@ export const useProjects = create<ProjectsState>()(
   ),
 );
 
+/**
+ * A saved design's full sizes. Saved copies can lack sizes a newer version added, or come back from an
+ * account partly filled, so readers fill gaps from the design's defaults and repair before using them.
+ */
+export function savedParams(p: Pick<Project, 'familyId' | 'params'>): Params {
+  const f = getFamily(p.familyId);
+  return f ? f.repair({ ...f.defaults, ...p.params } as Params) : p.params;
+}
+
 /** Most recently updated first. */
 export const sortedProjects = (ps: Project[]) =>
   [...ps].sort((a, b) => b.updatedAt.localeCompare(a.updatedAt));

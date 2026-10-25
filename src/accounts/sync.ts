@@ -23,13 +23,20 @@ export function toUpload(local: Project[], remote: Project[]): Project[] {
 }
 
 interface AccountState {
+  /** False until the first answer from /api/auth, so pages don't mistake "not asked yet" for "switched off". */
+  ready: boolean;
   configured: boolean;
   user: { email: string } | null;
   /** Shown on the shelf when the last sync failed; designs stay safe on the device either way. */
   syncError: boolean;
 }
 
-export const useAccount = create<AccountState>(() => ({ configured: false, user: null, syncError: false }));
+export const useAccount = create<AccountState>(() => ({
+  ready: false,
+  configured: false,
+  user: null,
+  syncError: false,
+}));
 
 let applying = false;
 
@@ -75,7 +82,7 @@ export async function initAccounts() {
   if (started) return;
   started = true;
   const s = await fetchAuth();
-  useAccount.setState({ configured: s.configured, user: s.user });
+  useAccount.setState({ ready: true, configured: s.configured, user: s.user });
   if (s.user) await pullAndMerge();
 }
 

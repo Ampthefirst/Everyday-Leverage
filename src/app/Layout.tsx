@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useSettings } from '../state/settings';
 import { DISCLAIMERS, showDisclaimers } from '../content/disclaimers';
 import { AccountEntry } from '../accounts/AccountEntry';
+import { useAccount } from '../accounts/sync';
 import { isTyping } from './hotkeys';
 
 /** The header keeps the ways in; everything else lives in the side menu. The wordmark goes home. */
@@ -40,7 +41,14 @@ export function LeverMark({ className = 'h-7 w-7' }: { className?: string }) {
 function SideMenu({ open, onClose }: { open: boolean; onClose: () => void }) {
   const ref = useRef<HTMLDialogElement>(null);
   // The presentation build keeps the Limits page reachable by link but does not promote it.
-  const menu = showDisclaimers() ? MENU : MENU.filter((m) => m.to !== '/limits');
+  const user = useAccount((s) => s.user);
+  const base = showDisclaimers() ? MENU : MENU.filter((m) => m.to !== '/limits');
+  const menu = user
+    ? [
+        { to: '/designs', label: 'Your designs', d: 'Everything you’ve saved, with sizes and strength.' },
+        ...base,
+      ]
+    : base;
   const navigate = useNavigate();
   const hotkeys = useSettings((s) => s.hotkeys);
   useEffect(() => {
@@ -118,8 +126,8 @@ function SideMenu({ open, onClose }: { open: boolean; onClose: () => void }) {
         </nav>
         {hotkeys && (
           <p className="px-6 py-4 text-sm text-faint">
-            Shortcuts: H home · F find · P pick · M menu · 1–5 in this menu. In the designer: ← → steps, A all
-            settings, Q quick mode. Turn them off in Settings.
+            Shortcuts: H home · F find · P pick · M menu · numbers in this menu. In the designer: ← → steps, A
+            all settings, Q quick mode. Turn them off in Settings.
           </p>
         )}
       </div>

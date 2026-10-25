@@ -109,7 +109,7 @@ test('fit-check template downloads as a PDF', async ({ page }) => {
   expect(dl.suggestedFilename()).toMatch(/template-(letter|a4)\.pdf$/);
 });
 
-test('Pick lists each design\'s tasks; one opens the designer at those sizes', async ({ page }) => {
+test("Pick lists each design's tasks; one opens the designer at those sizes", async ({ page }) => {
   await page.goto('/design');
   const entry = page.getByRole('article', { name: 'Lid and jar opener' });
   await expect(entry.getByText(/Largest lid 24–110 mm/)).toBeVisible();
@@ -125,7 +125,7 @@ test('pick a design by number keys, then a preset opens the designer with it app
   await expect(page.getByRole('heading', { name: 'Pick a design' })).toBeVisible();
   await page.keyboard.press('4');
   await expect(page).toHaveURL(/\/pick\/B1$/);
-  await expect(page.getByRole('heading', { name: /Lid and jar opener/ })).toBeVisible();
+  await expect(page.getByRole('heading', { level: 1, name: 'Lid and jar opener' })).toBeVisible();
   await page.keyboard.press('2');
   await expect(page).toHaveURL(/\/design\/B1$/);
   // Quick mode starts at the first measurement because the task was already chosen.

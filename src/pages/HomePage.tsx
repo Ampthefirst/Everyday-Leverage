@@ -10,7 +10,7 @@ import { LinkButton } from '../components/Button';
 import { getFamily } from '../families';
 import { analyse } from '../app/analysis';
 import { prefersReducedMotion, useSettings } from '../state/settings';
-import { sortedProjects, useProjects } from '../state/projects';
+import { savedParams, sortedProjects, useProjects } from '../state/projects';
 import { Shelf, stepLabel, useOpenProject } from '../components/home/Shelf';
 import { usePageKeys } from '../app/hotkeys';
 
@@ -149,7 +149,7 @@ function ContinueCard() {
   }
   return (
     <div className="mt-6 flex max-w-[31em] flex-wrap items-center gap-4 rounded-md border border-border p-3.5">
-      <Figure familyId={latest.familyId} params={latest.params} className="h-14 w-16 [&_svg]:h-14" />
+      <Figure familyId={latest.familyId} params={savedParams(latest)} className="h-14 w-16 [&_svg]:h-14" />
       <span className="min-w-0 flex-1">
         <span className="block font-serif text-lg font-medium">Continue where you stopped</span>
         <span className="block text-base text-muted">

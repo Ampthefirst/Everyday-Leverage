@@ -43,8 +43,8 @@ export default function AccountPage() {
       <>
         <h1 className="text-[2.6rem]">You’re signed in</h1>
         <p className="mt-4 text-muted">As {user.email}. Your saved designs sync to your account.</p>
-        <Link to="/#shelf" className="mt-6 inline-block font-semibold text-primary underline">
-          See your saved designs
+        <Link to="/designs" className="mt-6 inline-block font-semibold text-primary underline">
+          Go to your designs
         </Link>
       </>,
     );
@@ -57,7 +57,7 @@ export default function AccountPage() {
     setBusy(false);
     if (!r.ok) return setError(r.error);
     if (r.confirmEmail) return setConfirm(true);
-    navigate('/#shelf');
+    navigate('/designs');
   };
 
   const switchTo = (m: Mode) => {

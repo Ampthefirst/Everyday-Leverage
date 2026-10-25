@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { getFamily } from '../../families';
 import { useDesign } from '../../state/design';
-import { sortedProjects, STEPS, useProjects, type Project } from '../../state/projects';
+import { savedParams, sortedProjects, STEPS, useProjects, type Project } from '../../state/projects';
 import { Button } from '../Button';
 import { Figure } from '../Figure';
 import { useAccount } from '../../accounts/sync';
@@ -11,9 +11,9 @@ import { useAccount } from '../../accounts/sync';
 export function useOpenProject() {
   const navigate = useNavigate();
   const setParams = useDesign((s) => s.setParams);
-  return (p: Project) => {
-    setParams(p.familyId, p.params, p.presetId ? { preset: p.presetId } : undefined);
-    navigate(`/design/${p.familyId}`, { state: { project: p.id } });
+  return (p: Project, opts: { files?: boolean } = {}) => {
+    setParams(p.familyId, savedParams(p), p.presetId ? { preset: p.presetId } : undefined);
+    navigate(`/design/${p.familyId}`, { state: { project: p.id, files: opts.files } });
   };
 }
 
@@ -31,7 +31,7 @@ function ShelfItem({ p }: { p: Project }) {
     <li className="grid grid-cols-[6rem_1fr] gap-4 border-r border-b border-border bg-surface px-5 pt-5 pb-4">
       <Figure
         familyId={p.familyId}
-        params={p.params}
+        params={savedParams(p)}
         className="flex h-24 w-24 items-center justify-center rounded-sm border border-rule p-1.5 [&_svg]:max-h-[5.25rem]"
       />
       <div className="min-w-0">
@@ -95,11 +95,68 @@ function ShelfItem({ p }: { p: Project }) {
   );
 }
 
-/** Saved designs on this device, newest first, with an empty state that points to Find and Pick. */
+/** Signed in: the three most recent designs, with the dashboard one link away. */
+function RecentDesigns() {
+  const projects = sortedProjects(useProjects((s) => s.projects)).slice(0, 3);
+  const open = useOpenProject();
+  return (
+    <section id="shelf" aria-labelledby="shelf-title" className="scroll-mt-16 border-b border-rule">
+      <div className="mx-auto max-w-[90rem] px-4 py-16 sm:px-6 lg:px-24">
+        <h2 id="shelf-title" className="text-[2.1rem] sm:text-[2.5rem]">
+          Your recent designs
+        </h2>
+        {projects.length > 0 && (
+          <ul className="mt-8 grid border-t border-l border-border md:grid-cols-3">
+            {projects.map((p) => {
+              const fam = getFamily(p.familyId);
+              return (
+                <li key={p.id} className="border-r border-b border-border">
+                  <button
+                    type="button"
+                    onClick={() => open(p)}
+                    className="grid w-full grid-cols-[4.5rem_1fr] items-center gap-4 px-5 py-4 text-left hover:bg-surface-2"
+                  >
+                    <Figure
+                      familyId={p.familyId}
+                      params={savedParams(p)}
+                      className="flex h-14 items-center justify-center [&_svg]:max-h-14"
+                    />
+                    <span className="min-w-0">
+                      <span className="block font-serif text-[1.2rem] leading-tight font-medium break-words">
+                        {p.name}
+                      </span>
+                      <span className="block text-sm text-muted">
+                        {fam?.name} · at {stepLabel(p)}
+                      </span>
+                    </span>
+                  </button>
+                </li>
+              );
+            })}
+          </ul>
+        )}
+        {projects.length === 0 && (
+          <p className="mt-4 text-muted">Nothing saved yet. In the designer, choose “Save to shelf”.</p>
+        )}
+        <p className="mt-6">
+          <Link to="/designs" className="font-semibold text-primary underline-offset-4 hover:underline">
+            See all your designs <span aria-hidden="true">→</span>
+          </Link>
+        </p>
+      </div>
+    </section>
+  );
+}
+
+/**
+ * Saved designs on Home. Signed in, the three most recent with a link to the dashboard; otherwise the
+ * device shelf, newest first, with an empty state that points to Find.
+ */
 export function Shelf() {
   const projects = sortedProjects(useProjects((s) => s.projects));
   const user = useAccount((s) => s.user);
   const syncError = useAccount((s) => s.syncError);
+  if (user) return <RecentDesigns />;
   return (
     <section id="shelf" aria-labelledby="shelf-title" className="scroll-mt-16 border-b border-rule">
       <div className="mx-auto max-w-[90rem] px-4 py-16 sm:px-6 lg:px-24">
@@ -125,9 +182,7 @@ export function Shelf() {
         ) : (
           <>
             <p className="mt-3 max-w-[36em] text-muted">
-              {user
-                ? `Signed in as ${user.email}. Designs keep their sizes and where you stopped, on this device and in your account.`
-                : 'Designs keep their sizes and where you stopped. They stay in this browser, on this device.'}
+              Designs keep their sizes and where you stopped. They stay in this browser, on this device.
             </p>
             {syncError && (
               <p role="status" className="mt-3 text-base text-warn">

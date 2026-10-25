@@ -45,11 +45,11 @@ function AccountMenu({ email }: { email: string }) {
             Signed in as <span className="block truncate font-semibold text-text">{email}</span>
           </p>
           <Link
-            to="/#shelf"
+            to="/designs"
             onClick={() => setOpen(false)}
             className="tap flex items-center px-4 font-medium hover:bg-surface-2"
           >
-            Your saved designs
+            Your designs
           </Link>
           <button
             type="button"
