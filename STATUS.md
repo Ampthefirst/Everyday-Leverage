@@ -1,8 +1,8 @@
 # Status — Everyday Leverage
 
-## v3.1 (branch `claude/jolly-davinci-6wipnd`, 2026-10-25) — built, awaiting the owner's review
+## v3.1 (2026-10-25) — live, merged to `main`
 
-`V3_1PLAN.md` is the spec, with the owner's decisions at the end. Nothing from v3.1 is on `main` yet.
+`V3_1PLAN.md` is the spec, with the owner's decisions at the end. Vercel's production branch had been set to `claude/jolly-davinci-6wipnd`, so each v3.1 push went live as it landed. The owner kept v3.1 live, and `main` was fast-forwarded to match. The production branch should be set back to `main`.
 
 - **Tab icon:** returning visitors get the current icon (service-worker cache bumped to `el-v4`, versioned icon URLs, PNG fallbacks).
 - **Fig. 1:** morphs between the jar opener's three real presets at one fixed scale. It pauses on hover, on focus and with its Pause button; reduced motion holds still with "Next size".
