@@ -2,6 +2,8 @@
 
 ## v3.1 (2026-10-25) — live, merged to `main`
 
+**Live site is a presentation build (owner, 2026-10-25).** Vercel Production has `VITE_PRESENTATION_MODE=1` (every disclaimer and the strength badge hidden) and `VITE_DASHBOARD_PRINTER=0` (no "Your printer" panel). Preview builds keep both. To restore the normal site, delete the two variables in Vercel (Settings → Environment Variables) and redeploy.
+
 `V3_1PLAN.md` is the spec, with the owner's decisions at the end. Vercel's production branch had been set to `claude/jolly-davinci-6wipnd`, so each v3.1 push went live as it landed. The owner kept v3.1 live, and `main` was fast-forwarded to match. The production branch should be set back to `main`.
 
 - **Tab icon:** returning visitors get the current icon (service-worker cache bumped to `el-v4`, versioned icon URLs, PNG fallbacks).

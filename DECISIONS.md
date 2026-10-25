@@ -98,3 +98,4 @@ One line each: decision — reason.
 - C1: the drawer front is a wall behind the D-handle's screw feet, not a board under the handle; the hand hooks the grip bar's centre, not the loop's inner edge.
 - Diagnostics: ?debug (kept for the session) exposes window.__elDebug.measure(), which reports how far the hand and other objects sit inside the part, per hand segment. Threshold used: 1.5 mm or less is contact.
 - Designer hand colour: cool slate #8f99a8 at 60% opacity (owner picked option C from the mockups), for contrast against the white stage and grid. Product renders keep the light mannequin.
+- Live site switched to a presentation build for the hackathon video: Vercel Production env VITE_PRESENTATION_MODE=1 and VITE_DASHBOARD_PRINTER=0 (Production only, so previews still show disclaimers and the printer panel). Remove both and redeploy to restore.
