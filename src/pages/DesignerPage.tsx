@@ -307,7 +307,7 @@ function Designer({ familyId }: { familyId: FamilyId }) {
                 variant="secondary"
                 onClick={() => saveProject({ familyId, params, presetId: presetIdNow, step })}
               >
-                Save to shelf
+                Save Design
               </Button>
             )}
             <StepStrip current={step} className="ml-auto hidden xl:flex" />

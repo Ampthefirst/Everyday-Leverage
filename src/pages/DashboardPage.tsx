@@ -115,7 +115,7 @@ export default function DashboardPage() {
               <p className="flex-1">
                 <span className="block font-serif text-2xl">No saved designs yet</span>
                 <span className="mt-1 block text-muted">
-                  Open any design and choose “Save to shelf”. It lands here with its sizes and where you
+                  Open any design and choose “Save Design”. It lands here with its sizes and where you
                   stopped, on any device you sign in on.
                 </span>
               </p>

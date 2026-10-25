@@ -136,7 +136,7 @@ function RecentDesigns() {
           </ul>
         )}
         {projects.length === 0 && (
-          <p className="mt-4 text-muted">Nothing saved yet. In the designer, choose “Save to shelf”.</p>
+          <p className="mt-4 text-muted">Nothing saved yet. In the designer, choose “Save Design”.</p>
         )}
         <p className="mt-6">
           <Link to="/designs" className="font-semibold text-primary underline-offset-4 hover:underline">
@@ -168,7 +168,7 @@ export function Shelf() {
             <p className="flex-1">
               <span className="block font-serif text-lg font-medium">Nothing saved yet</span>
               <span className="block text-base text-muted">
-                In the designer, choose “Save to shelf”. Designs keep their sizes and where you stopped, in
+                In the designer, choose “Save Design”. Designs keep their sizes and where you stopped, in
                 this browser on this device.
               </span>
             </p>

@@ -162,7 +162,7 @@ test('save to the shelf, then continue where you stopped from Home', async ({ pa
   await page.goto('/design/B1');
   await expect(page.getByText(/Built in \d+ ms/)).toBeVisible({ timeout: 60_000 });
   await page.getByRole('button', { name: /Bottle caps/ }).click();
-  await page.getByRole('button', { name: 'Save to shelf' }).click();
+  await page.getByRole('button', { name: 'Save Design' }).click();
   await expect(page.getByRole('link', { name: /On your shelf/ })).toBeVisible();
   await page.goto('/');
   await expect(page.getByRole('heading', { name: /Lid and jar opener · Bottle caps/ })).toBeVisible();
