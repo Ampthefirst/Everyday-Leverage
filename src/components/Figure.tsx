@@ -29,6 +29,7 @@ export function Figure({
   label,
   className = '',
   transitionName,
+  align,
 }: {
   familyId: FamilyId;
   params?: Params;
@@ -38,10 +39,17 @@ export function Figure({
   className?: string;
   /** Shared across pages so this drawing glides into place during a View Transition. */
   transitionName?: string;
+  /** "start" pins the drawing to the left edge, so it lines up with a label set flush left. */
+  align?: 'start';
 }) {
   const fam = getFamily(familyId)!;
   const p = params ?? fam.defaults;
-  const svg = useMemo(() => figureSvg(familyId, p, view), [familyId, p, view]);
+  const svg = useMemo(() => {
+    const s = figureSvg(familyId, p, view);
+    return align === 'start'
+      ? s.replace('preserveAspectRatio="xMidYMid meet"', 'preserveAspectRatio="xMinYMid meet"')
+      : s;
+  }, [familyId, p, view, align]);
   return (
     <div
       className={`figure-svg ${className}`}

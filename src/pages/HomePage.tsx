@@ -15,6 +15,20 @@ import { Shelf, stepLabel, useOpenProject } from '../components/home/Shelf';
 import { usePageKeys } from '../app/hotkeys';
 
 const HOLD_MS = 2600;
+
+/** The device or in-app "reduce motion" choice, kept current when either changes. */
+function useReducedMotion() {
+  const setting = useSettings((s) => s.reduceMotion);
+  const [device, setDevice] = useState(prefersReducedMotion);
+  useEffect(() => {
+    const mq = window.matchMedia?.('(prefers-reduced-motion: reduce)');
+    if (!mq) return;
+    const on = () => setDevice(mq.matches);
+    mq.addEventListener('change', on);
+    return () => mq.removeEventListener('change', on);
+  }, []);
+  return setting || device;
+}
 const MORPH_MS = 900;
 
 /**
@@ -26,11 +40,17 @@ function LiveFigure() {
   const fam = getFamily('B1')!;
   const stops = useMemo(() => heroStops(fam), [fam]);
   const bounds = useMemo(() => heroBounds(fam, stops), [fam, stops]);
-  const still = useSettings((s) => s.reduceMotion) || prefersReducedMotion();
+  const reduced = useReducedMotion();
+  // Paused by the button, or for a moment while the pointer or keyboard focus is on the figure.
+  const [paused, setPaused] = useState(false);
+  const [held, setHeld] = useState(false);
+  const still = reduced || paused || held;
   // `at` is the stop shown at rest; `t` is the progress (0–1) of the morph towards the next stop.
   const [at, setAt] = useState(0);
-  const [t, setT] = useState(0);
+  const [tRaw, setT] = useState(0);
   const next = (at + 1) % stops.length;
+  // Pausing mid-morph settles on the current preset rather than freezing an in-between size.
+  const t = still ? 0 : tRaw;
 
   useEffect(() => {
     if (still) return;
@@ -80,7 +100,13 @@ function LiveFigure() {
   const hi = Math.round(frame.lidMax as number);
   const lids = steps > 1 && hi - lo >= 1 ? `${lo}–${hi} mm` : `${hi} mm`;
   return (
-    <figure className="flex flex-col justify-center">
+    <figure
+      className="flex flex-col justify-center"
+      onMouseEnter={() => setHeld(true)}
+      onMouseLeave={() => setHeld(false)}
+      onFocus={() => setHeld(true)}
+      onBlur={(e) => !e.currentTarget.contains(e.relatedTarget as Node | null) && setHeld(false)}
+    >
       <div className="figure-sheet relative px-6 pt-10 pb-8 sm:px-8">
         <div
           className="figure-svg"
@@ -110,18 +136,32 @@ function LiveFigure() {
       <figcaption className="mt-4 flex items-start justify-between gap-6">
         <span className="text-base text-muted">
           <span className="figcaption text-lg text-text">Fig. 1 — Lid and jar opener, top view.</span> At the
-          “{shown.label}” sizes, drawn at true scale from its measurements. Uses about{' '}
+          “{shown.label}” sizes, drawn at true scale from its measurements
+          {reduced ? '' : ', and morphing between its real presets'}. Uses about{' '}
           {Math.round(verdict.utilization * 100)}% of its strength budget.{' '}
           <StrengthBadge calibration={null} />
-          {still && (
-            <button
-              type="button"
-              onClick={() => setAt(next)}
-              className="tap mt-2 flex items-center rounded-md border border-border px-3 font-semibold text-text hover:border-text"
-            >
-              Next size<span className="sr-only">: {stops[next].label}</span>
-            </button>
-          )}
+          <span className="mt-2 flex flex-wrap gap-2">
+            {!reduced && (
+              <button
+                type="button"
+                aria-pressed={paused}
+                onClick={() => setPaused((x) => !x)}
+                className="tap flex items-center rounded-md border border-border px-3 font-semibold text-text hover:border-text"
+              >
+                {paused ? 'Play' : 'Pause'}
+                <span className="sr-only"> the drawing’s size changes</span>
+              </button>
+            )}
+            {(reduced || paused) && (
+              <button
+                type="button"
+                onClick={() => setAt(next)}
+                className="tap flex items-center rounded-md border border-border px-3 font-semibold text-text hover:border-text"
+              >
+                Next size<span className="sr-only">: {stops[next].label}</span>
+              </button>
+            )}
+          </span>
         </span>
         <span className="hidden w-40 shrink-0 rounded-md border border-border bg-surface p-2 shadow-[0_12px_30px_-18px_rgb(22_24_29/0.35)] sm:block">
           <img src="/renders/B1.webp" alt="" width={1024} height={1024} className="block w-full" />

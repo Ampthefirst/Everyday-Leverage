@@ -12,9 +12,9 @@ const linkRow =
 
 function Row({ k, v }: { k: string; v: string }) {
   return (
-    <div className="flex justify-between gap-4 py-1.5 text-base">
-      <dt className="whitespace-nowrap text-muted">{k}</dt>
-      <dd className="text-right font-semibold">{v}</dd>
+    <div className="flex flex-wrap justify-between gap-x-4 py-1.5 text-base">
+      <dt className="text-muted">{k}</dt>
+      <dd className="ml-auto text-right font-semibold whitespace-nowrap">{v}</dd>
     </div>
   );
 }

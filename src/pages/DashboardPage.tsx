@@ -39,6 +39,7 @@ export default function DashboardPage() {
   const calibrationFor = useCalibration((s) => s.activeFor);
   const [sort, setSort] = useState<Sort>('recent');
   const [group, setGroup] = useState<FamilyGroup | 'all'>('all');
+  const [notice, setNotice] = useState('');
 
   const verdicts = useMemo(
     () =>
@@ -177,10 +178,18 @@ export default function DashboardPage() {
                   ))}
                 </div>
               </div>
+              <p role="status" className="text-base text-muted">
+                {notice}
+              </p>
               {shown.length ? (
                 <ul aria-label="Saved designs">
                   {shown.map((p) => (
-                    <DesignRow key={p.id} p={p} verdict={verdicts.get(p.id) ?? null} />
+                    <DesignRow
+                      key={p.id}
+                      p={p}
+                      verdict={verdicts.get(p.id) ?? null}
+                      onDeleted={(n) => setNotice(`Deleted ${n}.`)}
+                    />
                   ))}
                 </ul>
               ) : (

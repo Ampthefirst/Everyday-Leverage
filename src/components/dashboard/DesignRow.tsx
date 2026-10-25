@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { getFamily } from '../../families';
 import { fitSizes } from '../../families/describe';
 import { savedParams, useProjects, type Project } from '../../state/projects';
@@ -11,7 +11,7 @@ import { withTransition } from '../../app/transition';
 import { Button } from '../Button';
 import { StepStrip } from '../StepStrip';
 import { StrengthBadge } from '../StrengthBadge';
-import { useOpenProject } from '../home/Shelf';
+import { stepLabel, useOpenProject } from '../home/Shelf';
 
 const LEVEL_COLOR: Record<VerdictLevel, string> = {
   comfortable: 'text-ok',
@@ -24,8 +24,11 @@ const date = (iso: string) => new Date(iso).toLocaleDateString(undefined, { day:
 export function DesignRow({
   p,
   verdict,
+  onDeleted,
 }: {
   p: Project;
+  /** Announced by the page once the row is gone. */
+  onDeleted?: (name: string) => void;
   verdict: {
     verdict: { utilization: number; level: VerdictLevel };
     calibration: CalibrationProfile | null;
@@ -36,6 +39,12 @@ export function DesignRow({
   const [editing, setEditing] = useState(false);
   const [name, setName] = useState(p.name);
   const [confirm, setConfirm] = useState(false);
+  // An armed delete disarms itself after a few seconds.
+  useEffect(() => {
+    if (!confirm) return;
+    const t = setTimeout(() => setConfirm(false), 6000);
+    return () => clearTimeout(t);
+  }, [confirm]);
   const [note, setNote] = useState('');
   const fam = getFamily(p.familyId);
   if (!fam) return null;
@@ -120,8 +129,12 @@ export function DesignRow({
             </dl>
           </details>
         )}
-        <StepStrip current={p.step} stopped={p.step} className="mt-3" />
-        <p className="mt-1.5 text-sm text-faint">Changed {date(p.updatedAt)}</p>
+        <StepStrip current={p.step} stopped={p.step} className="mt-3 hidden sm:flex" />
+        <p className="mt-1.5 hidden text-sm text-faint sm:block">Changed {date(p.updatedAt)}</p>
+        <p className="mt-3 text-base text-muted sm:hidden">
+          Stopped at <span className="font-semibold text-text">{stepLabel(p)}</span> · Changed{' '}
+          {date(p.updatedAt)}
+        </p>
       </div>
       {verdict && (
         <div className="col-span-full flex flex-wrap items-baseline gap-x-3 gap-y-2 sm:col-span-1 sm:block sm:text-right">
@@ -136,8 +149,8 @@ export function DesignRow({
           </span>
         </div>
       )}
-      <div className="col-span-full flex flex-wrap gap-1 sm:col-start-2 sm:-ml-3">
-        <Button onClick={() => open(p)} className="w-full sm:mr-2 sm:ml-3 sm:w-auto">
+      <div className="col-span-full grid grid-cols-2 gap-1 sm:col-start-2 sm:-ml-3 sm:flex sm:flex-wrap">
+        <Button onClick={() => open(p)} className="col-span-2 sm:mr-2 sm:ml-3">
           Open<span className="sr-only"> {p.name}</span>
         </Button>
         <Button variant="ghost" onClick={() => open(p, { files: true })}>
@@ -155,15 +168,28 @@ export function DesignRow({
           Copy share link<span className="sr-only"> for {p.name}</span>
         </Button>
         {confirm ? (
-          <Button variant="danger" onClick={() => withTransition(() => remove(p.id))}>
-            Yes, delete<span className="sr-only"> {p.name}</span>
-          </Button>
+          <>
+            <Button
+              variant="danger"
+              onClick={() =>
+                withTransition(() => {
+                  remove(p.id);
+                  onDeleted?.(p.name);
+                })
+              }
+            >
+              Yes, delete<span className="sr-only"> {p.name}</span>
+            </Button>
+            <Button variant="ghost" onClick={() => setConfirm(false)}>
+              Cancel
+            </Button>
+          </>
         ) : (
           <Button variant="ghost" onClick={() => setConfirm(true)}>
             Delete<span className="sr-only"> {p.name}</span>
           </Button>
         )}
-        <span role="status" className="self-center text-sm text-muted">
+        <span role="status" className="col-span-2 self-center text-sm text-muted">
           {note}
         </span>
       </div>

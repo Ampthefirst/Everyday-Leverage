@@ -64,8 +64,12 @@ test('the dashboard lists account designs with sizes and strength, and its actio
 
   const copy = page.getByRole('listitem', { name: 'Kitchen caps (copy)' });
   await copy.getByRole('button', { name: /^Delete/ }).click();
+  await copy.getByRole('button', { name: 'Cancel' }).click();
+  await expect(copy.getByRole('button', { name: /^Yes, delete/ })).toHaveCount(0);
+  await copy.getByRole('button', { name: /^Delete/ }).click();
   await copy.getByRole('button', { name: /^Yes, delete/ }).click();
   await expect(copy).toHaveCount(0);
+  await expect(page.getByText('Deleted Kitchen caps (copy).')).toBeVisible();
   await expect.poll(() => Object.keys(saved).length).toBe(1);
 
   await page.getByRole('button', { name: 'Turn and open' }).click();

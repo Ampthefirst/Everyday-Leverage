@@ -6,6 +6,7 @@ import type { Family, Params } from '../../families/types';
 import { useDesign } from '../../state/design';
 import { useSettings } from '../../state/settings';
 import { Figure } from '../Figure';
+import { LinkButton } from '../Button';
 
 /** One design in the catalogue: its measured drawing beside what it helps with, the sizes it fits and why it works. */
 function Entry({ f, n }: { f: Family; n: number }) {
@@ -52,8 +53,7 @@ function Entry({ f, n }: { f: Family; n: number }) {
             alt=""
             width={1024}
             height={1024}
-            loading="lazy"
-            className="h-14 w-14 rounded-sm border border-rule"
+            className="h-28 w-28 rounded-sm border border-rule bg-surface object-contain"
           />
           As printed, in PETG
         </p>
@@ -97,6 +97,9 @@ function Entry({ f, n }: { f: Family; n: number }) {
           <dt className="figcaption text-lg text-faint">Leverage</dt>
           <dd className="max-w-[44em]">{f.leverage}</dd>
         </dl>
+        <LinkButton to={`/pick/${f.id}`} viewTransition variant="secondary" className="mt-5">
+          Open {f.name.toLowerCase()}
+        </LinkButton>
       </div>
     </article>
   );

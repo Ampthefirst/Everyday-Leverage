@@ -224,11 +224,11 @@ components:
 
 **Creative North Star: "Patent figure"**
 
-Every screen is a sheet of drawing paper. The ground is white, the type is ink, and the pictures are the app's own measured drawings: true-scale views generated from the same parameters that build the 3D model and the print files, drawn in hairline ink and labelled with italic serif callouts, the way a patent or an old engineering manual labels its figures. Home's Fig. 1 is the jar opener's top view, and it redraws itself as the lid size changes. The nine designs are a figure sheet, Fig. 1 to Fig. 9, in a hairline grid.
+Every screen is a sheet of drawing paper. The ground is white, the type is ink, and the pictures are the app's own measured drawings: true-scale views generated from the same parameters that build the 3D model and the print files, drawn in hairline ink and labelled with italic serif callouts, the way a patent or an old engineering manual labels its figures. Home's Fig. 1 is the jar opener's top view, morphing between its real presets at one fixed scale. Home lists the nine designs as a quiet index; Pick is their catalogue, Fig. 1 to Fig. 9, each with what it helps with, the sizes it fits and why it works. Signed in, "Your designs" is a dashboard of saved designs in the same ink.
 
 The system is quiet so the figures and the numbers can carry the page. There is one accent, an ink blue, for actions and callouts. Green, amber and red appear only where they report strength. Structure comes from hairline rules, a light grey tint and space, not from boxes, shadows or colour. Type is a serif for headings, captions and callouts and a plain sans for everything you operate, set large (18px body) for older readers. The world is light on purpose: people read and print these sheets in daylight. High contrast is the accessibility alternative, not a dark theme.
 
-Motion is rare and functional. The live figure steps through three sizes; the side menu slides in. Everything else changes in place. The Designer puts the 3D part on graph paper whose grid fades where the part sits and follows it as the view turns.
+Motion is rare and functional: Fig. 1 morphs between presets (with a pause control), figures glide from Home and Pick into a design's screen, the tab underline and dashboard rows glide, the meter fill slides and quick-mode questions fade in. Reduced motion turns all of it off. The Designer puts the 3D part on graph paper whose grid fades where the part sits and follows it as the view turns.
 
 **Key Characteristics:**
 
@@ -258,9 +258,9 @@ Paper and ink: white grounds, a near-black ink with two greys from the same hue,
 ### Neutral
 
 - **Paper** (`bg`, `surface`, `viewer-bg`, all #ffffff): page ground, header, side menu, cards, figure sheets, fields and the Designer stage.
-- **Tint** (`surface-2`, #f7f8fa): group heading rows on the figure sheet, hover fill on figure cells, menu rows, preset rows and ghost buttons, the current menu row and the selected preset.
+- **Tint** (`surface-2`, #f7f8fa): hover fill on recent-design cells, menu rows, preset rows and ghost buttons, the current menu row and the selected preset.
 - **Graph Line** (`grid`, #e7e9ec): the 24px drafting grid behind figures and in the Designer.
-- **Hairline** (`border`, #cdd1d7): control borders, cards, the figure-sheet and shelf grids, figure sheets, key chips.
+- **Hairline** (`border`, #cdd1d7): control borders, cards, the shelf grid, figure sheets, filter chips, key chips.
 - **Rule** (`rule`, #e2e4e8): section dividers, the header and footer rules, tab underlines, panel dividers in the Designer.
 - **Ink** (`text`, #16181d): headings and body text, the active tab and nav underline, reached quick-mode progress segments.
 - **Secondary Grey** (`muted`, #4a4f59): leads, descriptions, units, help text, nav at rest, ghost buttons at rest, drawing labels inside figures.
@@ -323,7 +323,7 @@ Recurring structures:
 - **Header:** sticky, 64px tall, white at 95% with a `rule` line beneath. Wordmark (lever mark and "Everyday Leverage" in Spectral) at the left edge; Find a design, Pick a design and Learn from 768px; Menu and the account entry pushed right.
 - **Side menu:** a native dialog from the right, `min(26rem, 100vw)` wide, white with a hairline left edge. Rows are separated by rules; the current page has the tint and a 3px ink bar on its left. On phones the main links lead the menu.
 - **Home hero:** two columns from 1024px (5fr / 6fr). The text column carries the left edge; the figure column is graph paper with Fig. 1 on a white sheet. Stacks below 1024px.
-- **Figure sheet:** a hairline grid of figure cells, one group heading row per group, 1 column, 2 from 640px, 3 from 1024px.
+- **Design index and catalogue:** the index is one row per group (a 13rem label column, then three figures); the catalogue is one entry per design, two columns from 768px. The dashboard is a list beside a 21rem side panel from 1024px.
 - **Shelf:** the same hairline grid, 1 column, 2 from 768px, 3 from 1280px.
 - **Design screen:** figure on graph paper beside the name, blurb and numbered presets (1.05fr / 1fr from 1024px).
 - **Designer:** below the header, the stage and its toolbar fill the remaining height; the settings aside is 29rem from 1024px with a `rule` left edge. On phones the stage is 38vh, sticky under the header (not when the window is shorter than 700px).
@@ -350,7 +350,7 @@ Flat. Depth comes from paper on paper: a white sheet with a hairline border lyin
 
 ## Shapes
 
-Gently rounded controls on square-cornered paper. Controls, fields, cards, notes and overlays use a 6px radius (`md`). Key chips and badges use 4px (`sm`), as does the focus ring. The figure sheet, shelf grid and figure sheets have square corners, because they are paper; the small figure frame on a shelf item is 2px. Round shapes are reserved for small marks: step dots, the meter track, quick-mode progress segments, the toggle, the "Saved" pill and the account initial.
+Gently rounded controls on square-cornered paper. Controls, fields, cards, notes and overlays use a 6px radius (`md`). Key chips and badges use 4px (`sm`), as does the focus ring. The shelf grid and figure sheets have square corners, because they are paper; the small figure frame on a shelf item is 2px. Round shapes are reserved for small marks: step dots, the meter track, quick-mode progress segments, the toggle, the "Saved" pill and the account initial.
 
 Lines are hairlines: 1px `border` around controls and the figure grid, 1px `rule` between sections and panels, 1.5px rings on step dots. Toggles use a 2px track border. Figures are drawn in ink strokes from the drawing code, with labels in `muted`.
 
@@ -411,15 +411,29 @@ The strength readout. A 10px rounded track split into three pale zones by hard s
 
 Brief, Measure, Check, Print as a row of 14px Public Sans 500 labels, 20px apart, each with an 8px dot (1.5px ring). The current step has a filled `primary` dot and `text` label; done steps have a filled `muted` dot and `muted` label; later steps are `faint` rings. A saved project adds "· you stopped here". It is the app's real progress indicator, not decoration.
 
-### Figure sheet (signature)
+### Design index (Home)
 
-The nine designs as Fig. 1 to Fig. 9 in a square hairline grid. Each group starts with a full-width heading row on `surface-2` (group title in 600, lead in `muted`). Each cell is at least 288px tall with 24px side padding: an italic "Fig. n" label in `faint` (and a number key chip on Pick), the design's own measured drawing at 144px high, its name in Spectral at 1.375rem, and one plain sentence in `muted`. Hover tints the cell and underlines the name.
+The nine designs at a glance: one row per group under a 1px `text` rule, separated by `rule` hairlines. The group title (600) and its lead (`muted`) sit in a 13rem column; three small figures follow, each the design's own drawing at 64px (96px from 640px), pinned to the left edge so it lines up with the name beneath it in Spectral at 1.2rem. No cell borders, no blurbs. It ends with "Compare all nine on the Pick page →".
 
-**Fig. 1 (live):** on Home, the jar opener's true-scale top view on a white sheet on graph paper, with three italic `primary` callouts (cup steps, lever length, lid range). Its caption is italic Spectral, followed by the strength share in words and the strength badge. A small "As printed, in PETG" render card sits beside the caption from 640px.
+### Catalogue entry (Pick, signature)
+
+Pick is a catalogue in three groups. Each group opens with a 2.1rem heading and a one-sentence intro on how that kind of help works, then a `text` rule. Each entry is two columns from 768px: on the left, a white figure sheet (italic "Fig. n" in `faint`, the number key chip when shortcuts are on, the drawing at 160px) with a 112px "As printed, in PETG" render beneath; on the right, the name in Spectral at 1.875rem, the blurb, and a definition list with italic serif terms in `faint`: **Helps with** (each preset as a link that opens the designer at those sizes), **Sizes** (each millimetre fit range from the field limits) and **Leverage**, then a secondary "Open <design>" button. Entries are separated by `rule` hairlines.
+
+### Fig. 1 (live, Home)
+
+The jar opener's true-scale top view on a white sheet on graph paper, with three italic `primary` callouts (cup steps, lever length, lid range) that count with the drawing. Its caption is italic Spectral, names the current preset, then gives the strength share in words and the strength badge, then a Pause/Play button (and "Next size" when paused or under reduced motion). A small "As printed, in PETG" render card sits beside the caption from 640px.
 
 ### Shelf items
 
 Saved designs in the same hairline grid. Each item has a 96px figure of the saved design in a 2px-radius `rule` frame, the name in Spectral at 1.3rem, the design name and date in `muted`, and "You stopped at" with the step in 600. Below: Open (primary), then Rename, Duplicate and Delete as ghost buttons; Delete becomes a danger "Yes, delete" before it acts. The empty state is a single bordered row with a short explanation and a link to Find a design. A "Continue where you stopped" row on Home shows the latest item with its small figure and a secondary Continue button.
+
+### Dashboard ("Your designs", signed in)
+
+A 3rem heading with the email and sync state (a small `ok` or `warn` dot) and Find / Pick buttons. Below, two columns from 1024px:
+- **Summary line:** under a 1px `text` rule, the count in Spectral at 1.75rem, one dot-and-word per verdict level present (strength colours as data), and the "estimates" note (a disclaimer, hidden in the presentation build).
+- **Controls:** a Sort select and group filter chips (48px pills, 1px `border`; pressed, a doubled `text` ring). On phones the chips scroll as one row.
+- **Design row:** a `rule` hairline above; the saved design's drawing in a 2px-radius frame; the name in Spectral at 1.45rem; the design name and preset in `muted`; up to four fit sizes as label (`muted`) and value (600) pairs, with "Show all sizes" as a disclosure; the step strip with "you stopped here" and the change date (one line, "Stopped at … · Changed …", on phones); on the right the strength share in Spectral at 2.1rem, the level word in its status colour and the badge. Actions: primary Open, then ghost Get files, Rename, Duplicate, Copy share link and Delete (Delete arms "Yes, delete" and Cancel, disarms after 6s, and the page announces "Deleted …"). On phones the actions form a two-column grid under a full-width Open.
+- **Side panel:** one bordered 6px-radius panel of sections divided by `rule`: Start something new, Your printer (behind `VITE_DASHBOARD_PRINTER`), Your hand, Your account (with "Download all designs (.zip)" and Sign out). Section titles in Spectral at 1.375rem; key–value rows with the value in 600.
 
 ### Designer stage
 
@@ -435,10 +449,12 @@ One decision per screen in the Designer aside. A thin top bar shows "Step n of N
 
 ### Motion
 
-- **Fig. 1 redraw:** every 3.2s the live figure steps through lids of 85, 100 and 70 mm, redrawn from the drawing code. It pauses while the tab is hidden and stays still under reduced motion.
+- **Fig. 1 morph:** holds each of the jar opener's handheld presets (jam jars, bottle caps, one favourite jar) for 2.6s, then morphs to the next over 0.9s (cubic ease-in-out), redrawn from the drawing code every frame at one fixed scale; rings slide together where the step count changes. It pauses while the tab is hidden, while the pointer or focus is on the figure, and with its Pause button; reduced motion holds it still with "Next size".
+- **View transitions:** figures share `view-transition-name: fig-<id>` and glide from Home and Pick into a design's screen; the tab underline and dashboard rows glide on change. Groups run 220ms on `cubic-bezier(0.2, 0, 0, 1)`, the page cross-fade 160ms. Browsers without View Transitions change instantly.
+- **Small transitions:** the meter fill slides (200ms ease-out); quick-mode questions fade in with a 6px rise (150ms).
 - **Side menu:** slides in from the right over 180ms on `cubic-bezier(0.16, 1, 0.3, 1)`.
 - **In place:** colour changes on hover, the toggle knob slide, and the "Updating…" fade use short default transitions.
-- **Reduced motion:** the device setting and the in-app "Reduce motion" setting cut every animation and transition to 0.01ms. The how-to-use animation becomes a "next step" button.
+- **Reduced motion:** the device setting and the in-app "Reduce motion" setting cut every animation and transition to 0.01ms. View-transition animations are switched off too. The how-to-use animation becomes a "next step" button, and Fig. 1 a "Next size" button.
 
 ## Do's and Don'ts
 
@@ -461,4 +477,4 @@ One decision per screen in the Designer aside. A thin top bar shows "Step n of N
 - **Don't** put an eyebrow, kicker or badge above a heading, or use all-caps labels.
 - **Don't** nest cards or give a card a coloured side or top border.
 - **Don't** use pure black text or a dark theme; contrast needs go through the high-contrast set.
-- **Don't** add motion beyond the live figure and the side menu, and never motion that ignores reduced motion.
+- **Don't** add motion beyond the set listed under Motion, never motion that ignores reduced motion, and never looping motion without a pause control.

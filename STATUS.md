@@ -1,5 +1,19 @@
 # Status — Everyday Leverage
 
+## v3.1 (branch `claude/jolly-davinci-6wipnd`, 2026-10-25) — built, awaiting the owner's review
+
+`V3_1PLAN.md` is the spec, with the owner's decisions at the end. Nothing from v3.1 is on `main` yet.
+
+- **Tab icon:** returning visitors get the current icon (service-worker cache bumped to `el-v4`, versioned icon URLs, PNG fallbacks).
+- **Fig. 1:** morphs between the jar opener's three real presets at one fixed scale. It pauses on hover, on focus and with its Pause button; reduced motion holds still with "Next size".
+- **Home and Pick:** Home lists the nine as a minimal index. Pick is a catalogue: what each design helps with (preset links), the sizes it fits, why it works, and an Open button.
+- **Dashboard:** "Your designs" at `/designs`, signed in only. It shows sizes, steps, strength with badge, actions, summary, sort and filter, a side panel (printer behind `VITE_DASHBOARD_PRINTER`) and a zip download. Signed-in Home shows recent designs.
+- **Transitions:** figures glide from Home and Pick to a design's screen; the tab underline and dashboard rows glide; the meter slides; quick-mode questions fade in. Reduced motion turns all of it off.
+- **Finish review:** one round returned "fix" with eight findings, all applied (pause control, Pick Open button and larger renders, delete cancel and notice, phone dashboard rows, side panel wrap, index alignment, DESIGN.md). The fixes were not re-scored.
+- **Results:** `npm run check` passes 202 unit tests. `npm run e2e` passes 36 tests; 1 is skipped because it needs a Gemini key.
+
+---
+
 ## v3 (2026-10-23) — live, merged to `main`
 
 `V3PLAN.md` is the spec. The owner approved the merge to `main` after reviewing the live deployment. Accounts are switched on: Supabase is connected through Vercel's environment.

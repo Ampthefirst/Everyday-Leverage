@@ -40,8 +40,21 @@ test('a figure on Pick glides into the design screen (View Transition)', async (
         return orig(cb);
       };
   });
-  await page.getByRole('link', { name: 'Lid and jar opener' }).click();
+  await page.getByRole('link', { name: 'Lid and jar opener', exact: true }).click();
   await expect(page.getByRole('heading', { level: 1, name: 'Lid and jar opener' })).toBeVisible();
   const n = await page.evaluate(() => (document as Document & { vtCount?: number }).vtCount);
   expect(n).toBeGreaterThan(0);
+});
+
+test('Fig. 1 can be paused, and then stepped by hand', async ({ page }) => {
+  await page.goto('/');
+  const fig = page.getByRole('img', { name: /Top view of the lid and jar opener/ });
+  await page.getByRole('button', { name: /^Pause/ }).click();
+  await expect(page.getByRole('button', { name: /^Play/ })).toHaveAttribute('aria-pressed', 'true');
+  const before = await fig.getAttribute('aria-label');
+  await page.mouse.move(0, 0);
+  await page.waitForTimeout(4200);
+  expect(await fig.getAttribute('aria-label')).toBe(before);
+  await page.getByRole('button', { name: /^Next size/ }).click();
+  await expect(fig).not.toHaveAttribute('aria-label', before!);
 });
