@@ -1,6 +1,6 @@
 # v3.1 plan: dashboard, motion, and two kinds of design index
 
-Status: **draft for the owner's review.** Nothing here is built yet.
+Status: **approved by the owner (2026-10-25)** with the decisions below. Step 0 (mockups) comes first.
 Rules that still hold: `V3PLAN.md` direction A ("Patent figure"), the gate 2 checklist, and `CLAUDE.md`.
 Work happens on the branch, and nothing reaches `main` until the owner approves.
 
@@ -166,7 +166,7 @@ Today both pages use the same 3×3 figure sheet. The proposal splits them by pur
 | Step | What | Check |
 |---|---|---|
 | 0 | Mockups of the dashboard (desktop and phone, signed in and out) and the new Home strip / Pick entry, rendered from the real code where possible | **Owner approves before the build** |
-| 1 | Hero morph (2a), with a small test that the morph frames match `drawing()` at each preset | Captured as a short screen recording or frame strip for review |
+| 1 | Tab icon fix (decision 6), then the hero morph (2a), with a small test that the morph frames match `drawing()` at each preset | Captured as a short screen recording or frame strip for review |
 | 2 | Home strip and Pick catalogue (3) | e2e: number keys and preset links |
 | 3 | Dashboard (1) and the smaller Home shelf | e2e: open / rename / duplicate / delete / share; unit: size summaries and verdicts |
 | 4 | Small transitions (2b) | Reduced motion turns them all off; axe a11y passes |
@@ -186,14 +186,29 @@ The steps are independent, so they can ship separately if you'd rather see the h
 
 ---
 
-## Questions for the owner (each has my recommendation)
-1. **Who can open the dashboard?** Everyone, at `/designs`, with sign-in as an optional panel
-   *(recommended)*. The alternative is signed-in people only.
-2. **Which optional dashboard ideas?** I'd do 1 (sort/filter), 2 (strength summary) and 4 (download
-   everything) now, and hold 3 (compare) unless you want it for the presentation.
-3. **Hero cycle:** the three real handheld presets *(recommended)*, or the current three lid sizes
-   only.
-4. **Pick → design screen figure move (2b-1):** yes *(recommended)*. It is the one transition that makes
-   the "figure" idea feel continuous.
-5. **Mockups first (step 0)** for the dashboard and the two indexes *(recommended, because the
-   dashboard is a new surface)*. The alternative is building directly and reviewing on the preview.
+## Owner decisions (2026-10-25)
+1. **The dashboard is for signed-in people only** (for the presentation). This replaces the "everyone"
+   recommendation in section 1:
+   - `/designs` needs a session. Signed out, it sends you to `/account` and comes back after sign-in.
+   - The "Your designs" links appear only when someone is signed in.
+   - Signed-out visitors keep today's Home shelf, which is saved on the device, exactly as now.
+   - Signed in, Home shows the three most recent designs and "See all your designs".
+   - The dashboard needs accounts to be configured. With them switched off, `/designs` shows the
+     "Accounts are off" note.
+2. **Optional ideas:** 1 (sort/filter), 2 (strength summary) and 4 (download everything) now. Hold 3
+   (compare).
+3. **Hero:** cycles through the three real handheld presets.
+4. **Figure moves from Pick to the design screen:** yes.
+5. **Mockups first (step 0).**
+6. **Added: the browser-tab icon.**
+   - **Problem:** returning visitors still see the v2 icon. The live `/favicon.svg` is already the new
+     ink lever with the blue fulcrum. But the service worker serves `.svg` files cache-first, and its
+     cache name (`el-v3`) hasn't changed since v2, so browsers keep the old cached icon (and any other
+     old cached `.svg`).
+   - **Fix:**
+     - rename the cache to `el-v4`, which clears every old cache on the next visit;
+     - point `index.html` at a versioned icon (`/favicon.svg?v=3`);
+     - add PNG icons (32 px, and a 180 px `apple-touch-icon`) for browsers and home screens that don't
+       use SVG.
+
+     Shipped in step 1.
