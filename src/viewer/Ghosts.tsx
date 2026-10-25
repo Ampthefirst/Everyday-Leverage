@@ -66,9 +66,11 @@ function useGhostMaterial(color: string, opacity = 0.32, finish: Finish = 'plast
     () =>
       studio === 'viewer' && finish === 'mannequin'
         ? // In the designer the hand keeps the studio look but stays see-through, so the part shows inside it.
+          // Cool slate (owner's choice C) so it stands out from the white paper and the light grid.
           Object.assign(studioMaterial(finish), {
+            color: new THREE.Color('#8f99a8'),
             transparent: true,
-            opacity: 0.55,
+            opacity: 0.6,
             depthWrite: false,
             ...handOverride(),
           })
