@@ -109,6 +109,17 @@ test('fit-check template downloads as a PDF', async ({ page }) => {
   expect(dl.suggestedFilename()).toMatch(/template-(letter|a4)\.pdf$/);
 });
 
+test('Pick lists each design\'s tasks; one opens the designer at those sizes', async ({ page }) => {
+  await page.goto('/design');
+  const entry = page.getByRole('article', { name: 'Lid and jar opener' });
+  await expect(entry.getByText(/Largest lid 24–110 mm/)).toBeVisible();
+  await entry.getByRole('button', { name: /^Bottle caps/ }).click();
+  await expect(page).toHaveURL(/\/design\/B1$/);
+  await expect(page.getByText(/Step 2/)).toBeVisible();
+  await page.getByRole('button', { name: /Back/ }).click();
+  await expect(page.getByRole('button', { name: /Bottle caps/ })).toHaveAttribute('aria-pressed', 'true');
+});
+
 test('pick a design by number keys, then a preset opens the designer with it applied', async ({ page }) => {
   await page.goto('/design');
   await expect(page.getByRole('heading', { name: 'Pick a design' })).toBeVisible();

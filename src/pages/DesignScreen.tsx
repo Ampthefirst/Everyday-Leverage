@@ -25,7 +25,7 @@ function Arrow({ dir }: { dir: 'left' | 'right' }) {
   );
 }
 import { Figure } from '../components/Figure';
-import { showcaseParams } from '../components/home/FigureSheet';
+import { showcaseParams } from '../families/describe';
 
 /** One design's screen between the board and the Designer: what it is, and its presets as a numbered list. */
 export default function DesignScreen() {

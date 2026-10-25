@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { IsIsNotTable } from '../components/IsIsNot';
 import { showDisclaimers } from '../content/disclaimers';
-import { FigureSheet } from '../components/home/FigureSheet';
+import { DesignIndex } from '../components/home/DesignIndex';
 import { Figure, shapesSvg } from '../components/Figure';
 import { blendParams, easeInOut, heroBounds, heroStops } from '../app/morph';
 import { StrengthBadge } from '../components/StrengthBadge';
@@ -217,11 +217,10 @@ export function HomePage() {
             Nine designs, one idea: more leverage.
           </h2>
           <p className="mt-3 max-w-[36em] text-muted">
-            A longer lever, a thicker grip or a better angle. Each design lowers the force or the pinch a task
-            needs, and every size comes from your measurements.
+            A longer lever, a thicker grip or a better angle. Every size comes from your measurements.
           </p>
-          <div className="mt-11">
-            <FigureSheet />
+          <div className="mt-9">
+            <DesignIndex />
           </div>
         </div>
       </section>
