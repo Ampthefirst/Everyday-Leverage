@@ -13,7 +13,9 @@ import { mkdirSync, writeFileSync } from 'node:fs';
 const OUT = process.env.OUT ?? 'test-results/ghosts';
 mkdirSync(OUT, { recursive: true });
 // Every preset is measured: the loop stops at the first index past the family's preset list.
-const PRESETS = Object.fromEntries(['A1', 'A2', 'A3', 'B1', 'B2', 'B3', 'C1', 'C2', 'C3'].map((id) => [id, 9]));
+const PRESETS = Object.fromEntries(
+  ['A1', 'A2', 'A3', 'B1', 'B2', 'B3', 'C1', 'C2', 'C3'].map((id) => [id, 9]),
+);
 const only = process.argv[2]?.split(',');
 const b = await chromium.launch({
   args: ['--use-gl=angle', '--use-angle=swiftshader', '--enable-unsafe-swiftshader'],

@@ -291,7 +291,12 @@ export const C2: Family<C2P> = {
     return {
       objects: [
         // Ghost 0 is the button (pushed in with the tip), ghost 2 the panel round it.
-        { kind: 'button', size: { d: p.targetD, h, panel: 0 }, position: [face, 0, 0], rotation: [0, -90, 0] },
+        {
+          kind: 'button',
+          size: { d: p.targetD, h, panel: 0 },
+          position: [face, 0, 0],
+          rotation: [0, -90, 0],
+        },
         {
           kind: 'hand',
           size: { breadth: 0, grip: p.gripD },

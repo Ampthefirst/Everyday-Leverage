@@ -65,35 +65,38 @@ describe('articulated hand', () => {
     },
   );
 
-  it.each([9, 14, 20])('a %d mm bar in a hook grip: the bar sits in the fingers and none pass into it', (d) => {
-    for (const breadth of [70, 85, 100]) {
-      const spec = handSpec(breadth);
-      const cyl = gripCylinder(spec, d, 'hook');
-      // The bar is held under the proximal phalanges, clear of the palm (which ends at the knuckles).
-      expect(cyl.y).toBeGreaterThan(spec.fingers[1].base[1]);
-      const a = poseAngles('hook', spec, d);
-      spec.fingers.forEach((f, i) => {
-        let th = 0;
-        let [y, z] = [f.base[1], f.base[2]];
-        f.lengths.forEach((l, k) => {
-          th += a.fingers[i].flex[k];
-          const y2 = y + l * Math.cos((th * Math.PI) / 180);
-          const z2 = z - l * Math.sin((th * Math.PI) / 180);
-          for (let s = 0; s <= 10; s++) {
-            const half = (f.width * [1, 0.9, 0.82][k] * 0.86) / 2;
-            const dist = Math.hypot(y + ((y2 - y) * s) / 10 - cyl.y, z + ((z2 - z) * s) / 10 - cyl.z);
-            expect(dist - half).toBeGreaterThan(cyl.r + 0.5);
-          }
-          [y, z] = [y2, z2];
+  it.each([9, 14, 20])(
+    'a %d mm bar in a hook grip: the bar sits in the fingers and none pass into it',
+    (d) => {
+      for (const breadth of [70, 85, 100]) {
+        const spec = handSpec(breadth);
+        const cyl = gripCylinder(spec, d, 'hook');
+        // The bar is held under the proximal phalanges, clear of the palm (which ends at the knuckles).
+        expect(cyl.y).toBeGreaterThan(spec.fingers[1].base[1]);
+        const a = poseAngles('hook', spec, d);
+        spec.fingers.forEach((f, i) => {
+          let th = 0;
+          let [y, z] = [f.base[1], f.base[2]];
+          f.lengths.forEach((l, k) => {
+            th += a.fingers[i].flex[k];
+            const y2 = y + l * Math.cos((th * Math.PI) / 180);
+            const z2 = z - l * Math.sin((th * Math.PI) / 180);
+            for (let s = 0; s <= 10; s++) {
+              const half = (f.width * [1, 0.9, 0.82][k] * 0.86) / 2;
+              const dist = Math.hypot(y + ((y2 - y) * s) / 10 - cyl.y, z + ((z2 - z) * s) / 10 - cyl.z);
+              expect(dist - half).toBeGreaterThan(cyl.r + 0.5);
+            }
+            [y, z] = [y2, z2];
+          });
         });
-      });
-      // The middle finger curls round the bar; with `oneFinger` the others curl in instead.
-      expect(a.fingers[1].flex[1] + a.fingers[1].flex[2]).toBeGreaterThan(90);
-      const one = poseAngles('hook', spec, d, 360, true);
-      expect(one.fingers[1].flex).toEqual(a.fingers[1].flex);
-      expect(one.fingers[0].flex[0]).toBeGreaterThan(60);
-    }
-  });
+        // The middle finger curls round the bar; with `oneFinger` the others curl in instead.
+        expect(a.fingers[1].flex[1] + a.fingers[1].flex[2]).toBeGreaterThan(90);
+        const one = poseAngles('hook', spec, d, 360, true);
+        expect(one.fingers[1].flex).toEqual(a.fingers[1].flex);
+        expect(one.fingers[0].flex[0]).toBeGreaterThan(60);
+      }
+    },
+  );
 
   it('closes the pinch: the thumb tip meets the index tip across a key-sized gap', () => {
     for (const breadth of [70, 85, 100]) {
