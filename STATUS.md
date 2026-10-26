@@ -1,5 +1,11 @@
 # Status — Everyday Leverage
 
+## Ghost fixes (2026-10-26) — branch `claude/ghost-fixes`, preview only, not merged
+
+Designer context objects (hand, jar, key, lever…) no longer pass through the parts. Measured with `scripts/measure-ghosts.mjs` on every preset and how-to-use step (it now samples surfaces, not just vertices): every hand is at 1.5 mm or less, and objects sit in their sockets. Contacts kept on purpose: B1's lid teeth (0.9 mm), B2's knob ribs (0.6 mm), A1's slip ribs (0.3 mm). C3's two-piece long reach reads 2.6 mm because the viewer draws one piece 6 mm up. Two geometry fixes change printed parts: A2's utensil slot had width and thickness swapped, and D-shaped sockets (B3 stove knob, A3 round shank) were cut 1 mm tight on the flat. Details in `DECISIONS.md` ("Ghost fixes"). `npm run check` passes 249 unit tests; `npm run e2e` passes 36 (1 skipped, needs a Gemini key). Waiting for the owner before anything goes to `main` or the live branch.
+
+---
+
 ## v3.1 (2026-10-25) — live, merged to `main`
 
 **Live site is a presentation build (owner, 2026-10-25).** Vercel Production has `VITE_PRESENTATION_MODE=1` (every disclaimer and the strength badge hidden) and `VITE_DASHBOARD_PRINTER=0` (no "Your printer" panel). Preview builds keep both. To restore the normal site, delete the two variables in Vercel (Settings → Environment Variables) and redeploy.

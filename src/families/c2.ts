@@ -305,9 +305,10 @@ export const C2: Family<C2P> = {
   },
   ghost(p) {
     // A cup goes over the button: the button stands proud enough to reach 1 mm into it and the panel
-    // stays 1 mm clear of the rim when pushed. Other tips just touch the button.
+    // stays 1 mm clear of the rim when pushed. Other tips just touch a button that stands 1 mm prouder
+    // than the push, so the tip never reaches the panel.
     const cup = p.tip === 'cup';
-    const h = cup ? p.pressDepth + 2 : 3;
+    const h = cup ? p.pressDepth + 2 : Math.max(3, p.pressDepth + 1);
     const { at, dir, deg } = c2TipAxis(p);
     const off = cup ? p.pressDepth + 1 : h;
     const face: [number, number, number] = [at[0] + dir[0] * off, 0, at[2] + dir[2] * off];
