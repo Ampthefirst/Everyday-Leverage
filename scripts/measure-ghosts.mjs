@@ -3,7 +3,7 @@
  * preset and how-to-use step (the ?debug collision measure in src/viewer/debugCollide.ts).
  *
  *   npm run build && npx vite preview --port 4173 &   # then:
- *   node scripts/measure-ghosts.mjs [A1,B1,...]        # PORT=4173, OUT=test-results/ghosts
+ *   node scripts/measure-ghosts.mjs [A1,B1,...]        # PORT=4173, OUT=test-results/ghosts, PW_CHROMIUM_PATH
  *
  * Prints one line per object and step, and writes collide.json plus a stage screenshot per step to OUT.
  * A hand at 1.5 mm or less is touching the part; deeper is passing through it. A full run takes ~25 min.
@@ -12,10 +12,12 @@ import { chromium } from 'playwright';
 import { mkdirSync, writeFileSync } from 'node:fs';
 const OUT = process.env.OUT ?? 'test-results/ghosts';
 mkdirSync(OUT, { recursive: true });
-const PRESETS = { A1: 5, A2: 5, A3: 4, B1: 4, B2: 4, B3: 4, C1: 4, C2: 4, C3: 4 };
+// Every preset is measured: the loop stops at the first index past the family's preset list.
+const PRESETS = Object.fromEntries(['A1', 'A2', 'A3', 'B1', 'B2', 'B3', 'C1', 'C2', 'C3'].map((id) => [id, 9]));
 const only = process.argv[2]?.split(',');
 const b = await chromium.launch({
   args: ['--use-gl=angle', '--use-angle=swiftshader', '--enable-unsafe-swiftshader'],
+  ...(process.env.PW_CHROMIUM_PATH ? { executablePath: process.env.PW_CHROMIUM_PATH } : {}),
 });
 const rows = [];
 for (const [id, n] of Object.entries(PRESETS)) {
@@ -54,7 +56,7 @@ for (const [id, n] of Object.entries(PRESETS)) {
       if (!(await btn.count())) break;
       const before = await p.locator('[aria-live="polite"]').allTextContents();
       await btn.first().click();
-      await p.waitForTimeout(400);
+      await p.waitForTimeout(900);
       const cap =
         (
           await p.locator('section[aria-label="3D preview"] div.absolute.inset-x-3.top-3').allTextContents()

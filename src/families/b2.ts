@@ -1,4 +1,4 @@
-import type { Family, FieldDef, ValidationIssue } from './types';
+import type { Family, FieldDef, GhostObject, ValidationIssue } from './types';
 import { buildSchema, defaultsOf } from './schema';
 import { MEASURE, err, info, mm, warn } from './common';
 import { circle, dim, rect, roundRect, text, type Shape } from '../outputs/svg/ir';
@@ -370,19 +370,26 @@ export const B2: Family<B2P> = {
   },
   ghost(p) {
     const h = b2Holder(p);
+    // One key per slot, its head 0.5 mm short of the slot roof (the first key is ghost 0).
+    const keyAt = (i: number): GhostObject => ({
+      kind: 'key',
+      size: { w: p.bladeW, t: p.bladeT },
+      position: [
+        0,
+        -((p.keys - 1) * B2_KEY_PITCH(p)) / 2 + i * B2_KEY_PITCH(p),
+        p.leverW - h.h + p.insert - 0.5 - p.bladeW * 0.45,
+      ],
+    });
+    const extraKeys = p.mode === 'key' ? Array.from({ length: p.keys - 1 }, (_, i) => keyAt(i + 1)) : [];
     return {
       objects: [
         p.mode === 'key'
-          ? {
-              kind: 'key',
-              size: { w: p.bladeW, t: p.bladeT },
-              position: [0, 0, p.leverW - h.h + p.insert - p.bladeW * 0.45],
-            }
+          ? keyAt(0)
           : {
               kind: 'knob',
               size: { d: p.knobD, h: p.knobH },
-              // The knob sits in the socket: its top touches the socket roof.
-              position: [0, 0, p.leverW - h.h + p.knobH * 0.8 - p.knobH],
+              // The knob sits in the socket, its top 0.5 mm short of the socket roof.
+              position: [0, 0, p.leverW - h.h + p.knobH * 0.8 - 0.5 - p.knobH],
             },
         {
           kind: 'hand',
@@ -393,10 +400,13 @@ export const B2: Family<B2P> = {
           pose: 'pinch',
           rotation: [90, 0, 180],
         },
+        ...extraKeys,
       ],
     };
   },
-  animation() {
+  animation(p) {
+    // Ghost 0 is the (first) key or the knob, 1 the hand, then any further keys.
+    const keys = p.mode === 'key' ? Array.from({ length: p.keys - 1 }, (_, i) => i + 2) : [];
     return {
       steps: [
         { caption: 'Slot the key (or knob) into the turner.', hand: 0, part: { translate: [0, 0, 25] } },
@@ -405,7 +415,7 @@ export const B2: Family<B2P> = {
           caption: 'Push the wing to turn.',
           part: { rotate: { axis: [0, 0, 1], pivot: [0, 0, 0], deg: 60 } },
           // The key turns with the wing, and so does the hand pushing it.
-          ghosts: [0, 1],
+          ghosts: [0, 1, ...keys],
         },
       ],
     };

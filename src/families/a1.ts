@@ -425,8 +425,15 @@ export const A1: Family<A1P> = {
     const objects: ReturnType<Family<A1P>['ghost']>['objects'] = [
       {
         kind: p.length < 90 ? 'pen' : 'utensil',
-        size: { w: p.shaftW, h: p.shaftShape === 'round' ? p.shaftW : p.shaftH, length: p.length + 70 },
-        position: [0, 0, -20],
+        size: {
+          w: p.shaftW,
+          h: p.shaftShape === 'round' ? p.shaftW : p.shaftH,
+          // A blind pocket (open at the top) takes the handle from above, down to 0.5 mm off its floor.
+          length: p.closedEnd ? p.length + 15.5 : p.length + 70,
+          ...(p.shaftShape === 'rect' ? {} : { round: 1 }),
+        },
+        position: [0, 0, p.closedEnd ? p.length + 20 : -20],
+        ...(p.closedEnd ? { rotation: [180, 0, 0] as [number, number, number] } : {}),
       },
       {
         kind: 'hand',

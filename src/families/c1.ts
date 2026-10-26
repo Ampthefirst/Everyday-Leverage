@@ -342,6 +342,8 @@ export const C1: Family<C1P> = {
   ghost(p) {
     const { W } = c1Opening(p);
     const b = p.band;
+    // Where the loop ends and the ring tab or hook stem starts (as in the geometry).
+    const yEdge = p.style === 'tbar' ? -b * 0.8 : -W / 2 - b;
     // The handle lies in XY with the pull along +Y; the attachment is at −Y.
     const target =
       p.attach === 'screw'
@@ -355,14 +357,18 @@ export const C1: Family<C1P> = {
           }
         : p.attach === 'hook'
           ? {
+              // The can's lid just under the hook; the ring-pull's edge sits in the hook's gap (above the
+              // stem, against the lip) and its ring lies back over the stem.
               kind: 'canTab' as const,
-              size: {},
-              position: [0, -W / 2 - b - 14, 0] as [number, number, number],
+              size: { tabY: 20 + 13.5, tabZ: p.thick + 0.8 },
+              position: [0, yEdge - C1_TAB - 20, -0.5] as [number, number, number],
             }
           : {
+              // The zipper pull hangs 2 mm past the end of the ring tab (a split ring joins them), low
+              // enough that its tape runs just under the part.
               kind: 'zipper' as const,
               size: { w: 8, l: 20, t: 2 },
-              position: [0, -W / 2 - b - 16, p.thick / 2] as [number, number, number],
+              position: [0, yEdge - C1_TAB - 2 - 12, 0.75] as [number, number, number],
             };
     // Where the fingers close: the far bar of the loop (or the D-handle's grip bar, or the T-bar itself),
     // and how thick that bar is across the fingers.
@@ -377,9 +383,11 @@ export const C1: Family<C1P> = {
         target,
         {
           kind: 'hand',
-          size: { breadth: 0, grip: bar.gripD },
+          // A finger loop takes one finger; a whole-hand loop or bar takes them all.
+          size: { breadth: 0, grip: bar.gripD, ...(p.style === 'finger' ? { oneFinger: 1 } : {}) },
           // Palm down over the loop, fingers through the opening and round the bar, wrist toward the pull.
-          position: [0, bar.y, p.thick / 2],
+          // The T-bar's stem runs between the middle and ring fingers; ease them off it evenly.
+          position: [p.style === 'tbar' ? 1.5 : 0, bar.y, p.thick / 2],
           hand: 'right',
           pose: bar.pose,
           rotation: [0, 90, 0],

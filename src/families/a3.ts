@@ -378,7 +378,9 @@ export const A3: Family<A3P> = {
     const tool = {
       kind: 'tool' as const,
       size: { af: p.shankShape === 'hex' ? p.shankSize : p.shankSize * 0.87, length: 50 + p.depth },
-      position: [0, 0, -50] as [number, number, number],
+      // Top 0.5 mm short of the socket floor; turned 30° so the hex corners sit in the socket's corners.
+      position: [0, 0, -50.5] as [number, number, number],
+      rotation: [0, 0, 30] as [number, number, number],
     };
     if (p.style === 'mushroom') {
       // Palm cupped over the dome, fingers draping down its sides. The palm pose puts the palmar
@@ -423,7 +425,7 @@ export const A3: Family<A3P> = {
         {
           kind: 'hand',
           // The stem rises under the middle of the bar, so the fingers close round its sides, not under it.
-          size: { breadth: 0, grip: g * 1.12, wrapMax: 150 },
+          size: { breadth: 0, grip: g * 1.12, wrapMax: 110 },
           position: [0, 0, H + g / 2 - 2],
           hand: 'right',
           pose: 'grip',

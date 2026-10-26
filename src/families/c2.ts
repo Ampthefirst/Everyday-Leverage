@@ -283,9 +283,15 @@ export const C2: Family<C2P> = {
     };
   },
   ghost(p) {
+    // A cup goes over the button: the button stands proud enough to reach 1 mm into it and the panel
+    // stays 1 mm clear of the rim when pushed. Other tips just touch the button.
+    const cup = p.tip === 'cup';
+    const h = cup ? p.pressDepth + 2 : 3;
+    const face = c2Overall(p) + (cup ? p.pressDepth + 1 : h);
     return {
       objects: [
-        { kind: 'button', size: { d: p.targetD }, position: [c2Overall(p) + 2, 0, 0], rotation: [0, -90, 0] },
+        // Ghost 0 is the button (pushed in with the tip), ghost 2 the panel round it.
+        { kind: 'button', size: { d: p.targetD, h, panel: 0 }, position: [face, 0, 0], rotation: [0, -90, 0] },
         {
           kind: 'hand',
           size: { breadth: 0, grip: p.gripD },
@@ -294,6 +300,7 @@ export const C2: Family<C2P> = {
           pose: 'grip',
           rotation: [0, 90, 0],
         },
+        { kind: 'button', size: { d: p.targetD, cap: 0 }, position: [face, 0, 0], rotation: [0, -90, 0] },
       ],
     };
   },
@@ -305,7 +312,8 @@ export const C2: Family<C2P> = {
           caption: p.tip === 'cup' ? 'Place the cup over the button.' : 'Put the tip on the button.',
           part: {},
         },
-        { caption: 'Push with your arm.', part: { translate: [p.pressDepth, 0, 0] } },
+        // The button goes in with the tip; the panel stays.
+        { caption: 'Push with your arm.', part: { translate: [p.pressDepth, 0, 0] }, ghosts: [0, 1] },
       ],
     };
   },

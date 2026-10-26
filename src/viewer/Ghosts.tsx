@@ -4,6 +4,7 @@ import { ArticulatedHand, useHandClosure } from './Hand';
 import * as THREE from 'three';
 import { debugOn } from '../app/debug';
 import type { GhostObject } from '../families/types';
+import { starPts } from '../outputs/svg/ir';
 
 const deg = (d: number) => (d * Math.PI) / 180;
 
@@ -116,6 +117,52 @@ function ZCyl({
   );
 }
 
+/**
+ * Outline of a knob or cap seen from above (diameter d): a star when `points` is set (with inner
+ * diameter `inner`), a D when `flat` is set (cut `flat` mm in on +Y, as in the D socket), else null.
+ */
+function outline(d: number, points?: number, inner?: number, flat?: number): [number, number][] | null {
+  if (points) return starPts(points, d / 2, (inner ?? d * 0.8) / 2);
+  if (flat) {
+    const r = d / 2;
+    const a0 = Math.asin(Math.max(-1, Math.min(1, (r - flat) / r)));
+    return Array.from({ length: 49 }, (_, i) => {
+      const a = Math.PI - a0 + ((Math.PI + 2 * a0) * i) / 48;
+      return [r * Math.cos(a), r * Math.sin(a)];
+    });
+  }
+  return null;
+}
+
+/** A knob or cap outline extruded along +Z from z0 to z0 + h, or a plain cylinder when it is round. */
+function Prism({
+  sz,
+  d,
+  h,
+  z0 = 0,
+  mat,
+}: {
+  sz: GhostObject['size'];
+  d: number;
+  h: number;
+  z0?: number;
+  mat: THREE.Material;
+}) {
+  const { points, inner, flat } = sz;
+  const geo = useMemo(() => {
+    const pts = outline(d, points, inner, flat);
+    return (
+      pts &&
+      new THREE.ExtrudeGeometry(new THREE.Shape(pts.map(([x, y]) => new THREE.Vector2(x, y))), {
+        depth: h,
+        bevelEnabled: false,
+      })
+    );
+  }, [d, h, points, inner, flat]);
+  if (!geo) return <ZCyl r={d / 2} h={h} z0={z0} mat={mat} />;
+  return <mesh geometry={geo} position={[0, 0, z0]} material={mat} />;
+}
+
 function Box({
   size,
   pos,
@@ -154,6 +201,7 @@ function Hand({ o, breadth }: { o: GhostObject; breadth: number }) {
       pose={o.pose ?? 'grip'}
       gripD={o.size.grip ?? 32}
       wrapMax={o.size.wrapMax}
+      oneFinger={o.size.oneFinger === 1}
       side={o.hand ?? 'right'}
       closure={closure}
       mat={mat}
@@ -167,6 +215,19 @@ function GhostShape({ o, breadth }: { o: GhostObject; breadth: number }) {
   const metal = useGhostMaterial('#cbd5e1', 0.42, 'metal');
   const wood = useGhostMaterial('#d6b48a', 0.3, 'wood');
   const plastic = useGhostMaterial('#f9a8d4', 0.35, 'plastic');
+  // In the designer a wall behind the part (the drawer front) stays see-through, or it hides the part.
+  const pane = useMemo(
+    () =>
+      new THREE.MeshStandardMaterial({
+        color: '#d6b48a',
+        transparent: true,
+        opacity: 0.22,
+        depthWrite: false,
+        roughness: 0.7,
+        side: THREE.DoubleSide,
+      }),
+    [],
+  );
   const jam = useMemo(
     () => new THREE.MeshPhysicalMaterial({ color: '#7a0f1e', roughness: 0.25, clearcoat: 0.6 }),
     [],
@@ -190,7 +251,7 @@ function GhostShape({ o, breadth }: { o: GhostObject; breadth: number }) {
       return (
         <group>
           <ZCyl r={d * 0.75} h={sz.height ?? 150} mat={glass} />
-          <ZCyl r={d / 2} h={14} z0={sz.height ?? 150} mat={plastic} />
+          <Prism sz={sz} d={d} h={14} z0={sz.height ?? 150} mat={plastic} />
         </group>
       );
     }
@@ -202,7 +263,14 @@ function GhostShape({ o, breadth }: { o: GhostObject; breadth: number }) {
       const L = sz.length ?? 180;
       return (
         <group>
-          <Box size={[w, t, L]} pos={[0, 0, L / 2]} mat={metal} />
+          {/* `round: 1`: a round or oval handle (w × t), as in a round or oval pocket; else a flat bar. */}
+          {sz.round ? (
+            <group scale={[1, t / w, 1]}>
+              <ZCyl r={w / 2} h={L} mat={metal} />
+            </group>
+          ) : (
+            <Box size={[w, t, L]} pos={[0, 0, L / 2]} mat={metal} />
+          )}
           {o.kind === 'utensil' && (
             <mesh position={[0, 0, -18]} scale={[22, 6, 32]} material={metal}>
               <sphereGeometry args={[0.5, 24, 16]} />
@@ -224,20 +292,21 @@ function GhostShape({ o, breadth }: { o: GhostObject; breadth: number }) {
       );
     }
     case 'knob':
-      return <ZCyl r={(sz.d ?? 35) / 2} h={sz.h ?? 20} mat={wood} />;
+      return <Prism sz={sz} d={sz.d ?? 35} h={sz.h ?? 20} mat={wood} />;
     case 'stoveKnob':
       return (
         <group>
-          <ZCyl r={(sz.d ?? 40) / 2} h={sz.h ?? 22} mat={plastic} />
+          <Prism sz={sz} d={sz.d ?? 40} h={sz.h ?? 22} mat={plastic} />
           <Box size={[60, 60, 4]} pos={[0, 0, -2]} mat={metal} />
         </group>
       );
     case 'faucetCross': {
       const s = sz.span ?? 50;
+      const arm = sz.arm ?? s * 0.2;
       return (
         <group>
-          <Box size={[s, s * 0.2, sz.h ?? 18]} pos={[0, 0, (sz.h ?? 18) / 2]} mat={metal} />
-          <Box size={[s * 0.2, s, sz.h ?? 18]} pos={[0, 0, (sz.h ?? 18) / 2]} mat={metal} />
+          <Box size={[s, arm, sz.h ?? 18]} pos={[0, 0, (sz.h ?? 18) / 2]} mat={metal} />
+          <Box size={[arm, s, sz.h ?? 18]} pos={[0, 0, (sz.h ?? 18) / 2]} mat={metal} />
           <ZCyl r={10} h={40} z0={-40} mat={metal} />
         </group>
       );
@@ -247,7 +316,7 @@ function GhostShape({ o, breadth }: { o: GhostObject; breadth: number }) {
     case 'drawer':
       return (
         <group>
-          <Box size={[200, 120, 18]} pos={[0, 0, -9]} mat={wood} />
+          <Box size={[200, 120, 18]} pos={[0, 0, -9]} mat={studio === 'viewer' ? pane : wood} />
         </group>
       );
     case 'zipper':
@@ -265,18 +334,21 @@ function GhostShape({ o, breadth }: { o: GhostObject; breadth: number }) {
       return (
         <group>
           <ZCyl r={33} h={115} z0={-115} mat={metal} />
-          <Box size={[20, 26, 1]} pos={[0, 8, 0.5]} mat={metal} />
+          <Box size={[20, 26, 1]} pos={[0, sz.tabY ?? 8, (sz.tabZ ?? 0) + 0.5]} mat={metal} />
         </group>
       );
     case 'button':
+      // `panel: 0` draws only the button and `cap: 0` only the panel, so the button can be pushed in alone.
       return (
         <group>
-          <Box
-            size={studio ? [(sz.d ?? 12) * 2.6, (sz.d ?? 12) * 2.6, 6] : [80, 80, 6]}
-            pos={[0, 0, -3]}
-            mat={plastic}
-          />
-          <ZCyl r={(sz.d ?? 12) / 2} h={3} mat={metal} />
+          {sz.panel !== 0 && (
+            <Box
+              size={studio ? [(sz.d ?? 12) * 2.6, (sz.d ?? 12) * 2.6, 6] : [80, 80, 6]}
+              pos={[0, 0, -3]}
+              mat={plastic}
+            />
+          )}
+          {sz.cap !== 0 && <ZCyl r={(sz.d ?? 12) / 2} h={sz.h ?? 3} mat={metal} />}
         </group>
       );
     case 'doorLever': {
@@ -307,7 +379,8 @@ function GhostShape({ o, breadth }: { o: GhostObject; breadth: number }) {
       );
     }
     case 'hand':
-      return <Hand o={o} breadth={breadth} />;
+      // A part sized to the hand (A2's cuff) brings its own breadth; 0 means the profile's hand.
+      return <Hand o={o} breadth={sz.breadth || breadth} />;
   }
 }
 

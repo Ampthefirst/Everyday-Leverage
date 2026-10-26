@@ -404,18 +404,26 @@ export const B3: Family<B3P> = {
           : p.targetD < 40
             ? 'bottle'
             : 'knob';
+    // The cap or knob has the socket's own outline (a fluted cap is a star, a stove knob a D).
+    const outline =
+      p.profile === 'star'
+        ? { points: p.points, inner: p.targetD * p.innerRatio }
+        : p.profile === 'D'
+          ? { flat: p.dFlat }
+          : {};
     const size =
       kind === 'bottle'
-        ? { cap: p.targetD, height: 120 }
+        ? { cap: p.targetD, height: 120, ...outline }
         : kind === 'faucetCross'
-          ? { span: p.targetD, h: p.depth }
-          : { d: p.targetD, h: p.depth + 4 };
-    // The object is flipped (top down) so its top sits 1 mm inside the bottom of the socket.
+          ? { span: p.targetD, arm: p.crossArm, h: p.depth }
+          : { d: p.targetD, h: p.depth + 4, ...outline };
+    // The object is flipped (top down, about Y so the outline keeps its +Y side) and stops 1 mm short
+    // of the bottom of the socket.
     const objH = kind === 'bottle' ? 120 + 14 : kind === 'faucetCross' ? p.depth : p.depth + 4;
     const z = H - p.depth + 1 + objH;
     return {
       objects: [
-        { kind, size, position: [0, 0, z], rotation: [180, 0, 0] },
+        { kind, size, position: [0, 0, z], rotation: [0, 180, 0] },
         {
           kind: 'hand',
           // Closes round the lever's corners, clear of the round pad at its tip.
@@ -436,6 +444,8 @@ export const B3: Family<B3P> = {
         {
           caption: 'Push the lever to turn.',
           part: { rotate: { axis: [0, 0, 1], pivot: [0, 0, 0], deg: 45 } },
+          // The cap or tap turns with the socket, and the hand with the lever.
+          ghosts: [0, 1],
         },
       ],
     };

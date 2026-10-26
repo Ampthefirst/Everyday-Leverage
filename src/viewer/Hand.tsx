@@ -84,6 +84,7 @@ function CanonicalHand({
   pose,
   gripD,
   wrapMax,
+  oneFinger,
   closure,
   mat,
 }: {
@@ -91,11 +92,13 @@ function CanonicalHand({
   pose: HandPose;
   gripD: number;
   wrapMax?: number;
+  oneFinger?: boolean;
   closure: number;
   mat: THREE.Material;
 }) {
-  const target = poseAngles(pose, spec, gripD, wrapMax);
-  const a = closure >= 1 ? target : blendAngles(OPEN_ANGLES, target, closure);
+  const target = poseAngles(pose, spec, gripD, wrapMax, oneFinger);
+  // A palm pose is already an open hand, so it has nothing to close.
+  const a = closure >= 1 || pose === 'palm' ? target : blendAngles(OPEN_ANGLES, target, closure);
   const { palm, wrist, thumb } = spec;
   return (
     <group>
@@ -157,6 +160,7 @@ export function ArticulatedHand({
   pose = 'grip',
   gripD = 32,
   wrapMax,
+  oneFinger = false,
   side = 'right',
   closure = 1,
   mat,
@@ -166,6 +170,8 @@ export function ArticulatedHand({
   gripD?: number;
   /** Stop the fingers curling past this angle (deg), e.g. above a stem under the handle. */
   wrapMax?: number;
+  /** Hook only: just the middle finger hooks the handle (a small finger loop), centred on it. */
+  oneFinger?: boolean;
   side?: 'left' | 'right';
   /** 0 = open and relaxed, 1 = fully in the pose (see the "how to use" animation). */
   closure?: number;
@@ -174,14 +180,15 @@ export function ArticulatedHand({
   const spec = useMemo(() => handSpec(breadth), [breadth]);
   const { outer, inner } = useMemo(() => {
     if (pose === 'grip' || pose === 'hook') {
-      const cyl = gripCylinder(spec, gripD);
+      const cyl = gripCylinder(spec, gripD, pose);
       // canonical X → −Z (index finger on +Z), Y → −Y (wrist toward +Y), Z → −X (palm on −X)
       const m = new THREE.Matrix4().makeBasis(
         new THREE.Vector3(0, 0, -1),
         new THREE.Vector3(0, -1, 0),
         new THREE.Vector3(-1, 0, 0),
       );
-      return { outer: m, inner: new THREE.Vector3(0, -cyl.y, -cyl.z) };
+      const x = pose === 'hook' && oneFinger ? -spec.fingers[1].base[0] : 0;
+      return { outer: m, inner: new THREE.Vector3(x, -cyl.y, -cyl.z) };
     }
     if (pose === 'palm')
       return { outer: new THREE.Matrix4(), inner: new THREE.Vector3(0, -spec.palm.length, -10 * spec.scale) };
@@ -190,7 +197,7 @@ export function ArticulatedHand({
     const [x, y, z] =
       pose === 'pinch' ? pinchSolution(spec).point : indexTip(spec, poseAngles(pose, spec, gripD));
     return { outer: m, inner: new THREE.Vector3(-x, -y, -z) };
-  }, [spec, pose, gripD]);
+  }, [spec, pose, gripD, oneFinger]);
   // A see-through hand would show every overlapping segment inside it. A depth-only pass first means
   // only the outer surface is drawn, so it reads as one translucent shell.
   // Both passes sit in the transparent queue (after the opaque part), so the part still shows through.
@@ -204,7 +211,7 @@ export function ArticulatedHand({
     <group scale={[side === 'left' ? -1 : 1, 1, 1]}>
       <group matrix={outer} matrixAutoUpdate={false}>
         {/* An open hand waits a little off the handle and closes in onto it (grip and hook only). */}
-        <group position={[inner.x, inner.y, inner.z + (grasp ? (1 - closure) * 12 * spec.scale : 0)]}>
+        <group position={[inner.x, inner.y, inner.z + (grasp ? (1 - closure) * 18 * spec.scale : 0)]}>
           {seeThrough && (
             <group renderOrder={1}>
               <CanonicalHand
@@ -212,6 +219,7 @@ export function ArticulatedHand({
                 pose={pose}
                 gripD={gripD}
                 wrapMax={wrapMax}
+                oneFinger={oneFinger}
                 closure={closure}
                 mat={depthMat}
               />
@@ -223,6 +231,7 @@ export function ArticulatedHand({
               pose={pose}
               gripD={gripD}
               wrapMax={wrapMax}
+              oneFinger={oneFinger}
               closure={closure}
               mat={mat}
             />

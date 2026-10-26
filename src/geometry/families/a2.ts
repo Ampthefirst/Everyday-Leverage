@@ -33,10 +33,11 @@ export function buildA2(K: Kernel, p: A2P): Manifold {
   let part = band.add(holder.subtract(inside));
   const side = p.hand === 'right' ? 1 : -1;
   // slot cross-section: width along Z, thickness along Y; axis along X; then tilt about Y.
+  // (Turned about Y below, the section's x becomes Z and its y stays Y.)
   const slotPlaced = roundedRect(
     K,
-    p.slotT + 2 * p.clearance,
     p.slotW + 2 * p.clearance,
+    p.slotT + 2 * p.clearance,
     Math.min(1, p.slotT / 2),
   )
     .extrude(hl + 20, 0, 0, [1, 1], true)

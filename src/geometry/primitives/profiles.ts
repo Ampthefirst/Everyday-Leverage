@@ -39,7 +39,7 @@ export function profileCS(K: Kernel, p: Profile2D, grow = 0): CrossSection {
     case 'D': {
       // Circle with one flat: the flat sits `flat` mm in from the edge on +Y.
       const r = p.d / 2 + grow;
-      const keep = CrossSection.square([2 * r + 2, 2 * r - p.flat], false).translate([-r - 1, -r - 1]);
+      const keep = CrossSection.square([2 * r + 2, 2 * r + 1 - p.flat], false).translate([-r - 1, -r - 1]);
       return CrossSection.circle(r).intersect(keep);
     }
     case 'slot': {

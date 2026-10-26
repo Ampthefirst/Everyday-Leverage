@@ -1,6 +1,6 @@
 import type { Family, FieldDef, ValidationIssue } from './types';
 import { buildSchema, defaultsOf } from './schema';
-import { MEASURE, err, info, mm, warn } from './common';
+import { MEASURE, barGripD, err, info, mm, warn } from './common';
 import { circle, dim, line, rect, roundRect, text, type Shape } from '../outputs/svg/ir';
 import { c3LoadCases, c3Sections } from '../strength/families/c3';
 import { maxPartLength } from '../print/bedfit';
@@ -307,15 +307,21 @@ export const C3: Family<C3P> = {
   ghost(p) {
     return {
       objects: [
-        { kind: 'doorLever', size: { d: p.leverD, length: 120 }, position: [p.clipW - 4 - 120, 0, 0] },
+        // The bar's root reaches 6 mm into the clip, so the lever stops just short of it.
+        { kind: 'doorLever', size: { d: p.leverD, length: 120 }, position: [p.clipW - 6.5 - 120, 0, 0] },
         {
           kind: 'hand',
-          size: { breadth: 0 },
-          // Palm flat on top of the bar near its end, fingers toward the tip, pressing down.
-          position: [p.clipW + p.extension - 100, 0, p.barH / 2 + 23],
+          size: { breadth: 0, grip: barGripD(p.barW, p.barH, Math.min(5, p.barH / 3)) },
+          // Overhand grip round the bar near its end (palm on top, wrist away from the door), clear of
+          // the hook and of the clip's fillet; on a short bar the hand may run past the plain tip.
+          position: [
+            Math.max(p.clipW + 55, p.clipW + p.extension - 46 - (p.hook ? p.barH * 0.42 + 16 : 0)),
+            0,
+            0,
+          ],
           hand: 'right',
-          pose: 'palm',
-          rotation: [0, 0, -90],
+          pose: 'grip',
+          rotation: [0, 90, 0],
         },
       ],
     };

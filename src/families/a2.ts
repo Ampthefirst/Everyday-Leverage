@@ -370,7 +370,8 @@ export const A2: Family<A2P> = {
         {
           kind: 'hand',
           size: { breadth: p.palmWidth },
-          position: [0, 0, p.bandWidth / 2],
+          // The palm pose's palm sits 10 mm (scaled) off its origin; centre it in the band instead.
+          position: [0, (-10 * p.palmWidth) / 85, p.bandWidth / 2],
           hand: p.hand,
           pose: 'palm',
           rotation: [90, 0, 0],
@@ -378,8 +379,13 @@ export const A2: Family<A2P> = {
         {
           kind: 'utensil',
           size: { w: p.slotW, h: p.slotT, length: 160 },
-          position: [side * -40, -b - p.bandT - hd / 2 + 0.5, p.bandWidth / 2],
-          rotation: [0, side * (90 - p.slotAngle), 0],
+          // Along the slot: centred in the holder, tilted with it (flat side across the band).
+          position: [
+            side * -40,
+            -b - p.bandT + 1.2 - hd / 2,
+            p.bandWidth / 2 + 40 * Math.tan((p.slotAngle * Math.PI) / 180),
+          ],
+          rotation: [0, side * (90 + p.slotAngle), 0],
         },
       ],
     };
