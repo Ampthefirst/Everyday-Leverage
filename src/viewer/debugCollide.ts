@@ -131,6 +131,8 @@ export interface CollideReport {
   maxDepth: number;
   /** Deepest point inside the part for each hand segment that goes in (mm). */
   segments: Record<string, number>;
+  /** Where the deepest point is (scene frame), to find what it hits. */
+  deepestAt?: [number, number, number];
 }
 
 export function measure(scene: THREE.Scene, max = 1500): CollideReport[] {
@@ -147,12 +149,13 @@ export function measure(scene: THREE.Scene, max = 1500): CollideReport[] {
     const pts = samplePoints(o, max);
     let n = 0;
     let deepest = 0;
+    let deepestAt: [number, number, number] | undefined;
     const segments: Record<string, number> = {};
     for (const { p, seg } of pts)
       if (inside(solid, p)) {
         n++;
         const d = depth(solid, p);
-        deepest = Math.max(deepest, d);
+        if (d > deepest) [deepest, deepestAt] = [d, [+p.x.toFixed(1), +p.y.toFixed(1), +p.z.toFixed(1)]];
         if (seg) segments[seg] = Math.max(segments[seg] ?? 0, d);
       }
     out.push({
@@ -161,6 +164,7 @@ export function measure(scene: THREE.Scene, max = 1500): CollideReport[] {
       insideShare: pts.length ? n / pts.length : 0,
       maxDepth: deepest,
       segments,
+      deepestAt,
     });
   });
   return out;

@@ -299,7 +299,8 @@ export function indexTip(spec: HandSpec, a: PoseAngles): [number, number, number
 export const OPEN_ANGLES: PoseAngles = {
   fingers: [0, 1, 2, 3].map(() => ({ flex: [6, 8, 4] as [number, number, number], splay: 0 })),
   // The thumb stays about level with the palm, so an open hand near a handle doesn't dip into it.
-  thumb: { oppose: -6, abduct: 35, roll: -20, flex: [3, 6, 4] },
+  // It also stays near the index rather than reaching out along a handle (it hit C3's hook).
+  thumb: { oppose: -6, abduct: 15, roll: -20, flex: [3, 6, 4] },
 };
 
 /** Joint angles part-way from an open hand (t = 0) to a pose (t = 1). */

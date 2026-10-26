@@ -313,9 +313,9 @@ export const C3: Family<C3P> = {
           kind: 'hand',
           size: { breadth: 0, grip: barGripD(p.barW, p.barH, Math.min(5, p.barH / 3)) },
           // Overhand grip round the bar near its end (palm on top, wrist away from the door), clear of
-          // the hook and of the clip's fillet; on a short bar the hand may run past the plain tip.
+          // the hook (and the open hand's thumb) and of the clip's fillet; on a short bar the hand may run past the plain tip.
           position: [
-            Math.max(p.clipW + 55, p.clipW + p.extension - 46 - (p.hook ? p.barH * 0.42 + 16 : 0)),
+            Math.max(p.clipW + 50, p.clipW + p.extension - 46 - (p.hook ? p.barH * 0.42 + 30 : 0)),
             0,
             0,
           ],

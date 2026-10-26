@@ -23,6 +23,27 @@ export const c2TipD = (p: C2P) =>
     : p.tip === 'stylus'
       ? 8
       : Math.max(6, Math.min(p.targetD - 1, 20));
+/**
+ * Where the tip ends and which way it points (part frame), and its tilt in degrees: straight along +X,
+ * or bent up by `bend` part-way along a lever (as built in buildC2).
+ */
+export function c2TipAxis(p: C2P): {
+  at: [number, number, number];
+  dir: [number, number, number];
+  deg: number;
+} {
+  const tipLen = p.tip === 'cup' ? p.pressDepth + 3 : 6;
+  if (p.mode !== 'lever') return { at: [c2Overall(p), 0, 0], dir: [1, 0, 0], deg: 0 };
+  const a = (p.bend * Math.PI) / 180;
+  const L1 = p.reach * 0.35;
+  // The bent shaft runs L2 + tipLen past the joint and the tip (tipLen long) sits on its end.
+  const e = p.reach - L1 + 2 * tipLen;
+  return {
+    at: [C2_GRIP_L + L1 + e * Math.cos(a), 0, e * Math.sin(a)],
+    dir: [Math.cos(a), 0, Math.sin(a)],
+    deg: p.bend,
+  };
+}
 export const c2Overall = (p: C2P) => C2_GRIP_L + p.reach + (p.tip === 'cup' ? p.pressDepth + 3 : 6);
 const c2MaxLen = (p: C2P) => maxPartLength(Math.max(p.gripD, c2TipD(p)) + (p.mode === 'lever' ? 30 : 2));
 
@@ -287,16 +308,15 @@ export const C2: Family<C2P> = {
     // stays 1 mm clear of the rim when pushed. Other tips just touch the button.
     const cup = p.tip === 'cup';
     const h = cup ? p.pressDepth + 2 : 3;
-    const face = c2Overall(p) + (cup ? p.pressDepth + 1 : h);
+    const { at, dir, deg } = c2TipAxis(p);
+    const off = cup ? p.pressDepth + 1 : h;
+    const face: [number, number, number] = [at[0] + dir[0] * off, 0, at[2] + dir[2] * off];
+    // The button faces back along the tip.
+    const rotation: [number, number, number] = [0, -90 - deg, 0];
     return {
       objects: [
         // Ghost 0 is the button (pushed in with the tip), ghost 2 the panel round it.
-        {
-          kind: 'button',
-          size: { d: p.targetD, h, panel: 0 },
-          position: [face, 0, 0],
-          rotation: [0, -90, 0],
-        },
+        { kind: 'button', size: { d: p.targetD, h, panel: 0 }, position: face, rotation },
         {
           kind: 'hand',
           size: { breadth: 0, grip: p.gripD },
@@ -305,11 +325,12 @@ export const C2: Family<C2P> = {
           pose: 'grip',
           rotation: [0, 90, 0],
         },
-        { kind: 'button', size: { d: p.targetD, cap: 0 }, position: [face, 0, 0], rotation: [0, -90, 0] },
+        { kind: 'button', size: { d: p.targetD, cap: 0 }, position: face, rotation },
       ],
     };
   },
   animation(p) {
+    const { dir } = c2TipAxis(p);
     return {
       steps: [
         { caption: 'Hold the handle in your fist.', part: { translate: [-30, 0, 0] } },
@@ -317,8 +338,12 @@ export const C2: Family<C2P> = {
           caption: p.tip === 'cup' ? 'Place the cup over the button.' : 'Put the tip on the button.',
           part: {},
         },
-        // The button goes in with the tip; the panel stays.
-        { caption: 'Push with your arm.', part: { translate: [p.pressDepth, 0, 0] }, ghosts: [0, 1] },
+        // Push along the tip; the button goes in with it and the panel stays.
+        {
+          caption: 'Push with your arm.',
+          part: { translate: [p.pressDepth * dir[0], 0, p.pressDepth * dir[2]] },
+          ghosts: [0, 1],
+        },
       ],
     };
   },

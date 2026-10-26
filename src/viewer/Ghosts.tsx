@@ -250,7 +250,9 @@ function GhostShape({ o, breadth }: { o: GhostObject; breadth: number }) {
       const d = sz.cap ?? 30;
       return (
         <group>
-          <ZCyl r={d * 0.75} h={sz.height ?? 150} mat={glass} />
+          {/* Body, then a 20 mm neck up to the cap. */}
+          <ZCyl r={d * 0.75} h={(sz.height ?? 150) - 20} mat={glass} />
+          <ZCyl r={d * 0.45} h={20} z0={(sz.height ?? 150) - 20} mat={glass} />
           <Prism sz={sz} d={d} h={14} z0={sz.height ?? 150} mat={plastic} />
         </group>
       );
